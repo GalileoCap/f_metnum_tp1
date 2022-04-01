@@ -1,0 +1,54 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+
+\usepackage{g-util}
+\usepackage{amsfonts, amsmath, amssymb}
+\usepackage[xetex]{xcolor}
+
+\newcommand{\sub}[3]{\ensuremath{#1_{#2,#3}}}
+\newcommand{\supra}[2]{\ensuremath{#1^#2}}
+
+\title{Métodos Numéricos}
+\author{F. Galileo Cappella Lewi}
+\date{1c2022}
+
+\begin{document}
+
+\maketitle
+
+\section{Planteo del problema}
+
+\section{Formulación del sistema}
+
+\noindent Partiendo de las ecuaciones (1)-(6) tenemos: \\ \(
+\tab 0 = \frac{\sub{t}{j-1}{k} - 2\sub{t}{j}{k} + \sub{t}{j+1}{k}}{(\Delta r)^2} + \frac{\sub{t}{j}{k} - \sub{t}{j-1}{k}}{r \Delta r} + \frac{\sub{t}{j}{k-1} - 2\sub{t}{j}{k} + \sub{t}{j}{k+1}}{r^2 (\Delta \Theta)^2} \\
+\tab \phantom{0} = \sub{t}{j-1}{k} (\frac{1}{(\Delta r)^{2}} + \frac{-1}{r \Delta r}) + \sub{t}{j}{k} (\frac{-2}{(\Delta r)^2} + \frac{1}{r \Delta r} + \frac{-2}{(r \Delta \Theta)^{2}}) + \sub{t}{j+1}{k} \frac{1}{(\Delta r)^{2}} + \sub{t}{j}{k-1} \frac{1}{(r \Delta \Theta)^{2}} + \sub{t}{j}{k+1} \frac{1}{(r\Delta \Theta)^{2}} \) \\
+Para simplificar la notación tomo: \\ \(
+\tab \alpha = \frac{1}{(\Delta r)^{2}} + \frac{-1}{r \Delta r} \\
+\tab \beta = \frac{-2}{(\Delta r)^2} + \frac{1}{r \Delta r} + \frac{-2}{(r \Delta \Theta)^{2}} \\
+\tab \gamma = \frac{1}{(\Delta r)^{2}} \\ 
+\tab \chi = \frac{1}{(r \Delta \Theta)^{2}}
+\) \\
+Por lo que tengo: \\
+\[\alpha \sub{t}{j-1}{k} + \beta \sub{t}{j}{k} + \gamma \sub{t}{j+1}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = 0 \iff\]
+\[\beta \sub{t}{j}{k} + \gamma \sub{t}{j+1}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = -\alpha \sub{t}{j-1}{k} \iff\]
+\[\alpha \sub{t}{j-1}{k} + \beta \sub{t}{j}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = -\gamma \sub{t}{j+1}{k} \iff\]
+\[\beta \sub{t}{j}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = -\alpha \sub{t}{j-1}{k} - \gamma \sub{t}{j+1}{k}\]
+
+\subsection{Generalización}
+
+\section{Modelado}
+
+\subsection{"Matriz en banda"}
+
+%TODO:
+% Partiendo de las ecuaciones lo separo en t * coeficiente
+% Lo "resuelvo" en función del radio anterior y sigiente
+% Lo aplico:
+%   2xn es trivial
+%   3x4 ejemplo
+%   4x4 confirmo
+%   mxn en general
+% Aprovechar que tiene forma de "banda" para reducir cuentas y espacio
+
+\end{document}

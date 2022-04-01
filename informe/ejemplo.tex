@@ -1,0 +1,94 @@
+\subsection{3 radios y 4 ángulos}
+\(
+\begin{matrix}
+  \beta & \chi & 0 & \chi \\
+  \chi & \beta & \chi & 0 \\
+  0 & \chi & \beta & \chi \\
+  \chi & 0 & \chi & \beta
+\end{matrix} \begin{matrix}
+  \sub{t}{2}{1} \\
+  \sub{t}{2}{2} \\
+  \sub{t}{2}{3} \\
+  \sub{t}{2}{4} \\
+\end{matrix} = \begin{matrix}
+  -\alpha \sub{t}{1}{1} -\gamma \sub{t}{3}{1} \\
+  -\alpha \sub{t}{1}{2} -\gamma \sub{t}{3}{2} \\
+  -\alpha \sub{t}{1}{3} -\gamma \sub{t}{3}{3} \\
+  -\alpha \sub{t}{1}{4} -\gamma \sub{t}{3}{4} \\
+\end{matrix} \\
+\)
+
+\subsection{4 radios y 4 ángulos}
+\(
+\begin{matrix}
+  \beta & \chi & 0 & \chi & -\gamma & 0 & 0 & 0 \\
+  \chi & \beta & \chi & 0 & 0 & -\gamma & 0 & 0 \\
+  0 & \chi & \beta & \chi & 0 & 0 & -\gamma & 0 \\
+  \chi & 0 & \chi & \beta & 0 & 0 & 0 & -\gamma \\
+  -\alpha & 0 & 0 & 0 & \beta & \chi & 0 & \chi \\
+  0 & -\alpha & 0 & 0 & \chi & \beta & \chi & 0 \\
+  0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi \\
+  0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi \\
+  0 & 0 & 0 & -\alpha & \chi & 0 & \chi & \beta \\
+\end{matrix} \begin{matrix}
+  \sub{t}{2}{1} \\
+  \sub{t}{2}{2} \\
+  \sub{t}{2}{3} \\
+  \sub{t}{2}{4} \\
+  \sub{t}{3}{1} \\
+  \sub{t}{3}{2} \\
+  \sub{t}{3}{3} \\
+  \sub{t}{3}{4} \\
+\end{matrix} = \begin{matrix}
+  -\alpha \sub{t}{1}{1} \\
+  -\alpha \sub{t}{1}{2} \\
+  -\alpha \sub{t}{1}{3} \\
+  -\alpha \sub{t}{1}{4} \\
+  -\gamma \sub{t}{4}{1} \\
+  -\gamma \sub{t}{4}{2} \\
+  -\gamma \sub{t}{4}{3} \\
+  -\gamma \sub{t}{4}{4} \\
+\end{matrix} \\
+\)
+\subsection{\(m+1\) radios y \(n\) ángulos}
+\(
+\begin{matrix}
+  \beta & \chi & \overbrace{0 & 0 & ... & 0}{n-3} & & \chi & -\gamma & \overbrace{0 & 0 & ... & 0}{n- 1} & \overbrace{0 & 0 & ... & 0}{(m-3)n} \\
+  \chi & \beta & \chi & 0 & 0 & -\gamma & 0 & 0 \\
+  0 & \chi & \beta & \chi & 0 & 0 & -\gamma & 0 \\
+  \chi & 0 & \chi & \beta & 0 & 0 & 0 & -\gamma \\
+  0 & 0 & 0 & -\gamma & \chi & 0 & \chi & \beta \\
+  -\alpha & 0 & 0 & 0 & \beta & \chi & 0 & \chi \\
+  0 & -\alpha & 0 & 0 & \chi & \beta & \chi & 0 \\
+  0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi \\
+  0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi \\
+\end{matrix} \begin{matrix}
+  \sub{t}{2}{1} \\
+  \sub{t}{2}{2} \\
+  ... \\
+  \sub{t}{2}{n} \\
+  \sub{t}{3}{1} \\
+  \sub{t}{3}{2} \\
+  ... \\
+  \sub{t}{3}{n} \\
+  ... \\
+  \sub{t}{m-1}{1} \\
+  \sub{t}{m-1}{2} \\
+  ... \\
+  \sub{t}{m-1}{n} \\
+\end{matrix} = \begin{matrix}
+  -\alpha \sub{t}{1}{1} \\
+  -\alpha \sub{t}{1}{2} \\
+  -\alpha \sub{t}{1}{3} \\
+  -\alpha \sub{t}{1}{4} \\
+  0 \\
+  0 \\
+  ... ((m-3) \cdot n \text{ veces}) \\
+  0 \\
+  -\gamma \sub{t}{m+1}{1} \\
+  -\gamma \sub{t}{m+1}{2} \\
+  ... \\
+  -\gamma \sub{t}{m+1}{n} \\
+\end{matrix} \\
+\)
+
