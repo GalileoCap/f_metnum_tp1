@@ -1,5 +1,6 @@
 #include "system.h"
 #include "utils.h"
+#include <chrono>
 
 int main (int argc, char *argv[]) {
   //S: Processing arguments
@@ -17,18 +18,24 @@ int main (int argc, char *argv[]) {
   //S: Setting up
   System sys = read_file(dataIn, method);
 
-  //TODO: Measue time 
-  if (method == '1') sys.calc_lu(); //A: If we're using LU factorization, we have to calculate it
+  auto start = std::chrono::steady_clock::now();
+  std::vector<std::chrono::duration<double>> times;
+  if (method == '1') {
+    start = std::chrono::steady_clock::now();
+    sys.calc_lu(); //A: If we're using LU factorization, we have to calculate it
+    times.push_back(std::chrono::steady_clock::now() - start);
+  }
   
   std::vector<std::vector<double>> T;
   for (uint i = 0; i < sys._ninst; i++) {
-    //TODO: Measure time
+    start = std::chrono::steady_clock::now();
     std::vector<double> t = sys.solve(i);
+    times.push_back(std::chrono::steady_clock::now() - start);
 
     T.push_back(t);
   }
 
-  write_output(dataOut, T);
+  write_output(dataOut, T, times);
 
   return 0;
 }

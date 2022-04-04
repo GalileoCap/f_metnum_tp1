@@ -38,11 +38,14 @@ std::vector<T> operator-(const std::vector<T>& v0, const std::vector<T>& v1) {
   return res;
 }
 
-void write_output(char* dataOut, const std::vector<std::vector<double>>& T) {
+void write_output(char* dataOut, const std::vector<std::vector<double>>& T, const std::vector<std::chrono::duration<double>>& times) {
   std::ofstream fout(dataOut);
 
   for (uint i = 0; i < T.size(); i++)
     for (const double& x : T[i]) fout << x << '\n';
+#ifdef _PROFILING_
+  for (const std::chrono::duration<double>& t : times) fout << t.count() << ' '; fout << '\n';
+#endif
 
   fout.close();
 }
