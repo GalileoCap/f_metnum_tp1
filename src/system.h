@@ -27,6 +27,8 @@ struct System {
 
 System read_file(char* dataIn, char method);
 
+//void find_iso(const System&, double iso);
+
 #include "system.hpp"
 
 #endif

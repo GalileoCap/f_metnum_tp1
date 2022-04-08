@@ -132,3 +132,11 @@ System read_file(char* dataIn, char method) {
 
   return System(ri, re, mp1, n, size, iso, ninst, method, Ti, Te);
 }
+
+//void find_iso(const System& s, double iso, uint inst) {
+  //uint i = 0;
+  //do {
+    
+    //double prevTemp =
+  //} while (++i < (s._Ti[inst].size() + 2))
+//}
