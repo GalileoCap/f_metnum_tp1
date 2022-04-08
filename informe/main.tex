@@ -3,8 +3,11 @@
 
 \usepackage{g-util}
 \usepackage{amsfonts, amsmath, amssymb}
-\usepackage[xetex]{xcolor}
+%\usepackage[xetex]{xcolor}
 
+\setcounter{MaxMatrixCols}{12}
+\newcommand{\Gpmatrix}[1]{\ensuremath{\begin{pmatrix} #1 \end{pmatrix}}}
+\newcommand{\Gbmatrix}[1]{\ensuremath{\begin{bmatrix} #1 \end{bmatrix}}}
 \newcommand{\sub}[3]{\ensuremath{#1_{#2,#3}}}
 \newcommand{\supra}[2]{\ensuremath{#1^#2}}
 
@@ -16,39 +19,181 @@
 
 \maketitle
 
-\section{Planteo del problema}
+\section{Introducción}
 
-\section{Formulación del sistema}
+%TODO: Contar el problema que nos presentaron
+En general vamos a estar trabajando con \(m+1\) radios, y \(n\) ángulos.
 
-\noindent Partiendo de las ecuaciones (1)-(6) tenemos: \\ \(
-\tab 0 = \frac{\sub{t}{j-1}{k} - 2\sub{t}{j}{k} + \sub{t}{j+1}{k}}{(\Delta r)^2} + \frac{\sub{t}{j}{k} - \sub{t}{j-1}{k}}{r \Delta r} + \frac{\sub{t}{j}{k-1} - 2\sub{t}{j}{k} + \sub{t}{j}{k+1}}{r^2 (\Delta \Theta)^2} \\
-\tab \phantom{0} = \sub{t}{j-1}{k} (\frac{1}{(\Delta r)^{2}} + \frac{-1}{r \Delta r}) + \sub{t}{j}{k} (\frac{-2}{(\Delta r)^2} + \frac{1}{r \Delta r} + \frac{-2}{(r \Delta \Theta)^{2}}) + \sub{t}{j+1}{k} \frac{1}{(\Delta r)^{2}} + \sub{t}{j}{k-1} \frac{1}{(r \Delta \Theta)^{2}} + \sub{t}{j}{k+1} \frac{1}{(r\Delta \Theta)^{2}} \) \\
-Para simplificar la notación tomo: \\ \(
-\tab \alpha = \frac{1}{(\Delta r)^{2}} + \frac{-1}{r \Delta r} \\
-\tab \beta = \frac{-2}{(\Delta r)^2} + \frac{1}{r \Delta r} + \frac{-2}{(r \Delta \Theta)^{2}} \\
-\tab \gamma = \frac{1}{(\Delta r)^{2}} \\ 
-\tab \chi = \frac{1}{(r \Delta \Theta)^{2}}
-\) \\
-Por lo que tengo: \\
-\[\alpha \sub{t}{j-1}{k} + \beta \sub{t}{j}{k} + \gamma \sub{t}{j+1}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = 0 \iff\]
-\[\beta \sub{t}{j}{k} + \gamma \sub{t}{j+1}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = -\alpha \sub{t}{j-1}{k} \iff\]
-\[\alpha \sub{t}{j-1}{k} + \beta \sub{t}{j}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = -\gamma \sub{t}{j+1}{k} \iff\]
-\[\beta \sub{t}{j}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = -\alpha \sub{t}{j-1}{k} - \gamma \sub{t}{j+1}{k}\]
+\section{Formulación del Sistema}
+ 
+\paragraph{} Partimos de la ecuación de Laplace \\
+\[
+  0 = \frac{\partial^2T(r,\ \theta)}{\partial r^2} + \frac{1}{r} \frac{\partial^2T(r,\ \theta)}{\partial r} + \frac{1}{r^2} \frac{\partial^2T(r,\ \theta)}{\partial\theta^2}
+\]
+Y la discretizamos \\ %TODO: Pasos y justificación en el medio?
+\[
+0 = \frac{\sub{t}{j-1}{k} - 2\sub{t}{j}{k} + \sub{t}{j+1}{k}}{(\Delta r)^2} + \frac{\sub{t}{j}{k} - \sub{t}{j-1}{k}}{r \Delta r} + \frac{\sub{t}{j}{k-1} - 2\sub{t}{j}{k} + \sub{t}{j}{k+1}}{r^2 (\Delta \Theta)^2}
+\]
+Podemos reescribir la ecuación como una combinación lineal de cinco temperaturas \\
+\begin{align} %TODO: Más chiquita
+0 = \sub{t}{j-1}{k} (\frac{1}{(\Delta r)^{2}} + \frac{-1}{r \Delta r}) + \sub{t}{j}{k} (\frac{-2}{(\Delta r)^2} + \frac{1}{r \Delta r} + \frac{-2}{(r \Delta \Theta)^{2}}) + \sub{t}{j+1}{k} \frac{1}{(\Delta r)^{2}} + \sub{t}{j}{k-1} \frac{1}{(r \Delta \Theta)^{2}} + \sub{t}{j}{k+1} \frac{1}{(r\Delta \Theta)^{2}}
+\end{align}
+Para simplificar la notación vamos a nombrar cada coeficiente \\ %TODO: Renombrar coeficientes para que tengan más sentido
+\(
+\tab \alpha_r = \frac{1}{(\Delta r)^{2}} + \frac{-1}{r \Delta r} \\
+\tab \beta_r = \frac{-2}{(\Delta r)^2} + \frac{1}{r \Delta r} + \frac{-2}{(r \Delta \Theta)^{2}} \\
+\tab \gamma_r = \frac{1}{(\Delta r)^{2}} \\ 
+\tab \chi_r = \frac{1}{(r \Delta \Theta)^{2}}
+\) \\\\
+Resaltamos cuatro formas diferentes de escribir la ecuación \\
+\begin{align}
+  \alpha \sub{t}{j-1}{k} + \beta \sub{t}{j}{k} + \gamma \sub{t}{j+1}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = 0 \\
+  \beta \sub{t}{j}{k} + \gamma \sub{t}{j+1}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = -\alpha \sub{t}{j-1}{k} \\
+  \alpha \sub{t}{j-1}{k} + \beta \sub{t}{j}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = -\gamma \sub{t}{j+1}{k} \\
+  \beta \sub{t}{j}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = -\alpha \sub{t}{j-1}{k} - \gamma \sub{t}{j+1}{k}
+\end{align}
+\\
+\paragraph{} Por lo que podemos armar un sistema de ecuaciones de la forma \(Ax = b\) donde cada fila del sistema se corresponde a una instancia de la ecuación de Laplace discretizada. \\
+Pero qué forma tiene cada instancia depende de si la temperatura del radio anterior o la del siguiente también son incógnitas (por lo que tienen su coeficiente en la matriz), o si son datos medidos (por lo que cambian al resultado): \\
+\tab El primer y último radios (\(\sub{t}{1}{k}\) y \(\sub{t}{m+1}{k}\)) son datos medidos, por lo que no hace falta estimarlos con una ecuación. \\
+\tab Como las temperaturas del radio anterior las conocemos (porque son las temperaturas internas medidas), las primeras \(n\) filas (que se corresponden con el radio \(\sub{t}{2}{k}\)) van a tener la forma de la ecuación (3). \\ %TODO: Hyperlink
+\tab Luego, las siguientes \((m-2)n\) filas (que son todos los otros radios excepto el \(\sub{t}{m}{k}\)) tienen tanto al radio anteriro como el siguiente incógnitas, por lo que tienen la forma de la ecuación (2). \\ %TODO: Hyperlink
+\tab Y las últimas \(n\) filas (radio \(\sub{t}{m}{k}\)) tienen la forma de la ecuación (4). \\ %TODO: Hyperlink
+Entonces nos queda una matriz \(A \in \mathbb{R}^{((m-1)n \times (m-1)n)}\) armada de la forma explicada recién, el vector de incógntias \(x \in \mathbb{R}^{(m-1)n}\) con los radios "estirados" uno arriba del otro, y el vector de resultados \(b \in \mathbb{R}^{(m-1)n}\) que tiene las temperaturas medidas en las primeras y últimas \(n\) filas, y el resto 0's.
 
-\subsection{Generalización}
+\paragraph{} El caso de un sistema con 3 radios es especial, ya que para el radio \(\sub{t}{2}{k}\) (que es el vector de incógnitas completo) conocemos tanto las temperaturas del radio anterior como del siguiente. Sólo en este caso tenemos la ecuación (5).
 
-\section{Modelado}
+\subsection{Justificación no-pivoteo} 
+%TODO: Submatrices no singulares
 
-\subsection{"Matriz en banda"}
+\subsection{Ejemplos}
 
-%TODO:
-% Partiendo de las ecuaciones lo separo en t * coeficiente
-% Lo "resuelvo" en función del radio anterior y sigiente
-% Lo aplico:
-%   2xn es trivial
-%   3x4 ejemplo
-%   4x4 confirmo
-%   mxn en general
-% Aprovechar que tiene forma de "banda" para reducir cuentas y espacio
+\paragraph{3 radios y 4 ángulos:} \ \\
+
+\(
+\Gpmatrix{
+  \beta & \chi & 0 & \chi \\
+  \chi & \beta & \chi & 0 \\
+  0 & \chi & \beta & \chi \\
+  \chi & 0 & \chi & \beta \\
+} \cdot \Gpmatrix{
+  \sub{t}{2}{1} \\
+  \sub{t}{2}{2} \\
+  \sub{t}{2}{3} \\
+  \sub{t}{2}{4} \\
+} = \Gpmatrix{
+  -\alpha\sub{t}{1}{1} - \gamma\sub{t}{3}{1} \\
+  -\alpha\sub{t}{1}{2} - \gamma\sub{t}{3}{2} \\
+  -\alpha\sub{t}{1}{3} - \gamma\sub{t}{3}{3} \\
+  -\alpha\sub{t}{1}{4} - \gamma\sub{t}{3}{4} \\
+}
+\)
+
+\paragraph{4 radios y 4 ángulos:} \ \\
+
+\(
+\Gpmatrix{
+  \beta & \chi & 0 & \chi & -\gamma & 0 & 0 & 0 \\
+  \chi & \beta & \chi & 0 & 0 & -\gamma & 0 & 0 \\
+  0 & \chi & \beta & \chi & 0 & 0 & -\gamma & 0 \\
+  \chi & 0 & \chi & \beta & 0 & 0 & 0 & -\gamma \\
+  -\alpha & 0 & 0 & 0 & \beta & \chi & 0 & \chi \\
+  0 & -\alpha & 0 & 0 & \chi & \beta & \chi & 0 \\
+  0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi \\
+  0 & 0 & 0 & -\alpha & \chi & 0 & \chi & \beta \\
+} \cdot \Gpmatrix{
+  \sub{t}{2}{1} \\
+  \sub{t}{2}{2} \\
+  \sub{t}{2}{3} \\
+  \sub{t}{2}{4} \\
+  \sub{t}{3}{1} \\
+  \sub{t}{3}{2} \\
+  \sub{t}{3}{3} \\
+  \sub{t}{3}{4} \\
+} = \Gpmatrix{
+  -\alpha\sub{t}{1}{1} \\
+  -\alpha\sub{t}{1}{2} \\
+  -\alpha\sub{t}{1}{3} \\
+  -\alpha\sub{t}{1}{4} \\
+  -\gamma\sub{t}{4}{1} \\
+  -\gamma\sub{t}{4}{2} \\
+  -\gamma\sub{t}{4}{3} \\
+  -\gamma\sub{t}{4}{4} \\
+}
+\)
+
+\paragraph{5 radios y 4 ángulos:} \ \\
+
+\(
+\Gpmatrix{
+  \beta & \chi & 0 & \chi & -\gamma & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+  \chi & \beta & \chi & 0 & 0 & -\gamma & 0 & 0 & 0 & 0 & 0 & 0 \\
+  0 & \chi & \beta & \chi & 0 & 0 & -\gamma & 0 & 0 & 0 & 0 & 0 \\
+  \chi & 0 & \chi & \beta & 0 & 0 & 0 & -\gamma & 0 & 0 & 0 & 0 \\
+  -\alpha & 0 & 0 & 0 & \beta & \chi & 0 & \chi & -\gamma & 0 & 0 & 0 \\
+  0 & -\alpha & 0 & 0 & \chi & \beta & \chi & 0 & 0 & -\gamma & 0 & 0 \\
+  0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi & 0 & 0 & -\gamma & 0 \\
+  0 & 0 & 0 & -\alpha & \chi & 0 & \chi & \beta & 0 & 0 & 0 & -\gamma \\
+  0 & 0 & 0 & 0 & -\alpha & 0 & 0 & 0 & \beta & \chi & 0 & \chi \\
+  0 & 0 & 0 & 0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi & 0 \\
+  0 & 0 & 0 & 0 & 0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi \\
+  0 & 0 & 0 & 0 & 0 & 0 & 0 & -\alpha & \chi & 0 & \chi & \beta \\
+} \cdot \Gpmatrix{
+  \sub{t}{2}{1} \\
+  \sub{t}{2}{2} \\
+  \sub{t}{2}{3} \\
+  \sub{t}{2}{4} \\
+  \sub{t}{3}{1} \\
+  \sub{t}{3}{2} \\
+  \sub{t}{3}{3} \\
+  \sub{t}{3}{4} \\
+  \sub{t}{4}{1} \\
+  \sub{t}{4}{2} \\
+  \sub{t}{4}{3} \\
+  \sub{t}{4}{4} \\
+} = \Gpmatrix{
+  -\alpha\sub{t}{1}{1} \\
+  -\alpha\sub{t}{1}{2} \\
+  -\alpha\sub{t}{1}{3} \\
+  -\alpha\sub{t}{1}{4} \\
+  0 \\
+  0 \\
+  0 \\
+  0 \\
+  -\gamma\sub{t}{5}{1} \\
+  -\gamma\sub{t}{5}{2} \\
+  -\gamma\sub{t}{5}{3} \\
+  -\gamma\sub{t}{5}{4} \\
+}
+\)
+%\subsection{Modelado}
+
+%\subsubsection{Matriz en "banda"}
+%%TODO
+
+\section{Estimando la isoterma}
+
+\paragraph{} Un dato importante que nos interesa es encontrar la posición de la isoterma de 500ºC. Esta es un círculo dentro de la pared del horno todo a la misma temperatura. \\
+Queremos poder calcularla porque si está "muy cerca" (ver sección 2.2.1) la estructura del horno estaría en riesgo. %TODO: Hyperlink
+
+%TODO: Diagrama mostrando la isoterma
+
+\paragraph{} Para encontarla buscamos dos puntos dentro de un mísmo ángulo que "rodeen" la temperatura buscada, y luego aproximamos linealmente la posición donde se encuentra entre estos dos puntos.
+
+%TODO: Diagrama mostrando la isoterma estimada entre dos puntos
+
+\subsection{Midiendo la Peligrosidad}
+
+Una vez encontrada la isoterma, es importante decidir si el horno está en un estado peligroso o seguro. Para ello %TODO: Si llega al borde se rompe %TODO: Explicar la idea de medir qué pasa si cambia en 1 la temperatura en el interior, la "velocidad" del peligro, si estamos a d grados de que se rompa %TODO: Elejir cuánto es un d aceptable
+
+\section{Resultados}
+
+%TODO: Medir tiempo con unos ejemplos, gráficos y detalles
+
+\section{Conclusión}
+
+%TODO: Qué iriía acá?
 
 \end{document}
+
+%TODO: Math formatting
