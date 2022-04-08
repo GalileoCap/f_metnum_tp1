@@ -65,7 +65,9 @@ Entonces nos queda una matriz \(A \in \mathbb{R}^{((m-1)n \times (m-1)n)}\) arma
 \paragraph{} El caso de un sistema con 3 radios es especial, ya que para el radio \(\sub{t}{2}{k}\) (que es el vector de incógnitas completo) conocemos tanto las temperaturas del radio anterior como del siguiente. Sólo en este caso tenemos la ecuación (5).
 
 \subsection{Justificación no-pivoteo} 
-%TODO: Submatrices no singulares
+
+\paragraph{} Por como construimos el sistema, \\ %TODO: Demostrarlo
+Todas las filas de la matriz son linealmente independientes, por lo que el rango de la matriz es \((m-1)n\) y por propiedad de las matrices: si \(A \in \mathbb{R}^{n \times n} \land rg(A) = n \then A \text{ inversivle } \then \exists! LU \text{ sin pivoteo}\). %TODO: Referencia
 
 \subsection{Ejemplos}
 
@@ -185,7 +187,14 @@ Queremos poder calcularla porque si está "muy cerca" (ver sección 2.2.1) la es
 
 \subsection{Midiendo la Peligrosidad}
 
-Una vez encontrada la isoterma, es importante decidir si el horno está en un estado peligroso o seguro. Para ello %TODO: Si llega al borde se rompe %TODO: Explicar la idea de medir qué pasa si cambia en 1 la temperatura en el interior, la "velocidad" del peligro, si estamos a d grados de que se rompa %TODO: Elejir cuánto es un d aceptable
+\paragraph{} Una vez encontrada la isoterma, es importante decidir si el horno está en un estado peligroso o seguro. Sabemos que si el exterior del horno llega a tener una temperatura de 500ºC o más, se rompe. Por lo que simulamos qué sucede cuando crece la temperatura interna para medir la "velocidad" a la que se mueve la isoterma hacia el exterior.
+
+%TODO: Grafico mostrando la posición de la isoterma en base a la temperatura interna 
+
+Esto nos permite definir la peligrosidad como el \(\delta Ti\) hasta que la integridad del horno esté en riesgo.
+
+%TODO: Cambia en base a la cantidad de radios? Y de ángulos?
+
 
 \section{Resultados}
 
