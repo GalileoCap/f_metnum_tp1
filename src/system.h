@@ -4,30 +4,15 @@
 #include "matrix.h"
 #include "utils.h"
 
-struct System {
-  System(
-    double ri, double re, uint mp1, uint n, uint size, double iso, uint ninst, char method,
-    const std::vector<std::vector<double>>& Ti,
-    const std::vector<std::vector<double>>& Te
-  );
+void construct_system();
   
-  void calc_lu(); //U: Calculates the LU factorization
-  std::vector<double> solve(uint) const; //U: Solves a specific time instance using the specified method
+void calc_lu(); //U: Calculates the LU factorization
 
-  char _method; uint _ninst;
-  std::vector<std::vector<double>> _Ti, _Te, //U: Internal/External temperatures per time instance //TODO: Can we use lists instead of vectors?
-                                   _b; //U: Result vector //TODO: Can be removed and calc'd on the moment
-  Matrix _A, _L; //U: A = LU factorization //NOTE: To save space I'll save U in _A
+void solve(uint); //U: Solves a specific time instance using the specified method
+void _solve_gauss(uint); 
+void _solve_lu(uint); 
 
-  std::vector<double> _solve_gauss(uint) const; 
-  std::vector<double> _solve_lu(uint) const; 
-
-  double _calc_coefficient(uint, double) const;
-};
-
-System read_file(char* dataIn, char method);
-
-//void find_iso(const System&, double iso);
+void find_iso(double);
 
 #include "system.hpp"
 

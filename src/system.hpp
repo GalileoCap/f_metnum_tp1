@@ -1,16 +1,11 @@
 #include "system.h"
 
-System::System(
-  double ri, double re, uint mp1, uint n, uint size, double iso, uint ninst, char method,
-  const std::vector<std::vector<double>>& Ti,
-  const std::vector<std::vector<double>>& Te
-) : _method(method), _ninst(ninst), _Ti(Ti), _Te(Te), _b(ninst, std::vector<double> (size, 0)), _A(size), _L(size) { //U: Sets up the system to be solved
+void construct_system() { //U: Sets up the system to be solved
+  A = Matrix(mp1 * n);
 
-  double dr = (re - ri) / (mp1 - 1),
-         dt = 2 * M_PI / n;
-
-  auto calc_coefficient = [ri, dr, dt](uint c, double i) {
-    double r = (ri + (dr * (i + 1))); //A: Radius
+  dr = (re - ri) / (mp1 - 1); dt = 2 * M_PI / n;
+  auto calc_coefficient = [](uint c, double i) {
+    double r = (ri + (dr * i)); //A: Radius
 
     if (c == 0) return (1 / pow(dr, 2)) + (-1 / (r * dr)); //A: Alpha
     else if (c == 1) return (-2 / pow(dr, 2)) + (1 / (r * dr)) + (-2 / pow(r * dt, 2)); //A: Beta
@@ -20,8 +15,7 @@ System::System(
   };
 
   //S: Build the matrix
-  //_b = std::vector<std::vector<double>> (ninst , std::vector<double> (size, 0));
-  for (uint i = 0; i < (mp1 - 2); i++) { //A: For each unknown radius
+  for (uint i = 1; i < (mp1 - 1); i++) { //A: For each unknown radius (skips over first and last radii)
     double alpha = calc_coefficient(0, i),
            beta = calc_coefficient(1, i),
            gamma = calc_coefficient(2, i),
@@ -30,107 +24,91 @@ System::System(
     for (uint j = 0; j < n; j++) { //A: For each angle in this radius
       uint row = i * n + j;
 
-      //A: This radius, and angle
-      _A(row, row) = beta; 
+      //A: This angle/radius
+      A(row, row) = beta; 
 
       //A: Previous angle, same radius
-      if (j > 0) _A(row, row - 1) = chi; //A: Not the first angle
-      else _A(row, row + n - 1) = chi;
+      if (j > 0) A(row, row - 1) = chi; //A: Not the first angle
+      else A(row, row + n - 1) = chi;
 
       //A: Next angle, same radius
-      if ((j + 1) < n) _A(row, row + 1) = chi; //A: Not the last angle
-      else _A(row, row - n + 1) = chi; 
+      if ((j + 1) < n) A(row, row + 1) = chi; //A: Not the last angle
+      else A(row, row - n + 1) = chi; 
 
-      if ((i + 1) < (mp1 - 2)) _A(row, row + n) = gamma; //A: Same angle, previous radius; For every radius except the last one
-
-      if (i > 0) _A(row, row - n) = alpha; //A: Same angle, next radius; For every radius except the first one
+      A(row, row + n) = gamma; //A: Same angle, previous radius
+      A(row, row - n) = alpha; //A: Same angle, next radius
     }
   }
 
-  //S: Build the resulting vector //TODO: This can be optimized and calc'd when needed
-  for (uint i = 0; i < ninst; i++) 
-    for (uint j = 0; j < n; j++) {
-      _b[i][j] -= calc_coefficient(0, 0) * _Ti[i][j]; //A: The first radius is = -alpha * Ti
-      _b[i][size - 1 - j] -= calc_coefficient(2, mp1 - 2) * _Te[i][n - 1 - j]; //A: The last radius is = -gamma * Te
-      //A: The rest are = 0
-    }
-}
-
-void System::calc_lu() { //U: Calculates the LU decomposition
-  _L = Matrix(_A._m.size());
-
-  for (uint i = 0; i < _A._m.size(); i++) { //A: For each row of _A
-    for (uint l = i + 1; l < _A._m.size(); l++) { //A: Zeros under the diagonal for this col and save coefficient in _L
-      double c = _A(l, i) / _A(i, i); 
-
-      _A.get_row(l) = _A.get_row(l) - c * _A.get_row(i);
-      _L(l, i) = c; 
-    }
+  b = std::vector<std::vector<double>> (ninst, std::vector<double> (mp1 * n, 0));
+  for (uint i = 0; i < ninst; i++) {
+    for (uint j = 0; j < n; j++) b[i][j] = T[i][j]; //A: Internal temperatures
+    for (uint j = ((mp1 - 1) * n); j < (mp1 * n); j++) b[i][j] = T[i][j]; //A: External temperatures
   }
 }
 
-std::vector<double> System::solve(uint inst) const { //U: Solves a specific time instance, may write the output
-  if (_method == '0') return _solve_gauss(inst);
-  else return _solve_lu(inst);
-}
+void calc_lu() { //U: Calculates the LU decomposition
+  auto start = std::chrono::steady_clock::now();
 
-std::vector<double> System::_solve_gauss(uint inst) const {
-  Matrix A = _A; //A: Copy
-  std::vector<double> b = _b[inst];
+  L = Matrix(A._m.size());
 
   for (uint i = 0; i < A._m.size(); i++) { //A: For each row of A
-    for (uint l = i + 1; l < A._m.size(); l++) { //A: Zeros under the diagonal for this col 
+    for (uint l = i + 1; l < A._m.size(); l++) { //A: Zeros under the diagonal for this col and save coefficient in L
       double c = A(l, i) / A(i, i); 
 
       A.get_row(l) = A.get_row(l) - c * A.get_row(i);
-      b[l] = b[l] - c * b[i]; //A: Apply same operation to the result
+      L(l, i) = c; 
     }
   }
 
-  std::vector<double> t (b.size());
-  for (int i = (b.size() - 1); i >= 0; i--) { //A: Solve for each t
-    double foo = 0; for (int l = (i + 1); l < b.size(); l++) foo += A(i, l) * t[l]; //A: foo = sum from l = i+1 to n of (a[i][l] * t[l])
-    t[i] = (b[i] - foo) / A(i, i);
-  }
-
-  return t;
+  times[0] = (std::chrono::steady_clock::now() - start).count();
 }
 
-std::vector<double> System::_solve_lu(uint inst) const {
-  const std::vector<double>& b = _b[inst];
-  std::vector<double> y (b.size()); //A: First solve Ly = b
+void solve(uint inst) { //U: Solves a specific time instance, may write the output
+  auto start = std::chrono::steady_clock::now();
+
+  if (method == '0') _solve_gauss(inst);
+  else _solve_lu(inst);
+
+  times[inst] = (std::chrono::steady_clock::now() - start).count();
+}
+
+void _solve_gauss(uint inst) {
+  Matrix _A = A; //A: Copy
+  std::vector<double> _b = b[inst];
+
+  for (uint i = 0; i < _A._m.size(); i++) { //A: For each row
+    for (uint l = i + 1; l < _A._m.size(); l++) { //A: Zeros under the diagonal for this col 
+      double c = _A(l, i) / _A(i, i); 
+
+      _A.get_row(l) = _A.get_row(l) - c * _A.get_row(i);
+      _b[l] = _b[l] - c * _b[i]; //A: Apply same operation to the result
+    }
+  }
+
+  std::vector<double> &t = T[inst]; //A: Rename
+  for (int i = (_b.size() - 1); i >= 0; i--) { //A: Solve for each t
+    double foo = 0; for (int l = (i + 1); l < _b.size(); l++) foo += _A(i, l) * t[l]; //A: foo = sum from l = i+1 to n of (a[i][l] * t[l])
+    t[i] = (_b[i] - foo) / _A(i, i);
+  }
+}
+
+void _solve_lu(uint inst) {
+  const std::vector<double>& _b = b[inst]; //A: Rename
+
+  //S: First solve Ly = b
+  std::vector<double> y (_b.size()); 
   for (int i = 0; i < y.size(); i++) { //A: Solve for each y
-    double foo = 0; for (int l = 0; l < i; l++) foo += _L(i, l) * y[l]; //A: foo = sum from l = i+1 to n of (a[i][l] * x[l])
-    y[i] = (b[i] - foo) / _L(i, i);
+    double foo = 0; for (int l = 0; l < i; l++) foo += L(i, l) * y[l]; //A: foo = sum from l = i+1 to n of (a[i][l] * x[l])
+    y[i] = (_b[i] - foo) / L(i, i);
   }
 
-  std::vector<double> t (y.size()); //A: Solve Ut = y
+  //S: Solve Ut = y 
+  std::vector<double> &t = T[inst]; //A: Rename
   for (int i = (y.size() - 1); i >= 0; i--) { //A: Solve for each t
-    double foo = 0; for (int l = (i + 1); l < y.size(); l++) foo += _A(i, l) * t[l]; //A: foo = sum from l = i+1 to n of (a[i][l] * t[l])
-    t[i] = (y[i] - foo) / _A(i, i);
+    double foo = 0; for (int l = (i + 1); l < y.size(); l++) foo += A(i, l) * t[l]; //A: foo = sum from l = i+1 to n of (u[i][l] * t[l])
+    t[i] = (y[i] - foo) / A(i, i);
   }
-
-  return t;
-}
-
-System read_file(char* dataIn, char method) {
-  std::ifstream fin(dataIn);
-
-  uint mp1, n, ninst;
-  double ri, re, iso;
-  fin >> ri >> re >> mp1 >> n >> iso >> ninst; fin.ignore(); //A: Read parameters from file
-
-  std::vector<std::vector<double>> Ti(ninst, std::vector<double> (n));
-  std::vector<std::vector<double>> Te(ninst, std::vector<double> (n));
-  for (uint i = 0; i < ninst; i++) {
-    for (double& t : Ti[i]) fin >> t; fin.ignore(); //A: Internal temperature
-    for (double& t : Te[i]) fin >> t; //A: External temperature
-  }
-  fin.close();
-
-  uint size = (mp1 - 2) * n; 
-
-  return System(ri, re, mp1, n, size, iso, ninst, method, Ti, Te);
 }
 
 //void find_iso(const System& s, double iso, uint inst) {
@@ -140,3 +118,5 @@ System read_file(char* dataIn, char method) {
     //double prevTemp =
   //} while (++i < (s._Ti[inst].size() + 2))
 //}
+
+//TODO: Optimize by taking advantage of "band" matrix and first and last n rows being 1's

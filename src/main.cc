@@ -1,41 +1,37 @@
-#include "system.h"
 #include "utils.h"
-#include <chrono>
+#include "system.h"
+
+char *dataIn, *dataOut, method; //U: Files, method 0 for Gauss 1 for LU
+double ri, re, iso, //U: Internal/External radius, isotherm temperature
+       dr, dt; //U: Delta radius, delta theta
+uint mp1, n, ninst; //U: m+1 radii, n angles, ninst time instances
+std::vector<std::vector<double>> //TODO: They could be lists
+  T, //U: Solution vector for each instance
+  b; //U: Resulting vector //TODO: This can be calc'd when needed
+std::vector<double> times; //U: Profiling times
+Matrix A, L;
 
 int main (int argc, char *argv[]) {
   //S: Processing arguments
   if (argc != 4) throw std::invalid_argument("Missing/Extra arguments");
 
-  char *dataIn = argv[1],
-       *dataOut = argv[2],
-       *methodS = argv[3],
-        method = methodS[0];
+  dataIn = argv[1]; dataOut = argv[2];
+  method = argv[3][0];
 
-  if (strlen(methodS) != 1 || (method != '0' && method != '1')) throw std::invalid_argument("Invalid method, must be 0 or 1");
+  if (strlen(argv[3]) != 1 || (method != '0' && method != '1')) throw std::invalid_argument("Invalid method, must be 0 or 1");
 
   printf("TP1 Metodos Numericos\nF. Galileo Cappella Lewi\ndataIn: %s, dataOut: %s, metodo: %c\n", dataIn, dataOut, method);
 
   //S: Setting up
-  System sys = read_file(dataIn, method);
+  read_input();
+  construct_system();
+  if (method == '1') calc_lu(); //A: If we're using LU factorization, we have to calculate it
 
-  auto start = std::chrono::steady_clock::now();
-  std::vector<std::chrono::duration<double>> times;
-  if (method == '1') {
-    start = std::chrono::steady_clock::now();
-    sys.calc_lu(); //A: If we're using LU factorization, we have to calculate it
-    times.push_back(std::chrono::steady_clock::now() - start);
-  }
-  
-  std::vector<std::vector<double>> T;
-  for (uint i = 0; i < sys._ninst; i++) {
-    start = std::chrono::steady_clock::now();
-    std::vector<double> t = sys.solve(i);
-    times.push_back(std::chrono::steady_clock::now() - start);
+  //S: Solve each time instance
+  for (uint i = 0; i < ninst; i++) solve(i);
 
-    T.push_back(t);
-  }
-
-  write_output(dataOut, T, times);
+  //S: Output
+  write_output();
 
   return 0;
 }

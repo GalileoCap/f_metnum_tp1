@@ -7,26 +7,26 @@
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
+#include <chrono>
 #include <stdexcept>
 
 typedef unsigned int uint;
 
-template<typename T>
-std::vector<T> operator*(std::vector<T>, double); //U: Scalar product
+#include "matrix.h"
 
-template<typename T>
-std::vector<T> operator*(double, const std::vector<T>&); //U: Scalar product
+void read_input();
+void write_output();
 
-template<typename T>
-std::vector<T> operator*(const std::vector<T>&, const std::vector<T>&); //U: Dot product
+extern char *dataIn, *dataOut, method; //U: Files, method 0 for Gauss 1 for LU
+extern double ri, re, iso, //U: Internal/External radius, isotherm temperature
+       dr, dt; //U: Delta radius, delta theta
+extern uint mp1, n, ninst; //U: m+1 radii, n angles, ninst time instances
+extern std::vector<std::vector<double>> //TODO: They could be lists
+  T, //U: Solution vector for each instance
+  b; //U: Resulting vector //TODO: Can be calc'd when needed
+extern Matrix A, L;
 
-template<typename T>
-std::vector<T> operator+(const std::vector<T>&, const std::vector<T>&);
-
-template<typename T>
-std::vector<T> operator-(const std::vector<T>&, const std::vector<T>&);
-
-void write_output(char* dataOut, const std::vector<std::vector<double>>& T);
+extern std::vector<double> times; //U: Profiling times
 
 #include "utils.hpp"
 

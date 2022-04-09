@@ -2,6 +2,7 @@
 #define _MATRIX_
 
 #include "utils.h"
+#include "vector_ops.h"
 
 struct Matrix {
   Matrix(uint n = 0);
@@ -15,12 +16,7 @@ struct Matrix {
   std::vector<double>& get_row(uint row); 
 
   std::vector<std::vector<double>> _m;
-
-  //TODO: Custom struct for rows/cols
-  //TODO: Iterator
 };
-
-Matrix apply_gauss(Matrix&);
 
 #include "matrix.hpp"
 
