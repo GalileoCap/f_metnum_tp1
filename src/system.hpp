@@ -116,7 +116,7 @@ void find_iso(uint inst) { //U: Finds the isotherm by doing a linear interpolati
   for (uint i = 0; i < n; i++) { //A: For each angle
     uint j = 0; for(; j < (mp1 - 1); j++) if (t[(j + 1) * n + i] < iso) break; //A: Find the two points around where the isotherm is
     double m = (t[(j + 1) * n + i] - t[j * n + i]) / dr; //U: Slope of the line
-    uint r = ri + j * dr;
+    double r = ri + j * dr;
     isotherm[inst][i] = r + (iso - t[(j * n + i)]) / m;
   }
   //TODO: Different behaviour when the isotherm doesn't exists
