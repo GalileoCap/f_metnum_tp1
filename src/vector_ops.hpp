@@ -1,13 +1,13 @@
 #include "vector_ops.h"
 
 template<typename T>
-std::vector<T> operator*(std::vector<T> v, double k) { //U: Scalar product
+std::vector<T> operator*(std::vector<T> v, floating_t k) { //U: Scalar product
   for (T& x : v) x *= k;
   return v;
 }
 
 template<typename T>
-std::vector<T> operator*(double k, const std::vector<T>& v) { //U: Scalar product
+std::vector<T> operator*(floating_t k, const std::vector<T>& v) { //U: Scalar product
   return v * k;
 }
 

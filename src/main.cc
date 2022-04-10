@@ -2,14 +2,14 @@
 #include "system.h"
 
 char *dataIn, *dataOut, method; //U: Files, method 0 for Gauss 1 for LU
-double ri, re, iso, //U: Internal/External radius, isotherm temperature
+floating_t ri, re, iso, //U: Internal/External radius, isotherm temperature
        dr, dt; //U: Delta radius, delta theta
 uint mp1, n, ninst; //U: m+1 radii, n angles, ninst time instances
-std::vector<std::vector<double>> //TODO: They could be lists
+std::vector<std::vector<floating_t>> //TODO: They could be lists
   T, //U: Solution vector for each instance
   b; //U: Resulting vector //TODO: This can be calc'd when needed
 Matrix A, L;
-std::vector<std::vector<double>> isotherm; //U: Radii for the isotherm for each instance
+std::vector<std::vector<floating_t>> isotherm; //U: Radii for the isotherm for each instance
 std::vector<ulong> times; //U: Profiling times
 
 int main (int argc, char *argv[]) {

@@ -9,7 +9,7 @@ void read_input() {
   std::ifstream fin(dataIn);
 
   fin >> ri >> re >> mp1 >> n >> iso >> ninst; fin.ignore(); //A: Read parameters from file
-  T = std::vector<std::vector<double>> (ninst, std::vector<double> (mp1 * n));
+  T = std::vector<std::vector<floating_t>> (ninst, std::vector<floating_t> (mp1 * n));
   for (uint i = 0; i < ninst; i++) {
     for (uint j = 0; j < n; j++) fin >> T[i][j]; //A: Internal temperatures
     for (uint j = ((mp1 - 1) * n); j < (mp1 * n); j++) fin >> T[i][j]; //A: External temperatures
@@ -18,7 +18,7 @@ void read_input() {
 
   fin.close();
 
-  isotherm = std::vector<std::vector<double>> (ninst, std::vector<double> (n));
+  isotherm = std::vector<std::vector<floating_t>> (ninst, std::vector<floating_t> (n));
   times = std::vector<ulong> ((method == '1') + ninst, 0);
 }
 
@@ -28,12 +28,12 @@ void write_output() {
 #ifdef _PROFILING_
   for (const long& time : times) fout << time << ' '; fout << '\n';
 #elif defined(_ISOTHERM_)
-  for (const std::vector<double>& inst : isotherm) {
-    for (const double& r : inst) fout << r << ' '; fout << '\n';
+  for (const std::vector<floating_t>& inst : isotherm) {
+    for (const floating_t& r : inst) fout << r << ' '; fout << '\n';
   }
 #else
   for (uint i = 0; i < T.size(); i++) {
-    for (const double& t : T[i]) fout << t << ' '; fout << '\n'; 
+    for (const floating_t& t : T[i]) fout << t << ' '; fout << '\n'; 
   }
 #endif
 
