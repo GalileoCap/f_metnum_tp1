@@ -3,7 +3,7 @@
 void construct_system() { //U: Sets up the system to be solved
   A = Matrix(mp1 * n);
 
-  dr = (re - ri) / (mp1 - 1); dt = 2 * M_PI / n;
+  dr = (re - ri) / mp1; dt = 2 * M_PI / n;
   auto calc_coefficient = [](uint c, double i) {
     double r = (ri + (dr * i)); //A: Radius
 
@@ -48,7 +48,7 @@ void construct_system() { //U: Sets up the system to be solved
 }
 
 void calc_lu() { //U: Calculates the LU decomposition
-  auto start = std::chrono::steady_clock::now();
+  long start = get_time();
 
   L = Matrix(A._m.size());
 
@@ -61,16 +61,16 @@ void calc_lu() { //U: Calculates the LU decomposition
     }
   }
 
-  times[0] = (std::chrono::steady_clock::now() - start).count();
+  times[0] = get_time() - start;
 }
 
 void solve(uint inst) { //U: Solves a specific time instance, may write the output
-  auto start = std::chrono::steady_clock::now();
+  long start = get_time();
 
   if (method == '0') _solve_gauss(inst);
   else _solve_lu(inst);
 
-  times[inst] = (std::chrono::steady_clock::now() - start).count();
+  times[(method == '1') + inst] = get_time() - start;
 }
 
 void _solve_gauss(uint inst) {
@@ -111,12 +111,16 @@ void _solve_lu(uint inst) {
   }
 }
 
-//void find_iso(const System& s, double iso, uint inst) {
-  //uint i = 0;
-  //do {
-    
-    //double prevTemp =
-  //} while (++i < (s._Ti[inst].size() + 2))
-//}
+void find_iso(uint inst) { //U: Finds the isotherm by doing a linear interpolation between the two points around where the isotherm should be
+  const std::vector<double> &t = T[inst]; //A: Rename
+  for (uint i = 0; i < n; i++) { //A: For each angle
+    uint j = 0; for(; j < (mp1 - 1); j++) if (t[(j + 1) * n + i] < iso) break; //A: Find the two points around where the isotherm is
+    double m = (t[(j + 1) * n + i] - t[j * n + i]) / dr; //U: Slope of the line
+    uint r = ri + j * dr;
+    isotherm[inst][i] = r + (iso - t[(j * n + i)]) / m;
+  }
+  //TODO: Different behaviour when the isotherm doesn't exists
+  //TODO: The temperature can come back up
+}
 
 //TODO: Optimize by taking advantage of "band" matrix and first and last n rows being 1's

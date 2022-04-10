@@ -8,8 +8,9 @@ uint mp1, n, ninst; //U: m+1 radii, n angles, ninst time instances
 std::vector<std::vector<double>> //TODO: They could be lists
   T, //U: Solution vector for each instance
   b; //U: Resulting vector //TODO: This can be calc'd when needed
-std::vector<double> times; //U: Profiling times
 Matrix A, L;
+std::vector<std::vector<double>> isotherm; //U: Radii for the isotherm for each instance
+std::vector<ulong> times; //U: Profiling times
 
 int main (int argc, char *argv[]) {
   //S: Processing arguments
@@ -28,7 +29,10 @@ int main (int argc, char *argv[]) {
   if (method == '1') calc_lu(); //A: If we're using LU factorization, we have to calculate it
 
   //S: Solve each time instance
-  for (uint i = 0; i < ninst; i++) solve(i);
+  for (uint i = 0; i < ninst; i++) {
+    solve(i);
+    find_iso(i);
+  }
 
   //S: Output
   write_output();

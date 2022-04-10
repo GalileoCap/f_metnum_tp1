@@ -12,7 +12,7 @@ void solve(uint); //U: Solves a specific time instance using the specified metho
 void _solve_gauss(uint); 
 void _solve_lu(uint); 
 
-void find_iso(double);
+void find_iso(uint);
 
 #include "system.hpp"
 
