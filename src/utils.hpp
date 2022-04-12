@@ -25,17 +25,15 @@ void read_input() {
 void write_output() {
   std::ofstream fout(dataOut);
 
-#ifdef _PROFILING_
+#ifndef _ENTREGA_
   for (const long& time : times) fout << time << ' '; fout << '\n';
-#elif defined(_ISOTHERM_)
-  for (const std::vector<floating_t>& inst : isotherm) {
+  for (const std::vector<floating_t>& inst : isotherm) { 
     for (const floating_t& r : inst) fout << r << ' '; fout << '\n';
   }
-#else
-  for (uint i = 0; i < T.size(); i++) {
+#endif
+  for (uint i = 0; i < T.size(); i++) { 
     for (const floating_t& t : T[i]) fout << t << ' '; fout << '\n'; 
   }
-#endif
 
   fout.close();
 }

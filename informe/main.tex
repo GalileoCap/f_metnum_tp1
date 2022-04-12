@@ -4,6 +4,8 @@
 
 \usepackage{g-util}
 \usepackage{amsfonts, amsmath, amssymb}
+\usepackage{graphicx, float}
+\graphicspath{ {../data/} }
 %\usepackage[xetex]{xcolor}
 
 \setcounter{MaxMatrixCols}{12}
@@ -15,6 +17,10 @@
 \title{Métodos Numéricos}
 \author{F. Galileo Cappella Lewi}
 \date{1c2022}
+
+\renewcommand{\figurename}{Fig.}
+\renewcommand{\listfigurename}{Figuras}
+\renewcommand{\contentsname}{Secciones}
 
 \begin{document}
 
@@ -65,9 +71,9 @@ Entonces nos queda una matriz \(A \in \mathbb{R}^{((m-1)n \times (m-1)n)}\) arma
 \paragraph{} El caso de un sistema con 3 radios es especial, ya que para el radio \(\sub{t}{2}{k}\) (que es el vector de incógnitas completo) conocemos tanto las temperaturas del radio anterior como del siguiente. Sólo en este caso tenemos la ecuación (5).
 
 \subsection{Justificación no-pivoteo} 
+\label{sec:justificacion}
 
-\paragraph{} Por como construimos el sistema, \\ %TODO: Demostrarlo
-Todas las filas de la matriz son linealmente independientes, por lo que el rango de la matriz es \((m-1)n\) y por propiedad de las matrices: si \(A \in \mathbb{R}^{n \times n} \land rg(A) = n \then A \text{ inversivle } \then \exists! LU \text{ sin pivoteo}\). %TODO: Referencia
+%TODO
 
 \subsection{Ejemplos}
 
@@ -92,38 +98,38 @@ Todas las filas de la matriz son linealmente independientes, por lo que el rango
 }
 \)
 
-\paragraph{4 radios y 4 ángulos:} \ \\
+%\paragraph{4 radios y 4 ángulos:} \ \\
 
-\(
-\Gpmatrix{
-  \beta & \chi & 0 & \chi & -\gamma & 0 & 0 & 0 \\
-  \chi & \beta & \chi & 0 & 0 & -\gamma & 0 & 0 \\
-  0 & \chi & \beta & \chi & 0 & 0 & -\gamma & 0 \\
-  \chi & 0 & \chi & \beta & 0 & 0 & 0 & -\gamma \\
-  -\alpha & 0 & 0 & 0 & \beta & \chi & 0 & \chi \\
-  0 & -\alpha & 0 & 0 & \chi & \beta & \chi & 0 \\
-  0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi \\
-  0 & 0 & 0 & -\alpha & \chi & 0 & \chi & \beta \\
-} \cdot \Gpmatrix{
-  \sub{t}{2}{1} \\
-  \sub{t}{2}{2} \\
-  \sub{t}{2}{3} \\
-  \sub{t}{2}{4} \\
-  \sub{t}{3}{1} \\
-  \sub{t}{3}{2} \\
-  \sub{t}{3}{3} \\
-  \sub{t}{3}{4} \\
-} = \Gpmatrix{
-  -\alpha\sub{t}{1}{1} \\
-  -\alpha\sub{t}{1}{2} \\
-  -\alpha\sub{t}{1}{3} \\
-  -\alpha\sub{t}{1}{4} \\
-  -\gamma\sub{t}{4}{1} \\
-  -\gamma\sub{t}{4}{2} \\
-  -\gamma\sub{t}{4}{3} \\
-  -\gamma\sub{t}{4}{4} \\
-}
-\)
+%\(
+%\Gpmatrix{
+  %\beta & \chi & 0 & \chi & -\gamma & 0 & 0 & 0 \\
+  %\chi & \beta & \chi & 0 & 0 & -\gamma & 0 & 0 \\
+  %0 & \chi & \beta & \chi & 0 & 0 & -\gamma & 0 \\
+  %\chi & 0 & \chi & \beta & 0 & 0 & 0 & -\gamma \\
+  %-\alpha & 0 & 0 & 0 & \beta & \chi & 0 & \chi \\
+  %0 & -\alpha & 0 & 0 & \chi & \beta & \chi & 0 \\
+  %0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi \\
+  %0 & 0 & 0 & -\alpha & \chi & 0 & \chi & \beta \\
+%} \cdot \Gpmatrix{
+  %\sub{t}{2}{1} \\
+  %\sub{t}{2}{2} \\
+  %\sub{t}{2}{3} \\
+  %\sub{t}{2}{4} \\
+  %\sub{t}{3}{1} \\
+  %\sub{t}{3}{2} \\
+  %\sub{t}{3}{3} \\
+  %\sub{t}{3}{4} \\
+%} = \Gpmatrix{
+  %-\alpha\sub{t}{1}{1} \\
+  %-\alpha\sub{t}{1}{2} \\
+  %-\alpha\sub{t}{1}{3} \\
+  %-\alpha\sub{t}{1}{4} \\
+  %-\gamma\sub{t}{4}{1} \\
+  %-\gamma\sub{t}{4}{2} \\
+  %-\gamma\sub{t}{4}{3} \\
+  %-\gamma\sub{t}{4}{4} \\
+%}
+%\)
 
 \paragraph{5 radios y 4 ángulos:} \ \\
 
@@ -169,40 +175,96 @@ Todas las filas de la matriz son linealmente independientes, por lo que el rango
   -\gamma\sub{t}{5}{4} \\
 }
 \)
-%\subsection{Modelado}
+\subsection{Implementación}
 
-%\subsubsection{Matriz en "banda"}
+Implementamos este sistema en \texttt{C++}, y luego analizamos los resultados con \texttt{Python}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{test.0}
+\caption{Temperatura dentro del horno}
+\label{fig:temperature}
+\end{figure}
+
+%\subsection{Matriz en "banda"}
 %%TODO
+
+\section{Gauss vs LU}
+
+\paragraph{} Para resolver un sistema de ecuaciones cualquiera planteado como \(Ax = b\), se puede usar el método de eliminación gausseana (o "Gauss"), que tiene un tiempo de operación \(\bigO{n^3}\). Pero también se puede resolver usando la factorización \(LU\), que son dos matrices tales que \(A = LU\), y \(L\) es triangular inferior y \(U\) triangular superior. La forma de resolverlo así sería primero calcular un \(y\) tal que \(Ly = b\) y luego resolver \(Ux = y\). Esto toma \(\bigO{n^2}\) operaciones.
+\paragraph{} Como vimos en la sección \ref{sec:justificacion}, la matriz de nuestro sistema tiene factorización \(M = LU\). Lo cual nos es muy útil cuando queremos resolver múltiples instancias de \(Mt_i = b_i\) ya que la factorización \(LU\) se puede calcular aplicando Gauss una sola vez, y resolver cada instancia \(LUt_i = b_i\) requiere muchas menos operaciones. \\
+En la figura \ref{fig:solve.time} se puede ver que una vez que la matriz tiene 30 o más elementos, se vuelve definitivamente mejor resolver una instancia con \(LU\) que con Gauss. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{times.solve}
+\caption{Tiempo para resolver una instancia del sistema (1000 reps)}
+\label{fig:solve.time}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{times.ratio_lu_gauss}
+\caption{Relación del tiempo entre LU y Gauss (1000 reps)}
+\label{fig:solve.time.ratio}
+\end{figure}
+
+
+\paragraph{} Pero como mencionamos, para calcular la factorización hay que aplicar Gauss una vez, por lo que en realidad nos queda el resultado de la figura \ref{fig:solve.lu.time} para resolver una instancia. \\
+Por lo que es importante revisar cuándo de verdad nos empieza a convenir usar la factorización \(LU\). En la figura \ref{fig:pct_lu.time} se ve que independiente del tamaño de la matriz, el tiempo usado para resolver una instancia del sistema es una fracción mínima del tiempo usado para calcular la factorización. %TODO: Cuánto te combiene para la más chiquita
+
+%TODO: Gráfico de sumando lu
+
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=\textwidth]{times.lu}
+%\caption{Tiempo para calcular la factorización LU (1000 reps)}
+%\label{fig:lu.time}
+%\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{times.pct_lu}
+\caption{Relación entre el tiempo para resolver el sistema y el tiempo para calcular la factorización LU (1000 reps)}
+\label{fig:pct_lu.time}
+\end{figure}
 
 \section{Estimando la isoterma}
 
 \paragraph{} Un dato importante que nos interesa es encontrar la posición de la isoterma de 500ºC. Esta es un círculo dentro de la pared del horno todo a la misma temperatura. \\
-Queremos poder calcularla porque si está "muy cerca" (ver sección 2.2.1) la estructura del horno estaría en riesgo. %TODO: Hyperlink
+Queremos poder calcularla porque si está "muy cerca" (ver sección \ref{sec:peligrosidad.distance}) la estructura del horno estaría en riesgo. %TODO: Hyperlink
 
-%TODO: Diagrama mostrando la isoterma
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{test.isotherm.0}
+\caption{Posición de la isoterma}
+\label{fig:isotherm.pos}
+\end{figure}
 
 \paragraph{} Para encontarla buscamos dos puntos dentro de un mísmo ángulo que "rodeen" la temperatura buscada, y luego aproximamos linealmente la posición donde se encuentra entre estos dos puntos.
 
 %TODO: Diagrama mostrando la isoterma estimada entre dos puntos
 
 \subsection{Midiendo la Peligrosidad}
+\label{sec:peligrosidad.distance}
 
-\paragraph{} Una vez encontrada la isoterma, es importante decidir si el horno está en un estado peligroso o seguro. Sabemos que si el exterior del horno llega a tener una temperatura de 500ºC o más, se rompe. Por lo que simulamos qué sucede cuando crece la temperatura interna para medir la "velocidad" a la que se mueve la isoterma hacia el exterior.
+\paragraph{} Una vez encontrada la isoterma, es importante decidir si el horno está en un estado peligroso o seguro. Sabemos que si el exterior del horno llega a tener una temperatura de 500ºC o más, se rompe. \\
+En la figura \ref{fig:peligrosidad.distance} se puede ver cómo se mueve la isoterma de 500ºC si la temperatura interna creciera uniformemente. \\
 
-%TODO: Grafico mostrando la posición de la isoterma en base a la temperatura interna 
+\begin{figure}[H]
+\caption{Distancia de la isoterma al exterior del horno}
+\centering
+\includegraphics[width=\textwidth]{peligrosidad.distance}
+\label{fig:peligrosidad.distance}
+\end{figure}
 
-Esto nos permite definir la peligrosidad como el \(\delta Ti\) hasta que la integridad del horno esté en riesgo.
+\paragraph{} Para sacar conclusiones sobre qué tan peligroso es, habría que conocer más sobre los materiales que forman al horno. Pero preliminarmente se puede ver que si el "punto de ruptura" se encuentra al 75\% hay poco margen de error, ya que la isoterma se mueve rápido hacia el exterior.
 
-%TODO: Cambia en base a la cantidad de radios? Y de ángulos?
+\section{Apéndice}
 
+\tableofcontents
 
-\section{Resultados}
-
-%TODO: Medir tiempo con unos ejemplos, gráficos y detalles
-
-\section{Conclusión}
-
-%TODO: Qué iriía acá?
+\listoffigures
 
 \end{document}
 
