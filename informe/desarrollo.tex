@@ -1,0 +1,36 @@
+section{Desarrollo}
+
+\subsection{Formulacion del Sistema}
+
+Para poder armar el sistema $A.x = b $, 
+
+\subsection{Ecuación de calor}
+
+La matriz $A$, es una matriz cuadrada de tamaño $(m-2) x n$ donde los coeficientes de la misma quedan determinados del despeje de la siguiente ecuación de calor:
+
+\begin{equation} \label{ecu:calor}
+	\frac{\partial^2T(r,\ \theta)}{\partial r^2} + \frac{1}{r} \frac{\partial^2T(r,\ \theta)}{\partial r} + \frac{1}{r^2} \frac{\partial^2T(r,\ \theta)}{\partial\theta^2} = 0
+\end{equation}
+
+  	Luego se discretiza cada punto para poder ser procesada: 
+\begin{equation} 
+  	%\frac{ {t_{j-1,k}s - 2 t_{j,k} + t_{j+1,k} }{(\Delta r)^2} + \frac{t_{j,k} - t_{j-1,k}}{r \Delta r} + \frac{t_{j,k-1} - 2 t_{j,k} + t_{j,k+1} }{r^2 (\Delta \Theta)^2} = 0 
+  	\frac{t_{j-1,k} - 2t_{j,k}+t_{j+1,k}}{(\Delta r)^2}+\frac{t_{j,k} - t_{j-1,k}}{r \Delta r}+ \frac{t_{j,k-1} - 2t_{j,k} + t_{j,k+1}}{r^2 (\Delta \Theta)^2} = 0  	
+\end{equation}  	
+Para finalmente reescribir la ecuación como una combinación lineal de cinco temperaturas:
+
+\begin{equation} \label{ec:discretizada}
+	t_{j-1,k} (\frac{1}{(\Delta r)^{2}} + \frac{-1}{r \Delta r}) + t_{j,k} (\frac{-2}{(\Delta r)^2} + \frac{1}{r \Delta r} + \frac{-2}{(r \Delta \Theta)^{2}}) + t_{j+1,k} \frac{1}{(\Delta r)^{2}} + t_{j,k-1} \frac{1}{(r \Delta \Theta)^{2}} + t_{j,k+1} \frac{1}{(r\Delta \Theta)^{2}} = 0
+\end{equation}  
+
+De la ecuación \ref{ec:discretizada} manera quedan determinados cada uno de los coeficientes que aparecen en la matriz: \\
+\\
+\(
+\alpha_r = \frac{1}{(\Delta r)^{2}} + \frac{-1}{r \Delta r} \\
+\beta_r = \frac{-2}{(\Delta r)^2} + \frac{1}{r \Delta r} + \frac{-2}{(r \Delta \Theta)^{2}} \\
+\gamma_r = \frac{1}{(\Delta r)^{2}} \\ 
+\chi_r = \frac{1}{(r \Delta \Theta)^{2}}
+\) \\\\
+
+Finalmente re
+ \label{ecuación}

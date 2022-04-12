@@ -1,0 +1,38 @@
+\section{Introducción}
+\label{sec:EJEMPLO}
+\subsection{Palabras clave}
+
+Eliminación Gaussiana. Factorización LU. Alto horno. Sistema de ecuaciones. Isoterma. Performance. Matrices.
+
+\subsection{Resumen}
+
+
+En el siguiente trabajo practico se aborda el problema de resolver sistemas de ecuaciones con diferentes factorizaciones, aplicado sobre el problema del alto horno. Se evaluara la performance de los algoritmos de eliminación Gausseana y la factorización Lu. También una experimentación sobre la ubicación de la isoterma dependiendo del tamaño del horno utilizado. Finalmente en la sección conclusiones se discute los resultados obtenidos. 
+
+%%de la interpretación de opiniones de personas a partir de comentarios escritos. Se utiliza para ello una base de datos de opiniones sobre películas, y los juicios posibles se reducen a dos opciones: valuación positiva y valuación negativa. 
+\section{Introducción teórica}
+
+
+\textbf{\textit{En esta sección se presentan los elementos teóricos que soportan la resolución del trabajo práctico.}} 
+\\
+
+En el trabajo se estudia diferentes maneras de encontrar una isoterma en la pared de un alto horno. Para ello se necesitan las dimensiones del horno, como la cantidad de radios, ángulos y las temperaturas en las secciones exteriores e interiores del mismo. Para estudiar el calor en el interior del horno se debe discretizar los datos de temperatura, ya que no pueden ser evaluados de forma continua. 
+
+Para plantear el problema es necesario armar un sistema de ecuaciones $Ax =b$ donde A sea una matriz de coeficientes obtenidos desde la ecuación de Laplace en la sección \ref{sec:EJEMPLO}, a partir de esa ecuación queda determinada la matriz tal como se explica en la sección \ref{sec:EJEMPLO_FUNCION_PARTIDA}. \\
+Para resolver el sistema se realizan operaciones entre filas y columnas de la matriz $A$ y el vector $b$, es decir, se utiliza el algoritmo de eliminación 
+Gausseana para obtener un sistema de ecuaciones que sea equivalente al sistema original, con el objetivo de simplificar las cuentas del mismo. Para ello, primero es necesario demostrar que la matriz $A$ cumple con la propiedad de ser \textbf{estrictamente diagonal dominante}, esto permite que las operaciones que se realicen nunca se vaya a realizar una permutación entre filas o columnas. 
+
+\subsection{Demostración}
+Sea $A \in R^{n \times n}$ una matriz quiero probar que $A$ es una matriz estrictamente diagonal dominante entonces es posible aplicar eliminacion gaussiana sin pivoteo sobre $A$.
+
+Defino: $A^{(k)}$ como la matriz obtenida luego de realizar $k$ pasos de eliminación gaussiana sobre las filas de $A$.
+
+Quiero ver que:
+
+\[
+\sum_{j = 1, j \neq i }^{n}|A_{ij}| \leq  |A_{ii}|,  \forall  1 \leq  i \leq n
+\]
+
+Por lo tanto $A$ es diagonal dominante y no singular. Ahora por propiedades teoricas explicadas en la seccion \ref{sec:EJEMPLO}, sobre la matriz se puede aplicar eliminación gausseana sin permutaciones.
+
+

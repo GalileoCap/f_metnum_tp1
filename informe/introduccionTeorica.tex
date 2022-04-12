@@ -1,0 +1,63 @@
+section{Introducción Teórica} \label{introTeorica}
+
+
+El problema de partida a resolver en este trabajo es: dado un conjunto de breves textos escritos en lenguaje natural, catalogados como comentarios \textit{positivos} o \textit{negativos}, tener la capacidad de aprender sobre ellos de modo de poder predecir, para nuevos comentarios no catalogados, si son positivos o negativos.\\
+A lo largo del trabajo se nombrará al conjunto de comentarios previamente catalogados como \textit{Conjunto de Training} y a los comentarios a catalogar como \textit{Conjunto de Test}. Normalmente, sabremos en verdad cuál debería ser la respuesta para estas reseñas a catalogar. \\
+
+El dominio de problema con el que se desarrollará el trabajo son las reseñas de películas, tomadas de la Internet Movie Data Base (\texttt{www.imdb.com}). Sin embargo, todas las herramientas construidas y experimentaciones realizadas son aplicables en cualquier otro dominio.\\
+
+La heurística central con la que se resolverá la predicción es el algoritmo \textbf{Knn} (por \textit{k Nearest Neighbors}). Este procedimiento toma  un conjunto $D = \{x_{1},...,x_{n}\} \subset {\rm I\!R}^{m}$, cada uno de cuyos elementos tienen asociada una clase de pertenencia \textit{etiqueta} que, para nuestro trabajo, serán \textit{'Pos'} o \textit{'Neg'}, en referencia a reseñas positivas y negativas, respectivamente.\\
+
+Luego, dado un $x \in {\rm I\!R}^{m}$ tal que $x \notin D$, Knn toma los $k$ elementos de $D$ \textit{más cercanos} a $x$ en el espacio vectorial ${\rm I\!R}^{m}$, evalúa las etiquetas \textit{'Pos'} o \textit{'Neg'} de estos $k$ elementos y asigna a $x$ la etiqueta con mayor presencia entre ellos.\\
+El valor dado a $k$ será uno de los objetos de estudio de este trabajo.\\
+
+
+Con \textbf{Knn} se resuelve la categorización de reseñas. No obstante, es necesario transformar las reseñas tal como se las encuentra - como textos breves en lenguaje coloquial - en vectores de ${\rm I\!R}^{m}$. \\
+
+
+%%Una vez construidas las Bolsa de Palabras para las reseñas, se cuenta con los vectores en ${\rm I\!R}^{m}$, útiles para kNN. 
+Para esto se utiliza la biblioteca de \texttt{Python} propuesta por la cátedra \texttt{Sklearn} para convertir reseñas en vectores en ${\rm I\!R}^{m}$, útiles para su procesamiento.  
+Sin embargo, $m$ puede ser demasiado alto, generando un espacio ${\rm I\!R}^{m}$ demasiado vasto para los costos computacionales. \\
+
+
+Por esta razón, se apela a la utilización del \textbf{Análisis de componentes principales} ó \textbf{PCA} por sus siglas en ingles, la cual consiste en armar la matriz de covarianza de la matriz de entrenamiento y calcularle los autovectores y de esos autovectores quedarme sólo con $\alpha$. Esta técnica permite que se resuma la información y se preserve la más relevante de la muestra descartando las dimensiones más significativas y disminuyendo el tiempo de cómputo.
+
+
+Considerando $D = \{x_{1},...,x_{n}\} \subset {\rm I\!R}^{m}$, el conjunto de vectores que representan las reseñas que se buscan estudiar, se puede calcular $\mu = (x_{1}+...+x_{n})/n$, el valor medio de cada coordenada de los vectores de $D$. Con este valor, se puede armar la matriz $X \in {\rm I\!R}^{n \times m}$ tal que la $i$-ésima fila de $X$ sea el vector $(x_{i}-\mu)^{t} / \sqrt{n-1}$. \\
+Para el \textbf{Análisis de Componentes Principales}, siendo sus siglas \textbf{PCA}, se utiliza la matriz de \textit{Covarianzas de la muestra $X$}. $M$ al ser simétrica tiene autovalores y autovectores reales \cite{Burden}.\\% M semi-definida positiva?
+Sean $v_{1},...,v_{n}$ los autovectores de $M$ asociados a los autovalores respectivos, ordenados éstos de forma decreciente,por sus valores absolutos, definimos para $x \in {\rm I\!R}^{m}$
+\begin{equation*}
+  tc(x) = (v_{1} x,v_{2} x,...,v_{\alpha} x) \in {\rm I\!R}^{\alpha}
+  \label{def:alfa}
+\end{equation*}
+para algún $\alpha \in 1,...,m$ constante.\\
+$tc(x)$ es la extracción de \textit{los $\alpha$ primeros componentes principales}, y representa la información de las $\alpha$ variables más importantes de $M$, descartando las menos importantes.\\
+
+
+También se hará hincapié en la utilidad que se le dará al uso del Método de la Potencia\cite{Burden_potencia}. El objetivo de uso es ver como el cálculo de autovalores y autovectores influye con nuestro algoritmo implementado en \texttt{C++} del Método de la Potencia, observando la cantidad de iteraciones suficientes a las dimensiones de las matrices que trabajamos y determinar a partir de cuántas iteraciones se llega a una convergencia. 
+
+También usaremos otro método que nos va a ayudar a obtener los autovalores de una manera más rápida cuando apliquemos el método de la Potencia: es conocido como el Método de Deflación\cite{Argos}.
+
+Para utilizar el método de deflación se utiliza la siguiente propiedad: 
+
+Sea $A \in \mathbb{R}^{n \times n}$ con $|\mathbf{\lambda_1}| > |\mathbf{\lambda_2}| \geq \mathbf{...} \geq |\mathbf{\lambda_n}|$ que tiene una base de autovectores entonces se construye la siguiente matriz:
+
+\begin{equation}
+    B = A - \lambda_{1}v_{1}v^{t}_{1}
+\end{equation}
+
+que verifica:
+
+\begin{equation}
+    Bv_{j}=\lambda_{j}v_{j}
+\end{equation}
+
+donde \begin{equation}
+    \lambda_{j} = 
+        \begin{cases}
+            0 & \text {si $j = 1$}\\
+            \lambda_{j} & \text {si $j \neq 1$}
+        \end{cases}
+\end{equation}
+
+Por lo tanto, $B$ tiene una base de autovectores $\{v_{1},v_{2},...,v_{n}\}$ asociados a los autovalores $0, \lambda_{2}, ... , \lambda_{n}$
