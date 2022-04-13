@@ -1,0 +1,10 @@
+data/a.*
+*.lof
+*.aux
+.*.swp
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.toc
+analysis/.venv
