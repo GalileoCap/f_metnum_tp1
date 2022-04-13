@@ -5,8 +5,17 @@
 \usepackage{g-util}
 \usepackage{amsfonts, amsmath, amssymb}
 \usepackage{graphicx, float}
+
 \graphicspath{ {../data/} }
 %\usepackage[xetex]{xcolor}
+
+% \theoremstyle{plain}
+  \newtheorem{prop}{Proposición}
+  \newtheorem{lema}{Lema}
+% \theoremstyle{remark}
+  \newtheorem{obs}{Observación}
+% \theoremstyle{definition}
+  \newtheorem{defi}{Definición}
 
 \setcounter{MaxMatrixCols}{12}
 \newcommand{\Gpmatrix}[1]{\ensuremath{\begin{pmatrix} #1 \end{pmatrix}}}
@@ -259,6 +268,107 @@ En la figura \ref{fig:peligrosidad.distance} se puede ver cómo se mueve la isot
 \end{figure}
 
 \paragraph{} Para sacar conclusiones sobre qué tan peligroso es, habría que conocer más sobre los materiales que forman al horno. Pero preliminarmente se puede ver que si el "punto de ruptura" se encuentra al 75\% hay poco margen de error, ya que la isoterma se mueve rápido hacia el exterior.
+
+
+\section{Demostración}
+
+\section{Introducción teórica}
+
+
+\textbf{\textit{En esta sección se presentan los elementos teóricos que soportan la resolución del trabajo práctico.}} 
+\\
+
+En el trabajo se estudia diferentes maneras de encontrar una isoterma en la pared de un alto horno. Para ello se necesitan las dimensiones del horno, como la cantidad de radios, ángulos y las temperaturas en las secciones exteriores e interiores del mismo. Para estudiar el calor en el interior del horno se debe discretizar los datos de temperatura, ya que no pueden ser evaluados de forma continua. 
+
+Para plantear el problema es necesario armar un sistema de ecuaciones $Ax =b$ donde A sea una matriz de coeficientes obtenidos desde la ecuación de Laplace en la sección \ref{sec:EJEMPLO}, a partir de esa ecuación queda determinada la matriz tal como se explica en la sección \ref{sec:EJEMPLO_FUNCION_PARTIDA}. \\
+Para resolver el sistema se realizan operaciones entre filas y columnas de la matriz $A$ y el vector $b$, es decir, se utiliza el algoritmo de eliminación 
+Gausseana para obtener un sistema de ecuaciones que sea equivalente al sistema original, con el objetivo de simplificar las cuentas del mismo. Para ello, primero es necesario demostrar que la matriz $A$ cumple con la propiedad de ser \textbf{estrictamente diagonal dominante}, esto permite que las operaciones que se realicen nunca se vaya a realizar una permutación entre filas o columnas. 
+
+
+\begin{defi}
+	Sea ${A} \in \mathbb{R}^{n \times n}$. ${A}$ se dice \emph{diagonal dominante} si 
+	\[
+	\sum_{j = 1, j \neq i }^{n}|A_{ij}| \leq  |A_{ii}| \qquad \text{para todo $i = 1, \dots, n$}
+	\]
+	
+\end{defi}
+
+\begin{lema}
+	\label{lema:{EG conserva diagonal dominante}
+		Sea ${A}^{(0)} = {A} \in \mathbb{R}^{n \times n}$ una matriz diagonal dominante, con ${A}_{1,1} \neq 0$, y ${A}^{(1)}$ el resultado de aplicar un paso de Eliminación Gaussiana (sin pivoteo) sobre ${A}$. Entonces ${A}^{(1)}$ es diagonal dominante.
+	\end{lema}
+	\begin{proof}
+		Consideremos la $k$-ésima fila de ${A}^{(1)}$, queremos ver que 
+		$\lvert  a^{(1)}_{i,i} \rvert \geq \sum_{k = 1 \\ k \neq i}^n \lvert a^{(1)}_{i,k} \rvert$
+		Se tiene que
+		\[ \lvert a^{(1)}_{k,k} \rvert = \lvert a_{k,k} - \frac{a_{k,1}}{a_{1,1}} a_{1,k} \rvert
+		\qquad \text{y} \qquad
+		\sum_{\substack{i = 1 \\ i \neq j}}^n \lvert a^{(1)}_{j,i} \rvert
+		= \sum_{\substack{i = 2 \\ i \neq j}}^n \lvert a_{j,i} - \frac{a_{j,1}}{a_{1,1}} a_{1,i} \rvert \]
+		
+		Ahora veamos como es un paso de eliminación gausseana:
+		
+		\[ \begin{split}
+			\sum_{\substack{k = 1 \\ k \neq i}}^n \lvert a^{(1)}_{i,k} \rvert
+			&= \sum_{\substack{k = 2 \\ k \neq i}}^n \lvert a_{i,k} - \frac{a_{i,1}}{a_{1,1}} a_{1,k} \rvert \\
+			&\leq \sum_{\substack{k = 2 \\ k \neq i}}^n \vert a_{i,k} \vert + \left \vert \frac{a_{i,1}}{a_{1,1}} \right \vert \sum_{\substack{k = 2 \\ k \neq i}}^n \vert a_{1,i} \vert \\
+			&\leq \left( \vert a_{i,i} \vert - \vert a_{i,1} \vert \right) + \left \vert \frac{a_{i,1}}{a_{1,1}} \right \vert \left( \vert a_{1,1} \vert - \vert a_{1,i} \vert \right) \\
+			&= \vert a_{i,i} \vert - \left \vert \frac{a_{i,1}}{a_{1,1}} \right \vert \vert a_{1,i} \vert \\
+			&\leq \left \vert a_{i,i} -  \frac{a_{i,1}}{a_{1,1}} a_{1,i} \right \vert = \lvert a^{(1)}_{i,i} \rvert 
+		\end{split} \]
+	\end{proof}
+	
+	Ahora se tiene que luego de realizar un paso de eliminación gausseana la matriz resultante también es diagonal dominante.
+	
+	Finalmente, queda demostrar, que luego de realizar una iteración del algoritmo de eliminación gaussiana sin pivoteo la matriz resultante queda bien definida.
+	
+	
+	Entonces:
+	\[ \begin{split}
+		\lvert a_{i,i} \rvert &= \beta  = \left \vert - \frac{2}{(\Delta r)^2} + \frac{1}{r \Delta r} - \frac{2}{r^2 (\Delta \theta)^2} \right \vert \\
+		&= \left \vert - \frac{1}{(\Delta r)^2} + \frac{1}{r \Delta r} - \frac{2}{r^2 (\Delta \theta)^2} - \frac{1}{(\Delta r)^2} \right \vert \\
+		&= \left \vert - \frac{r - \Delta r}{r (\Delta r)^2} - \frac{2}{r^2 (\Delta \theta)^2} - \frac{1}{(\Delta r)^2} \right \vert \\
+		&= \left \vert \frac{r - \Delta r}{r (\Delta r)^2} + \frac{2}{r^2 (\Delta \theta)^2} + \frac{1}{(\Delta r)^2} \right \vert
+	\end{split} \]
+	
+	Veamos que si $r_{int}, \Delta r > 0$ y $j \geq 1$, se cumple que
+	\[ r - \Delta r = (r_{int} + j \Delta r) - \Delta r = r_{int} + (j - 1) \Delta r > 0\]
+	$\text{Entonces ahora sabemos que:}$
+	\[ r - \Delta r > 0\]
+	Ahora veamos como queda la sumatoria de las columnas. Notar que:	
+	\[ \lvert a_{i,i} \rvert = \frac{r - \Delta r}{r (\Delta r)^2} + \frac{2}{r^2 (\Delta \theta)^2} + \frac{1}{(\Delta r)^2} \]
+	
+	Ahora al sumar los módulos del resto de los coeficientes, notar que en una fila pueden aparecer hasta 5 coeficientes por eso se suman el modulo de todos, asi queda que:
+	\[ \begin{split}
+		\sum_{\substack{k=1 \\ k \neq i}}^{(m-1)n} \vert a^{j}_{i,k} \vert &= \left \vert \frac{1}{(\Delta r)^2} - \frac{1}{r \Delta r} \right \vert + 2 \left \vert \frac{1}{r^2 (\Delta \theta)^2} \right \vert + \left \vert \frac{1}{(\Delta r)^2} \right \vert \\
+		&= \left \vert \frac{r - \Delta r}{r (\Delta r)^2} \right \vert + \frac{2}{r^2 (\Delta \theta)^2} + \frac{1}{(\Delta r)^2} \\
+		\text{y ahora por lo probado antes} \\
+		&= \frac{r - \Delta r}{r (\Delta r)^2} + \frac{2}{r^2 (\Delta \theta)^2} + \frac{1}{(\Delta r)^2} = \rvert a_{i,i} \lvert
+	\end{split} \]
+	
+	Asi de la demostración anterior se obtuvo que la matriz A es diagonal dominante y aparte no tieene 0 en la diagonal. Ahora resta ver que la eliminacion gausseana es aplicable y se puede utilizar sin pivoteo. Asi solamente hay que ver que para los puntos del medio del horno puede aplicarse eliminacion gausseana y ademas la matriz resultante es diagonal dominante. 
+	
+	\begin{itemize}
+		\item Caso base: Notemos que $a_{1,1} = \beta$ no es nulo, ya que es un coeficiente definido mediante la ecuación de calor, entonces se puede aplicar el primer paso de Eliminación Gaussiana. Dado que $a_{1,2} = \chi$ pero como mostramos anteriormente $\beta \ge \chi$ entonces en el lugar $a_{2,2}$ queda un coeficiente no nulo y ya que la matriz luego de haber procesado la primer fila sigue siendo diagonal dominante entonces puedo aplicar el siguiente paso de eliminación gausseana.
+		
+		\item Caso inductivo: 
+		\subitem 	Tomamos la hipótesis inductiva \textbf{(HI)}: la matriz ${A}^{(k-1)}$, obtenida tras aplicar $k-1$ pasos de eliminación gaussiana sobre ${A}$, es diagonal dominante y su k-ésima fila es no nula. Esto implica que $a^{(k-1)}_{k,k} \neq 0$.
+		
+		Vamos a escribir a $A^{(k-1)}$ por bloques de la siguiente manera:
+		\[ {A}^{(k-1)} = \left( \begin{matrix} \bar{A}_{k-1} & {B} \\ {C} & \widetilde{{A}}_{k-1} \end{matrix} \right) \]
+		luego de haber probado lo anterior, $\bar{A}_{k-1}$ y $\widetilde{{A}}_{k-1}$ son matrices diagonal dominantes.
+		Dado la construcción del sistema la matriz $C$ no le queda otra que ser la matriz nula, ya que no hay coeficientes de la ecuación de calor para modificar los valores de esa matriz en ningun paso de Gauss.
+		
+		Entonces cuando se quiere aplicar un paso de eliminación gaussiana sobre $\widetilde{A}$, dado que el elemento de la diagonal es no nulo, este paso se puede hacer sin pivotear la matriz, y utilizando el lema \ref{lema:EG conserva diagonal dominante} se sigue que la matriz luego de este paso sera diagonal dominante.
+		
+		Solo resta probar que la fila $k+1$ de la matriz ${A}^{(k)}$ es no nula ya que si es nula entonces no se puede expresar el siguiente paso de la eliminación gausseana.
+		
+		Si la fila representa a un coeficiente de la ecuación de calor, para ciertos $j = 1, \dots, m - 1$ y $k = 0, \dots, n - 1$. Puntualmente, por la forma en la que se construye la matriz del sistema, el elemento $a_{k+1,k+1+m o n nose}$ es el coeficiente de la temperatura $t_{j,k+1}$ en dicha ecuación, debe ser no nulo. Dado como esta armado el sistema todos los elementos de la columna $k+1$ que se encuentran por arriba de $a_{k+1,k+1+m o n nose}$, deben ser nulos, es decir, en una iteracion de gauss no deberían haberse modificado el coeficiente $a_{k+1,k+1+m o n nose}$ entonces sigue siendo no nulo.
+	\end{itemize}
+	
+
+
+
 
 \section{Apéndice}
 
