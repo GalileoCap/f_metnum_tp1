@@ -197,23 +197,23 @@ En la figura \ref{fig:solve.time} se puede ver que una vez que la matriz tiene 3
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{times.solve}
+\includegraphics[width=\textwidth]{times.solve.1000.1}
 \caption{Tiempo para resolver una instancia del sistema (1000 reps)}
-\label{fig:solve.time}
+\label{fig:solve.time.1000.1}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{times.ratio_lu_gauss}
+\includegraphics[width=\textwidth]{times.ratio_lu_gauss.1000.1}
 \caption{Relación del tiempo entre LU y Gauss (1000 reps)}
 \label{fig:solve.time.ratio}
 \end{figure}
 
 
 \paragraph{} Pero como mencionamos, para calcular la factorización hay que aplicar Gauss una vez, por lo que en realidad nos queda el resultado de la figura \ref{fig:solve.lu.time} para resolver una instancia. \\
-Por lo que es importante revisar cuándo de verdad nos empieza a convenir usar la factorización \(LU\). En la figura \ref{fig:pct_lu.time} se ve que independiente del tamaño de la matriz, el tiempo usado para resolver una instancia del sistema es una fracción mínima del tiempo usado para calcular la factorización. %TODO: Cuánto te combiene para la más chiquita
+Por lo que es importante revisar cuándo de verdad nos empieza a convenir usar la factorización \(LU\). En la figura \ref{fig:pct_lu.time} se ve que independiente del tamaño de la matriz, el tiempo usado para resolver una instancia del sistema es una fracción mínima del tiempo usado para calcular la factorización. Por lo que para dos o más instancias del sistema combiene calcular y usar la factorización \(LU\) (resaltado en la figura \ref{fig:time.2solve}).
 
-%TODO: Gráfico de sumando lu
+%TODO: Gráfico mostrando lu+2solve vs 2Gauss
 
 %\begin{figure}[H]
 %\centering
@@ -224,7 +224,7 @@ Por lo que es importante revisar cuándo de verdad nos empieza a convenir usar l
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{times.pct_lu}
+\includegraphics[width=\textwidth]{times.pct_lu.1000.1}
 \caption{Relación entre el tiempo para resolver el sistema y el tiempo para calcular la factorización LU (1000 reps)}
 \label{fig:pct_lu.time}
 \end{figure}
