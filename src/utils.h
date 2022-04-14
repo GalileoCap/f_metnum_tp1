@@ -14,7 +14,7 @@ typedef unsigned int uint;
 #ifdef _FLOAT_
 typedef float floating_t;
 #else
-typedef double floating_t;
+typedef long double floating_t;
 #endif
 
 #include "matrix.h"

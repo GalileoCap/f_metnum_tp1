@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <iomanip>
 
 long get_time() { //U: Returns the current time in milliseconds
   auto start = std::chrono::system_clock::now();
@@ -25,15 +26,19 @@ void read_input() {
 void write_output() {
   std::ofstream fout(dataOut);
 
+  fout.precision(6);
+
 #ifndef _ENTREGA_
   for (const long& time : times) fout << time << ' '; fout << '\n';
   for (const std::vector<floating_t>& inst : isotherm) { 
     for (const floating_t& r : inst) fout << r << ' '; fout << '\n';
   }
 #endif
-  for (uint i = 0; i < T.size(); i++) { 
-    for (const floating_t& t : T[i]) fout << t << ' '; fout << '\n'; 
-  }
+  for (uint i = 0; i < T.size(); i++) 
+    for (const floating_t& t : T[i]) {
+      fout << std::fixed << t << ' ';
+      fout << '\n';
+    }
 
   fout.close();
 }
