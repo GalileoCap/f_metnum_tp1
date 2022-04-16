@@ -3,10 +3,19 @@
 \usepackage[margin=1.0in]{geometry}
 
 \usepackage{g-util}
-\usepackage{amsfonts, amsmath, amssymb}
-\usepackage{graphicx, float}
+\usepackage{caratula}
+\usepackage{amsfonts, amsmath, amssymb, amsthm}
+\usepackage{graphicx, float, hyperref}
 \graphicspath{ {../data/} }
 %\usepackage[xetex]{xcolor}
+
+% \theoremstyle{plain}
+\newtheorem{prop}{Proposición}
+\newtheorem{lema}{Lema}
+% \theoremstyle{remark}
+\newtheorem{obs}{Observación}
+% \theoremstyle{definition}
+\newtheorem{defi}{Definición}
 
 \setcounter{MaxMatrixCols}{12}
 \newcommand{\Gpmatrix}[1]{\ensuremath{\begin{pmatrix} #1 \end{pmatrix}}}
@@ -14,257 +23,353 @@
 \newcommand{\sub}[3]{\ensuremath{#1_{#2,#3}}}
 \newcommand{\supra}[2]{\ensuremath{#1^#2}}
 
-\title{Métodos Numéricos}
-\author{F. Galileo Cappella Lewi}
-\date{1c2022}
-
 \renewcommand{\figurename}{Fig.}
 \renewcommand{\listfigurename}{Figuras}
 \renewcommand{\contentsname}{Secciones}
+\renewcommand{\refname}{Bibliografía}
 
 \begin{document}
 
+\titulo{TP1 - Trabajamos y nos divertimos...}
+%\subititulo{}
+
+\fecha{\today}
+
+\materia{Métodos Numéricos}
+\grupo{Grupo 8}
+
+\integrante{Cappella Lewi, F. Galileo}{653/20}{galileocapp@gmail.com}
+\integrante{Anachure, Juan Pablo}{99/16}{TODO@dc.uba.ar}
+
 \maketitle
 
+\tableofcontents
+
 \section{Introducción}
+\label{sec:intro}
 
-%TODO: Contar el problema que nos presentaron
-En general vamos a estar trabajando con \(m+1\) radios, y \(n\) ángulos.
+%TODO: Presentar problema, y las técnicas (Gauss, LU), referenciar lemas, bibliografía y las teóricas
 
-\section{Formulación del Sistema}
- 
-\paragraph{} Partimos de la ecuación de Laplace \\
-\[
+\paragraph{} Los altos hornos son un tipo de horno metalúrgico, usados para producir metales industriales. Están formado por una pared circular usualmente de acero y ladrillos refractarios \cite{how.it.works} lo que permite fundir distintos metales en el centro. En la Figura \ref{fig:furnace} se puede ver un diagrama de la sección horizontal de un horno. \\
+Estos hornos suelen trabajar con temperaturas internas de 900ºC a 1300ºC \cite{how.it.works}, y en las paredes externas se suelen medir temperaturas de entre 50ºC y 200ºC \cite{consigna}. Dentro de la pared es importante la posición de la isoterma de 500ºC, ya que si esta se encuentra cerca del exterior (ver Sección \ref{sec:peligrosidad}) la integridad del horno podría estar en riesgo.
+
+%TODO: fig:furnace
+
+\paragraph{} En este trabajo estudiamos una manera de calcular las temperaturas dentro de la pared, buscando poder estimar la posición de la isoterma. \\
+Para ello utilizamos una discretización de la ecuación del calor de Laplace (Sección \ref{sec:modelado}). Por lo que necesitamos conocer las dimensiones del horno (el radio interno y el radio externo), y las temperaturas medidas a diferentes ángulos en el interior y exterior del horno. Una vez conseguidos esos datos, armamos una matriz que nos permite estimar la temperatura en diferentes radios dentro de la la pared. %TODO: m en lugar de m+1
+
+\section{Desarrollo}
+
+\subsection{Modelado}
+\label{sec:modelado}
+
+\paragraph{} La ecuación del calor Laplace afirma que en estado estacionario cualquier temperatura \(T(r, \theta)\), dada por la posición dentro de la pared del horno en coordenadas polares \((r, \theta)\) que representan al radio y el ángulo polar, cumple la siguiente ecuación: \cite{consigna}
+
+\begin{equation}
+\label{eq:laplace}
   0 = \frac{\partial^2T(r,\ \theta)}{\partial r^2} + \frac{1}{r} \frac{\partial^2T(r,\ \theta)}{\partial r} + \frac{1}{r^2} \frac{\partial^2T(r,\ \theta)}{\partial\theta^2}
-\]
-Y la discretizamos \\ %TODO: Pasos y justificación en el medio?
-\[
+\end{equation}
+
+Para poder utilizarla para resolver el problema computacionalmente, discretizamos el dominio a coordenadas polares. Tomando una partición \(0 = \theta_0 < \theta_1 < ... < \theta_n = 2\pi\) en \(n\) ángulos discretos con \(\theta_k - \theta_{k-1} = \Delta\theta\) para \(k = 1, ..., n\) y una partición \(r_i = r_0 < r_1 < ... < r_m = r_e\) en \(m+1\) radios discretos con \(r_j - r_{j-1} = \Delta r\) para \(j = 1, ..., m\). Tomamos \(\sub{t}{j}{k} = T(r_j, \theta_k)\) y transformamos a la ecuación (\ref{eq:laplace}) en un conjunto de ecuaciones lineales sobre las incógnitas \(\sub{t}{j}{k}\), aproximando así a \(T\) por la siguiente fórmula de diferencias finitas: %TODO: Too similar to the assignment
+
+\begin{equation}
+\label{eq:laplace.finita}
 0 = \frac{\sub{t}{j-1}{k} - 2\sub{t}{j}{k} + \sub{t}{j+1}{k}}{(\Delta r)^2} + \frac{\sub{t}{j}{k} - \sub{t}{j-1}{k}}{r \Delta r} + \frac{\sub{t}{j}{k-1} - 2\sub{t}{j}{k} + \sub{t}{j}{k+1}}{r^2 (\Delta \Theta)^2}
-\]
-Podemos reescribir la ecuación como una combinación lineal de cinco temperaturas \\
-\begin{align} %TODO: Más chiquita
+\end{equation}
+
+Que podemos reescribir como una combinación lineal de cinco temperaturas:
+\begin{equation}
+\label{eq:laplace.split}
 0 = \sub{t}{j-1}{k} (\frac{1}{(\Delta r)^{2}} + \frac{-1}{r \Delta r}) + \sub{t}{j}{k} (\frac{-2}{(\Delta r)^2} + \frac{1}{r \Delta r} + \frac{-2}{(r \Delta \Theta)^{2}}) + \sub{t}{j+1}{k} \frac{1}{(\Delta r)^{2}} + \sub{t}{j}{k-1} \frac{1}{(r \Delta \Theta)^{2}} + \sub{t}{j}{k+1} \frac{1}{(r\Delta \Theta)^{2}}
-\end{align}
-Para simplificar la notación vamos a nombrar cada coeficiente \\ %TODO: Renombrar coeficientes para que tengan más sentido
-\(
-\tab \alpha_r = \frac{1}{(\Delta r)^{2}} + \frac{-1}{r \Delta r} \\
-\tab \beta_r = \frac{-2}{(\Delta r)^2} + \frac{1}{r \Delta r} + \frac{-2}{(r \Delta \Theta)^{2}} \\
-\tab \gamma_r = \frac{1}{(\Delta r)^{2}} \\ 
-\tab \chi_r = \frac{1}{(r \Delta \Theta)^{2}}
-\) \\\\
-Resaltamos cuatro formas diferentes de escribir la ecuación \\
-\begin{align}
-  \alpha \sub{t}{j-1}{k} + \beta \sub{t}{j}{k} + \gamma \sub{t}{j+1}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = 0 \\
-  \beta \sub{t}{j}{k} + \gamma \sub{t}{j+1}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = -\alpha \sub{t}{j-1}{k} \\
-  \alpha \sub{t}{j-1}{k} + \beta \sub{t}{j}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = -\gamma \sub{t}{j+1}{k} \\
-  \beta \sub{t}{j}{k} + \chi \sub{t}{j}{k-1} + \chi \sub{t}{j}{k+1} = -\alpha \sub{t}{j-1}{k} - \gamma \sub{t}{j+1}{k}
-\end{align}
-\\
-\paragraph{} Por lo que podemos armar un sistema de ecuaciones de la forma \(Ax = b\) donde cada fila del sistema se corresponde a una instancia de la ecuación de Laplace discretizada. \\
-Pero qué forma tiene cada instancia depende de si la temperatura del radio anterior o la del siguiente también son incógnitas (por lo que tienen su coeficiente en la matriz), o si son datos medidos (por lo que cambian al resultado): \\
-\tab El primer y último radios (\(\sub{t}{1}{k}\) y \(\sub{t}{m+1}{k}\)) son datos medidos, por lo que no hace falta estimarlos con una ecuación. \\
-\tab Como las temperaturas del radio anterior las conocemos (porque son las temperaturas internas medidas), las primeras \(n\) filas (que se corresponden con el radio \(\sub{t}{2}{k}\)) van a tener la forma de la ecuación (3). \\ %TODO: Hyperlink
-\tab Luego, las siguientes \((m-2)n\) filas (que son todos los otros radios excepto el \(\sub{t}{m}{k}\)) tienen tanto al radio anteriro como el siguiente incógnitas, por lo que tienen la forma de la ecuación (2). \\ %TODO: Hyperlink
-\tab Y las últimas \(n\) filas (radio \(\sub{t}{m}{k}\)) tienen la forma de la ecuación (4). \\ %TODO: Hyperlink
-Entonces nos queda una matriz \(A \in \mathbb{R}^{((m-1)n \times (m-1)n)}\) armada de la forma explicada recién, el vector de incógntias \(x \in \mathbb{R}^{(m-1)n}\) con los radios "estirados" uno arriba del otro, y el vector de resultados \(b \in \mathbb{R}^{(m-1)n}\) que tiene las temperaturas medidas en las primeras y últimas \(n\) filas, y el resto 0's.
+\end{equation}
 
-\paragraph{} El caso de un sistema con 3 radios es especial, ya que para el radio \(\sub{t}{2}{k}\) (que es el vector de incógnitas completo) conocemos tanto las temperaturas del radio anterior como del siguiente. Sólo en este caso tenemos la ecuación (5).
-
-\subsection{Justificación no-pivoteo} 
-\label{sec:justificacion}
-
-%TODO
-
-\subsection{Ejemplos}
-
-\paragraph{3 radios y 4 ángulos:} \ \\
-
-\(
-\Gpmatrix{
-  \beta & \chi & 0 & \chi \\
-  \chi & \beta & \chi & 0 \\
-  0 & \chi & \beta & \chi \\
-  \chi & 0 & \chi & \beta \\
-} \cdot \Gpmatrix{
-  \sub{t}{2}{1} \\
-  \sub{t}{2}{2} \\
-  \sub{t}{2}{3} \\
-  \sub{t}{2}{4} \\
-} = \Gpmatrix{
-  -\alpha\sub{t}{1}{1} - \gamma\sub{t}{3}{1} \\
-  -\alpha\sub{t}{1}{2} - \gamma\sub{t}{3}{2} \\
-  -\alpha\sub{t}{1}{3} - \gamma\sub{t}{3}{3} \\
-  -\alpha\sub{t}{1}{4} - \gamma\sub{t}{3}{4} \\
-}
-\)
-
-%\paragraph{4 radios y 4 ángulos:} \ \\
-
+Aunque para simplificar la notación vamos a nombrar cada coeficiente, por lo que nos queda: \\ %TODO: Renombrar coeficientes para que tengan más sentido
+\begin{equation}
+\label{eq:laplace.split}
+0 = \alpha_r\sub{t}{j-1}{k} + \beta_r\sub{t}{j}{k} + \gamma_r\sub{t}{j+1}{k} + \chi_r\sub{t}{j}{k-1} + \chi_r\sub{t}{j}{k+1}
+\end{equation}
 %\(
-%\Gpmatrix{
-  %\beta & \chi & 0 & \chi & -\gamma & 0 & 0 & 0 \\
-  %\chi & \beta & \chi & 0 & 0 & -\gamma & 0 & 0 \\
-  %0 & \chi & \beta & \chi & 0 & 0 & -\gamma & 0 \\
-  %\chi & 0 & \chi & \beta & 0 & 0 & 0 & -\gamma \\
-  %-\alpha & 0 & 0 & 0 & \beta & \chi & 0 & \chi \\
-  %0 & -\alpha & 0 & 0 & \chi & \beta & \chi & 0 \\
-  %0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi \\
-  %0 & 0 & 0 & -\alpha & \chi & 0 & \chi & \beta \\
-%} \cdot \Gpmatrix{
-  %\sub{t}{2}{1} \\
-  %\sub{t}{2}{2} \\
-  %\sub{t}{2}{3} \\
-  %\sub{t}{2}{4} \\
-  %\sub{t}{3}{1} \\
-  %\sub{t}{3}{2} \\
-  %\sub{t}{3}{3} \\
-  %\sub{t}{3}{4} \\
-%} = \Gpmatrix{
-  %-\alpha\sub{t}{1}{1} \\
-  %-\alpha\sub{t}{1}{2} \\
-  %-\alpha\sub{t}{1}{3} \\
-  %-\alpha\sub{t}{1}{4} \\
-  %-\gamma\sub{t}{4}{1} \\
-  %-\gamma\sub{t}{4}{2} \\
-  %-\gamma\sub{t}{4}{3} \\
-  %-\gamma\sub{t}{4}{4} \\
-%}
+%\tab \alpha_r = \frac{1}{(\Delta r)^{2}} + \frac{-1}{r \Delta r} \\
+%\tab \beta_r = \frac{-2}{(\Delta r)^2} + \frac{1}{r \Delta r} + \frac{-2}{(r \Delta \Theta)^{2}} \\
+%\tab \gamma_r = \frac{1}{(\Delta r)^{2}} \\ 
+%\tab \chi_r = \frac{1}{(r \Delta \Theta)^{2}}
 %\)
 
-\paragraph{5 radios y 4 ángulos:} \ \\
+\paragraph{} Ahora armamos un sistema de ecuaciones para cada \(\sub{t}{j}{k}\), que podemos representar matricialmente de la forma \(At = b\). Donde \(A \in \mathbb{R}^{(m+1)n \times (m+1)n}\) es una matriz con las primeras y últimas \(n\) filas iguales a la identidad (por las ), y el resto corresponde a una instancia de la ecuación (\ref{eq:laplace.split}); \(t \in \mathbb{R}^{(m+1)n}\) es el vector de incógntias con los radios "estirados" uno arriba del otro; Y  \(b \in \mathbb{R}^{(m+1)n}\) es el vector de resultados que tiene las temperaturas internas en los primeros \(n\) valores, las externas en los últimos \(n\) valores, y el resto todos ceros. \\
+En la ecuación (\ref{eq:example}) mostramos un ejemplo de cómo queda el sistema con \(r_i = 1,\ r_e = 3,\ mp1 = 3,\ n = 3,\ \sub{t}{i}{1} = \sub{t}{i}{2} = \sub{t}{i}{3} = 1500,\ \sub{t}{e}{1} = \sub{t}{e}{2} = \sub{t}{e}{3} = 150\).
 
-\(
+\begin{equation}
+\label{eq:example}
 \Gpmatrix{
-  \beta & \chi & 0 & \chi & -\gamma & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-  \chi & \beta & \chi & 0 & 0 & -\gamma & 0 & 0 & 0 & 0 & 0 & 0 \\
-  0 & \chi & \beta & \chi & 0 & 0 & -\gamma & 0 & 0 & 0 & 0 & 0 \\
-  \chi & 0 & \chi & \beta & 0 & 0 & 0 & -\gamma & 0 & 0 & 0 & 0 \\
-  -\alpha & 0 & 0 & 0 & \beta & \chi & 0 & \chi & -\gamma & 0 & 0 & 0 \\
-  0 & -\alpha & 0 & 0 & \chi & \beta & \chi & 0 & 0 & -\gamma & 0 & 0 \\
-  0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi & 0 & 0 & -\gamma & 0 \\
-  0 & 0 & 0 & -\alpha & \chi & 0 & \chi & \beta & 0 & 0 & 0 & -\gamma \\
-  0 & 0 & 0 & 0 & -\alpha & 0 & 0 & 0 & \beta & \chi & 0 & \chi \\
-  0 & 0 & 0 & 0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi & 0 \\
-  0 & 0 & 0 & 0 & 0 & 0 & -\alpha & 0 & 0 & \chi & \beta & \chi \\
-  0 & 0 & 0 & 0 & 0 & 0 & 0 & -\alpha & \chi & 0 & \chi & \beta \\
+  1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+  0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+  0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+  \frac{1}{2} & 0 & 0 & -\frac{2}{\pi^2} - \frac{3}{2} & \frac{1}{\pi^2} & \frac{1}{\pi^2} & 1 & 0 & 0 \\
+  0 & \frac{1}{2} & 0 & \frac{1}{\pi^2} & -\frac{2}{\pi^2} - \frac{3}{2} & \frac{1}{\pi^2} & 0 & 1 & 0 \\
+  0 & 0 & \frac{1}{2} & \frac{1}{\pi^2} & \frac{1}{\pi^2} & -\frac{2}{\pi^2} - \frac{3}{2} & 0 & 0 & 1 \\
+  0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+  0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+  0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
 } \cdot \Gpmatrix{
+  \sub{t}{1}{1} \\
+  \sub{t}{1}{2} \\
+  \sub{t}{1}{3} \\
   \sub{t}{2}{1} \\
   \sub{t}{2}{2} \\
   \sub{t}{2}{3} \\
-  \sub{t}{2}{4} \\
   \sub{t}{3}{1} \\
   \sub{t}{3}{2} \\
   \sub{t}{3}{3} \\
-  \sub{t}{3}{4} \\
-  \sub{t}{4}{1} \\
-  \sub{t}{4}{2} \\
-  \sub{t}{4}{3} \\
-  \sub{t}{4}{4} \\
 } = \Gpmatrix{
-  -\alpha\sub{t}{1}{1} \\
-  -\alpha\sub{t}{1}{2} \\
-  -\alpha\sub{t}{1}{3} \\
-  -\alpha\sub{t}{1}{4} \\
+  1500 \\
+  1500 \\
+  1500 \\
   0 \\
   0 \\
   0 \\
-  0 \\
-  -\gamma\sub{t}{5}{1} \\
-  -\gamma\sub{t}{5}{2} \\
-  -\gamma\sub{t}{5}{3} \\
-  -\gamma\sub{t}{5}{4} \\
+  150 \\
+  150 \\
+  150 \\
 }
-\)
+\end{equation}
+
+Demostramos en el apéndice \ref{appendix:justificacion} que se puede aplicar la Eliminación Gausseana sin pivotear filas.
+
 \subsection{Implementación}
 
-Implementamos este sistema en \texttt{C++}, y luego analizamos los resultados con \texttt{Python}.
+\paragraph{} Implementamos este sistema en \texttt{C++}. Primero programamos matrices usando vectores de la \texttt{STL}. Luego implementamos funciones que resuelvan sistemas de ecuaciones usando Eliminación Gausseana o factorización LU. Y finalmente recibimos los datos y guardamos los resultados en archivos pasados por parámetros. \\
+También armamos una herramienta en \texttt{Python} para correr el programa y analizar los resultados, armando los gráficos vistos a través de este informe (como la Figura \ref{fig:temperature}). \\
+Todo el código se puede ver adjuntado al informe, junto con explicaciones de cómo usarlo. \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{test.0}
-\caption{Temperatura dentro del horno}
+\includegraphics[scale=0.5]{complete.0.temperature}
+\caption{Temperatura calculada dentro del horno}
 \label{fig:temperature}
 \end{figure}
 
-%\subsection{Matriz en "banda"}
-%%TODO
+\subsubsection{Optimización Matriz "en banda"}
 
-\section{Gauss vs LU}
+\paragraph{} Por cómo construimos la matriz, luego aplicar la eliminación Gausseana, nos queda una matriz "en banda", lo que en este caso significa que en todas las filas sólo tiene máximo \(n+1\) elementos diferentes a cero. \\
+Por lo que podemos aprovechar y sólo operar sobre esos valores, reduciendo tanto la memoria usada por el programa, como la cantidad de operaciones hechas para resolver el sistema. \\
+En la figura \ref{fig:memory.band.nband} se puede apreciar el espacio ahorrado por esta optimización. \\
+Y en la figura \ref{fig:times.band.nband} se nota que esta optimización no mejoró mucho el tiempo de operación. Esto se debe a que el órden del sistema no dejó de ser \(\bigO{((m+1)n)^3}\). %TODO: Calcular bien el orden
+%TODO: Figuras memory.band.nband y times.band.nband
 
-\paragraph{} Para resolver un sistema de ecuaciones cualquiera planteado como \(Ax = b\), se puede usar el método de eliminación gausseana (o "Gauss"), que tiene un tiempo de operación \(\bigO{n^3}\). Pero también se puede resolver usando la factorización \(LU\), que son dos matrices tales que \(A = LU\), y \(L\) es triangular inferior y \(U\) triangular superior. La forma de resolverlo así sería primero calcular un \(y\) tal que \(Ly = b\) y luego resolver \(Ux = y\). Esto toma \(\bigO{n^2}\) operaciones.
-\paragraph{} Como vimos en la sección \ref{sec:justificacion}, la matriz de nuestro sistema tiene factorización \(M = LU\). Lo cual nos es muy útil cuando queremos resolver múltiples instancias de \(Mt_i = b_i\) ya que la factorización \(LU\) se puede calcular aplicando Gauss una sola vez, y resolver cada instancia \(LUt_i = b_i\) requiere muchas menos operaciones. \\
-En la figura \ref{fig:solve.time} se puede ver que una vez que la matriz tiene 30 o más elementos, se vuelve definitivamente mejor resolver una instancia con \(LU\) que con Gauss. 
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{times.solve.1000.1}
-\caption{Tiempo para resolver una instancia del sistema (1000 reps)}
-\label{fig:solve.time.1000.1}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{times.ratio_lu_gauss.1000.1}
-\caption{Relación del tiempo entre LU y Gauss (1000 reps)}
-\label{fig:solve.time.ratio}
-\end{figure}
-
-
-\paragraph{} Pero como mencionamos, para calcular la factorización hay que aplicar Gauss una vez, por lo que en realidad nos queda el resultado de la figura \ref{fig:solve.lu.time} para resolver una instancia. \\
-Por lo que es importante revisar cuándo de verdad nos empieza a convenir usar la factorización \(LU\). En la figura \ref{fig:pct_lu.time} se ve que independiente del tamaño de la matriz, el tiempo usado para resolver una instancia del sistema es una fracción mínima del tiempo usado para calcular la factorización. Por lo que para dos o más instancias del sistema combiene calcular y usar la factorización \(LU\) (resaltado en la figura \ref{fig:time.2solve}).
-
-%TODO: Gráfico mostrando lu+2solve vs 2Gauss
-
-%\begin{figure}[H]
+%\begin{figure}[H] %TODO: Fig.banda
 %\centering
-%\includegraphics[width=\textwidth]{times.lu}
-%\caption{Tiempo para calcular la factorización LU (1000 reps)}
-%\label{fig:lu.time}
+%\includegraphics[scale=0.5]{times.band.nband.100.1}
+%\caption{Comparación del tiempo para resolver una instancia del sistema entre banda y no banda}
+%\label{fig:gauss.banda}
 %\end{figure}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{times.pct_lu.1000.1}
-\caption{Relación entre el tiempo para resolver el sistema y el tiempo para calcular la factorización LU (1000 reps)}
-\label{fig:pct_lu.time}
-\end{figure}
+\subsubsection{Float vs Double}
+\label{sec:rounding}
+
+\paragraph{} Un problema común en la computación es que, al trabajar con números representados en una cantidad fija de dígitos binarios (bits), hay errores de redondeo \cite{rounding}.%TODO: Mejor explicación
+%TODO: Experimento
+
+\subsection{Testeando} %TODO: Rename
+
+\paragraph{} La cátedra nos proveyó con una serie de tests, con su input y un output esperado. Al correr nuestro programa con este input nos encontramos con que los resultados conseguidos no eran iguales a los esperados (ver figura \ref{fig:diffs}). \\
+Para revisar tenemos el número de condición, que es un número calculado a partir de la matriz que nos permite definir un rango de error al rededor del resultado esperado dentro del cual, si se encuentran nuestros resultados, es aceptable y esperado por los errores de redondeo (ver sección \ref{sec:rounding}). \\
+Corrimos nuestro programa teniendo en cuenta el error y confirmamos que nuestros resultados caen dentro de este rango de error aceptable. Esto se puede repetir usando el script \texttt{analyze\_expected.py}. Y muy importante es que la isoterma estimada entre ambos resultados no es muy diferente, por lo que este error no debería causar problemas. %TODO: Mejor explicación
+%TODO: fig:diffs
 
 \section{Estimando la isoterma}
+\label{sec:peligrosidad}
 
-\paragraph{} Un dato importante que nos interesa es encontrar la posición de la isoterma de 500ºC. Esta es un círculo dentro de la pared del horno todo a la misma temperatura. \\
-Queremos poder calcularla porque si está "muy cerca" (ver sección \ref{sec:peligrosidad.distance}) la estructura del horno estaría en riesgo. %TODO: Hyperlink
+\paragraph{} En la sección \ref{sec:intro} planteamos que la razón principal de querer resolver este problema es querer calcular la posición de la isoterma de 500ºC, ya que si está "muy cerca" (ver sección \ref{sec:peligrosidad.distance}) la estructura del horno estaría en riesgo.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{test.isotherm.0}
-\caption{Posición de la isoterma}
+\includegraphics[scale=0.5]{complete.0.isotherm}
+\caption{Posición estimada de la isoterma}
 \label{fig:isotherm.pos}
 \end{figure}
 
-\paragraph{} Para encontarla buscamos dos puntos dentro de un mísmo ángulo que "rodeen" la temperatura buscada, y luego aproximamos linealmente la posición donde se encuentra entre estos dos puntos.
+\paragraph{} Para encontrarla buscamos dos puntos dentro de un mismo ángulo que "rodeen" la temperatura buscada, y luego aproximamos linealmente la posición donde se encuentra entre estos dos puntos. En la figura \ref{fig:estimar.isoterma} representamos cómo hacemos esto.
 
 %TODO: Diagrama mostrando la isoterma estimada entre dos puntos
 
 \subsection{Midiendo la Peligrosidad}
 \label{sec:peligrosidad.distance}
 
-\paragraph{} Una vez encontrada la isoterma, es importante decidir si el horno está en un estado peligroso o seguro. Sabemos que si el exterior del horno llega a tener una temperatura de 500ºC o más, se rompe. \\
-En la figura \ref{fig:peligrosidad.distance} se puede ver cómo se mueve la isoterma de 500ºC si la temperatura interna creciera uniformemente. \\
+\paragraph{} Una vez encontrada la isoterma, es importante decidir si el horno está en un estado peligroso o seguro. \\
+Pero habría que conocer más sobre cómo está armado un alto horno para poder sacar conclusiones sobre qué tan peligrosa es la posición de la isoterma. Aunque preliminarmente se puede ver (Figura \ref{fig:peligrosidad.distance}) que si el "punto de ruptura" se encuentra antes del 75\% de la pared hay poco margen de error, ya que hasta ese punto la isoterma se mueve rápido hacia el exterior.
 
 \begin{figure}[H]
-\caption{Distancia de la isoterma al exterior del horno}
 \centering
-\includegraphics[width=\textwidth]{peligrosidad.distance}
+\includegraphics[scale=0.5]{peligrosidad}
+\caption{Distancia de la isoterma al exterior del horno}
 \label{fig:peligrosidad.distance}
 \end{figure}
 
-\paragraph{} Para sacar conclusiones sobre qué tan peligroso es, habría que conocer más sobre los materiales que forman al horno. Pero preliminarmente se puede ver que si el "punto de ruptura" se encuentra al 75\% hay poco margen de error, ya que la isoterma se mueve rápido hacia el exterior.
+%\section{Resultados}
+%TODO: ¿Qué?
 
-\section{Apéndice}
+\appendix %TODO: Roman numbering
+\renewcommand{\thesection}{\Roman{section}}
 
-\tableofcontents
+\section{Justificación Gauss sin pivoteo} 
+\label{appendix:justificacion}
+
+\paragraph{} En este anexo demostramos que las matrices armadas (Sección \ref{sec:modelado}) son diagonal dominantes y luego justificamos inductivamente que se puede aplicar el método de Eliminación Gausseana sin reordenar filas.
+
+\begin{defi}
+Sea \(A \in \mathbb{R}^{n \times n}\). \(A\) se dice \textbf{diagonal dominante} si 
+\[
+  \psum{\substack{j = 1 \\ j \neq i}}{n}|A_{ij}| \leq  |A_{ii}| \qquad \forall i = 1, ..., n
+\]
+\end{defi}
+
+\begin{lema}
+\label{lema:EG conserva diagonal dominante}
+Sea \(A^{(0)} = A \in \mathbb{R}^{n \times n}\) una matriz diagonal dominante, con \(\sub{A}{1}{1} \neq 0\), y \(A^{(1)}\) el resultado de aplicar un paso de Eliminación Gausseana (sin pivoteo) sobre \(A\). Entonces \(A^{(1)}\) es diagonal dominante.
+\end{lema}
+\begin{proof}
+Consideremos la \(k\)-ésima fila de \(A^{(1)}\), queremos ver que:
+\[
+  \psum{\substack{k = 1 \\ k \neq i}}{n} |a^{(1)}_{i,k}| \leq |a^{(1)}_{i,i} |
+\]
+Se tiene que:
+\[
+  | a^{(1)}_{k,k} | = | a_{k,k} - \frac{a_{k,1}}{a_{1,1}} a_{1,k} |
+  \qquad \text{y} \qquad
+  \sum_{\substack{i = 1 \\ i \neq j}}^n | a^{(1)}_{j,i} |
+= \sum_{\substack{i = 2 \\ i \neq j}}^n | a_{j,i} - \frac{a_{j,1}}{a_{1,1}} a_{1,i} |
+\]
+Ahora veamos como es un paso de Eliminación Gausseana:
+\[\begin{split}
+  \sum_{\substack{k = 1 \\ k \neq i}}^n | a^{(1)}_{i,k} | & = \sum_{\substack{k = 2 \\ k \neq i}}^n | a_{i,k} - \frac{a_{i,1}}{a_{1,1}} a_{1,k} | \\
+                                                          & \leq \sum_{\substack{k = 2 \\ k \neq i}}^n \vert a_{i,k} \vert + \left \vert \frac{a_{i,1}}{a_{1,1}} \right \vert \sum_{\substack{k = 2 \\ k \neq i}}^n \vert a_{1,i} \vert \\
+                                                          & \leq \left( \vert a_{i,i} \vert - \vert a_{i,1} \vert \right) + \left \vert \frac{a_{i,1}}{a_{1,1}} \right \vert \left( \vert a_{1,1} \vert - \vert a_{1,i} \vert \right) \\
+                                                          & = \vert a_{i,i} \vert - \left \vert \frac{a_{i,1}}{a_{1,1}} \right \vert \vert a_{1,i} \vert \\
+                                                          & \leq \left \vert a_{i,i} -  \frac{a_{i,1}}{a_{1,1}} a_{1,i} \right \vert = | a^{(1)}_{i,i} | 
+\end{split}\]
+\end{proof}
+
+\paragraph{} Ahora se tiene que luego de realizar un paso de Eliminación Gausseana la matriz resultante también es diagonal dominante.
+\paragraph{} Finalmente queda demostrar que, luego de realizar una iteración del algoritmo de Eliminación Gaussiana sin pivoteo sobre nuestra matriz, la matriz resultante queda bien definida. \\ %TODO: Definir antes que es bien definida
+Entonces:
+\[\begin{split}
+  | a_{i,i} | & = \beta \\
+              & = \left \vert - \frac{2}{(\Delta r)^2} + \frac{1}{r \Delta r} - \frac{2}{r^2 (\Delta \theta)^2} \right \vert \\
+              & = \left \vert - \frac{1}{(\Delta r)^2} + \frac{1}{r \Delta r} - \frac{2}{r^2 (\Delta \theta)^2} - \frac{1}{(\Delta r)^2} \right \vert \\
+              & = \left \vert - \frac{r - \Delta r}{r (\Delta r)^2} - \frac{2}{r^2 (\Delta \theta)^2} - \frac{1}{(\Delta r)^2} \right \vert \\
+              & = \left \vert \frac{r - \Delta r}{r (\Delta r)^2} + \frac{2}{r^2 (\Delta \theta)^2} + \frac{1}{(\Delta r)^2} \right \vert
+\end{split}\]
+Veamos que si tenemos \(r_{int}, \Delta r > 0, j \geq 1\), se cumple que
+\[
+  r - \Delta r = (r_{int} + j \Delta r) - \Delta r = r_{int} + (j - 1) \Delta r > 0
+\]
+Entonces ahora sabemos que:
+\[
+  r - \Delta r > 0
+\]
+Ahora veamos como queda la sumatoria sobre una fila. Notar que:  
+\[
+  | \sub{a}{i}{i} | = \frac{r - \Delta r}{r (\Delta r)^2} + \frac{2}{r^2 (\Delta \theta)^2} + \frac{1}{(\Delta r)^2}
+\]
+Ahora al sumar los módulos del resto de los coeficientes queda que:
+\[\begin{split}
+  \psum{\substack{k = 1 \\ k \neq i}}{(m+1)n} |\sub{a}{i}{k}^{j}| & = |\alpha| + |\gamma| + 2 |\chi| \\
+                                                                  & = \left \vert \frac{1}{(\Delta r)^2} - \frac{1}{r \Delta r} \right \vert + 2 \left \vert \frac{1}{r^2 (\Delta \theta)^2} \right \vert + \left \vert \frac{1}{(\Delta r)^2} \right \vert \\
+                                                                       & = \left \vert \frac{r - \Delta r}{r (\Delta r)^2} \right \vert + \frac{2}{r^2 (\Delta \theta)^2} + \frac{1}{(\Delta r)^2} \\
+                                                                       \text{(Por lo probado antes)}
+                                                                       & = \frac{r - \Delta r}{r (\Delta r)^2} + \frac{2}{r^2 (\Delta \theta)^2} + \frac{1}{(\Delta r)^2} \\
+                                                                       & = | \sub{a}{i}{i} |
+\end{split}\] %TODO: Era \proof?
+
+\paragraph{} Así de la demostración anterior se obtuvo que la matriz \(A \in \mathbb{R}^{(m+1)n \times (m+1)n}\) de nuestro sistema es diagonal dominante y aparte no tiene ceros en la diagonal. Ahora resta ver que la Eliminación Gausseana es aplicable y se puede utilizar sin pivoteo. Así solamente hay que ver que para los puntos del medio del horno puede aplicarse Eliminación Gausseana y ademas la matriz resultante es diagonal dominante. 
+
+\begin{itemize}
+\item En las primeras y últimas \(n\) filas, la matriz ya está triangulada, por lo que no hace falta aplicar Gauss.
+
+\item[\textbf{Caso base:}] Notemos que \(\sub{a}{1}{1} = \beta\) no es nulo, ya que es un coeficiente definido mediante la ecuación de Laplace, entonces se puede aplicar el primer paso de la Eliminación Gausseana. Dado que \(\sub{a}{1}{2} = \chi\) pero como mostramos anteriormente $\beta \ge \chi$ entonces en el lugar $a_{2,2}$ queda un coeficiente no nulo y ya que la matriz luego de haber procesado la primer fila sigue siendo diagonal dominante entonces puedo aplicar el siguiente paso de Eliminación Gausseana. %TODO: Revisar
+
+\item[\textbf{HI:}] Tomamos como Hipótesis Inductiva que la matriz \(A^{(k-1)\), obtenida tras aplicar \(k-1\) pasos de Eliminación Gausseana sobre \(A\), es diagonal dominante y su \(k\)-ésima fila es no nula. Esto implica que \(\sub{a^{(k-1)}}{k}{k} \neq 0\).
+
+\item[\textbf{Paso inductivo:}] Vamos a escribir a \(A^{(k-1)}\) por bloques de la siguiente manera:
+\[
+  A^{(k-1)} = \Gpmatrix{
+    \sub{A^{(k-1)}}{1}{1} & B \\
+    C & \sub{A^{(k-1)}}{2}{2} \\
+  }
+\]
+Con \(\sub{A^{(k-1)}}{1}{1} \in \mathbb{R}^{(k-1) \times (k-1)}\). \\ %TODO: Y el resto?
+%Con \(\sub{A^{(k-1)}}{1}{1} \in \mathbb{R}^{(k-1) \times (k-1)}, B \in \mathbb{R}^{(m+1)n \times (m+1)n - (k-1)}, C \in \mathbb{R}^{(m+1)n - (k-1) \times (k-1)}, \sub{A^{(k-1)}}{2}{2} \in \mathbb{R}^{(m+1)n - (k-1) \times (m+1)n - (k-1)}\). \\ %TODO: Formatting
+Luego de haber probado lo anterior, sabemos que \(\sub{A^{(k-1)}}{1}{1}\) y \(\sub{A^{(k-1)}}{2}{2}\) son matrices diagonal dominantes. \\
+Como para armar \(A^{(k-1)}\) ya aplicamos \((k-1)\) pasos de la Eliminación Gausseana, se tiene que \(C = 0\). \\
+Entonces cuando se quiere aplicar un paso de Eliminación Gaussiana sobre \(\sub{A^{(k-1)}}{2}{2}\), dado que el elemento de la diagonal es no nulo, este paso se puede hacer sin pivotear la matriz, y utilizando el lema \ref{lema:EG conserva diagonal dominante} se sigue que la matriz luego de este paso sera diagonal dominante.
+
+\paragraph{} Solo resta probar que la fila \(k+1\) de la matriz \(A^{(k)}\) es no nula. % ya que si es nula entonces no se puede expresar el siguiente paso de la Eliminación Gausseana.
+Ya que cada fila representa a una instancia de la ecuación de Laplace, se tiene que el elemento \(\sub{a}{k+1}{k+1+n-1}\) es el coeficiente de la temperatura \(\sub{t}{j}{k+1}\) que es no nulo. %TODO: Lo de las columnas no es cierto
+
+%Si la fila representa a un coeficiente de la ecuación de calor, para ciertos $j = 1, ..., m - 1$ y $k = 0, ..., n - 1$. Puntualmente, por la forma en la que se construye la matriz del sistema, el elemento $a_{k+1,k+1+n-1}$ es el coeficiente de la temperatura $t_{j,k+1}$ en dicha ecuación, debe ser no nulo. Dado como esta armado el sistema todos los elementos de la columna $k+1$ que se encuentran por arriba de $a_{k+1,k+1+n-1}$, deben ser nulos, es decir, en una iteracion de gauss no deberían haberse modificado el coeficiente $a_{k+1,k+1+n-1}$ entonces sigue siendo no nulo.
+\end{itemize}
+
+\section{Efectividad de la factorización LU}
+
+\paragraph{} Para resolver un sistema de ecuaciones cualquiera planteado como \(Ax = b\), se puede usar el método de Eliminación Gausseana o "Gauss", que tiene un tiempo de operación en el orden de \(\bigO{n^3}\). Pero también se puede resolver usando la factorización LU, que son dos matrices tales que \(A = LU\), donde \(L\) es triangular inferior y \(U\) es triangular superior. La forma de resolverlo así sería primero calcular un \(y\) tal que \(Ly = b\) y luego resolver \(Ux = y\). Esto toma \(\bigO{n^2}\) operaciones.
+\paragraph{} Como vimos en el apéndice \ref{appendix:justificacion}, se puede aplicar Gauss sobre la matriz de nuestro sistema. Lo cual es condición suficiente para afirmar que tiene factorización \(A = LU\) \cite{clases}. Que nos es muy útil cuando queremos resolver múltiples instancias de \(At_i = b_i\) ya que la factorización LU se puede calcular aplicando la Eliminación Gausseana una sola vez con, y resolver cada instancia \(LUt_i = b_i\) requiere muchas menos operaciones. \\
+En la figura \ref{fig:solve.time} se puede confirmar que resolver una instancia del sistema con LU es definitivamente más rápido que resolverla con Gauss. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{times.1.t_solve}
+\caption{Tiempo para resolver una instancia del sistema (1000 reps)}
+\label{fig:solve.time}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{times.1.t_solve_lu}
+\caption{Tiempo para resolver un sistema contando el tiempo para calcular \(LU\) (1000 reps)}
+\label{fig:solve.lu.time}
+\end{figure}
+
+\paragraph{} Pero como mencionamos, para calcular la factorización hay que aplicar Gauss una vez, por lo que en realidad nos queda el resultado de la figura \ref{fig:solve.lu.time} para resolver una instancia. \\
+Es por esto que es importante revisar cuándo de verdad nos empieza a convenir usar la factorización \(LU\). En la figura \ref{fig:pct_lu.time} se ve que independiente del tamaño de la matriz, el tiempo usado para resolver una instancia del sistema es una fracción mínima del tiempo usado para calcular la factorización. Por lo que para dos o más instancias del sistema conviene calcular y usar la factorización \(LU\) (resaltado en la figura \ref{fig:time.2solve}). \\
+En la figura \ref{fig:time.9solve} resaltamos que para resolver 9 instancias del sistema la diferencia de tiempo ya se vuelve muy notoria.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{times.1.t_pct_lu}
+\caption{Relación entre el tiempo para resolver el sistema y el tiempo para calcular la factorización LU (1000 reps)}
+\label{fig:pct_lu.time}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{times.2.t_solve_lu}
+\caption{Tiempo para resolver dos instancias del sistema teniendo en cuenta el tiempo de \(LU\) (1000 reps)}
+\label{fig:time.2solve}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{times.9.t_solve_lu}
+\caption{Tiempo para resolver nueve instancias del sistema teniendo en cuenta el tiempo de \(LU\) (1000 reps)}
+\label{fig:time.9solve}
+\end{figure}
 
 \listoffigures
+
+\begin{thebibliography}{9}
+\bibitem{how_it_works}
+American Iron and Steel Institute (2005), \href{https://web.archive.org/web/20070510164459/http://www.steel.org/AM/Template.cfm?Section=Home&template=%2FCM%2FHTMLDisplay.cfm&ContentID=5433}{How A Blast Furnace Works}. steel.org
+
+\bibitem{consigna}
+Cátedra de Métodos Numéricos (2022), Consigna del TP1
+
+\bibitem{rounding}
+TODO:
+
+\bibitem{clases}
+Cátedra de Métodos Numéricos (2022), Clases Teóricas
+
+\end{thebibliography}
 
 \end{document}
 
