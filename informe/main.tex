@@ -45,6 +45,8 @@
 
 \tableofcontents
 
+\pagebreak
+
 \section{Introducción}
 \label{sec:intro}
 
@@ -98,15 +100,14 @@ Aunque para simplificar la notación vamos a nombrar cada coeficiente, por lo qu
 
 Finalmente, se define la matriz de la siguiente forma: 
 
-$a_{i,j} $ =\left\{ \begin{array}{lcc}
+$a_{i,j} $ =\left\{ \begin{array}{lcc} %TODO: Descripción de la matriz
 	5 &   si  & x \leq 2 \\
 	\\ x^2-6x+10 &  si & 2 < x < 5 \\
 	\\ 4x-15 &  si  & x \geq 5
 \end{array}
 \right.
 
-
-\paragraph{} Ahora armamos un sistema de ecuaciones para cada \(\sub{t}{j}{k}\), que podemos representar matricialmente de la forma \(At = b\). Donde \(A \in \mathbb{R}^{(m+1)n \times (m+1)n}\) es una matriz con las primeras y últimas \(n\) filas iguales a la identidad (por las ), y el resto corresponde a una instancia de la ecuación (\ref{eq:laplace.split}); \(t \in \mathbb{R}^{(m+1)n}\) es el vector de incógntias con los radios "estirados" uno arriba del otro; Y  \(b \in \mathbb{R}^{(m+1)n}\) es el vector de resultados que tiene las temperaturas internas en los primeros \(n\) valores, las externas en los últimos \(n\) valores, y el resto todos ceros. \\
+\paragraph{} Ahora armamos un sistema de ecuaciones para cada \(\sub{t}{j}{k}\), que podemos representar matricialmente de la forma \(At = b\). Donde \(A \in \mathbb{R}^{(m+1)n \times (m+1)n}\) es una matriz con las primeras y últimas \(n\) filas iguales a la identidad (por las ), y el resto corresponde a una instancia de la ecuación (\ref{eq:laplace.split}); \(t \in \mathbb{R}^{(m+1)n}\) es el vector de incógntias con los radios "estirados" uno arriba del otro; Y  \(b \in \mathbb{R}^{(m+1)n}\) es el vector de resultados que tiene las temperaturas internas en los primeros \(n\) valores, las externas en los últimos \(n\) valores, y el resto todos ceros. \\ %TODO: REwordear
 En la ecuación (\ref{eq:example}) mostramos un ejemplo de cómo queda el sistema con \(r_i = 1,\ r_e = 3,\ mp1 = 3,\ n = 3,\ \sub{t}{i}{1} = \sub{t}{i}{2} = \sub{t}{i}{3} = 1500,\ \sub{t}{e}{1} = \sub{t}{e}{2} = \sub{t}{e}{3} = 150\).
 
 \begin{equation}
@@ -180,7 +181,7 @@ Y en la figura \ref{fig:times.band.nband} se nota que esta optimización no mejo
 \paragraph{} Un problema común en la computación es que, al trabajar con números representados en una cantidad fija de dígitos binarios (bits), hay errores de redondeo \cite{rounding}.%TODO: Mejor explicación
 %TODO: Experimento
 
-\subsection{Testeando} %TODO: Rename
+\subsection{Testeando} %TODO: Rename %TODO: Se va a Experimentación
 
 \paragraph{} La cátedra nos proveyó con una serie de tests, con su input y un output esperado. Al correr nuestro programa con este input nos encontramos con que los resultados conseguidos no eran iguales a los esperados (ver figura \ref{fig:diffs}). \\
 Para revisar tenemos el número de condición, que es un número calculado a partir de la matriz que nos permite definir un rango de error al rededor del resultado esperado dentro del cual, si se encuentran nuestros resultados, es aceptable y esperado por los errores de redondeo (ver sección \ref{sec:rounding}). \\
@@ -224,24 +225,27 @@ Pero habría que conocer más sobre cómo está armado un alto horno para poder 
 \section{Experimentación} 
 
 \subsection{Consutrucción de las instancias}
-Para experimentar se construyen instancias para cada experimento. En el experimento 1 se definio un $\epsilon = 10^{-4}}$. Para el experimento 2, se realiza una serie de variaciones a la temperatura externa en los siguientes valores [v1,v2,v3,v4] y se evalua donde se encuentra la isoterma buscada. Para el experimento 3, en las instancias construidas se deje estatico a la cantidad de angulos que tendra el horno mientras se varia la cantidad de radios que puede tener el horno. Finalmente en el experimento 4 intercambiamos la variable estatica del experimento 3 para que evaluar el impacto del cambio de radios en las soluciones. 
+Para experimentar se construyen instancias para cada experimento. En el experimento 1 se definio un $\epsilon = 10^{-4}}$. Para el experimento 2, se realiza una serie de variaciones a la temperatura externa en los siguientes valores [v1,v2,v3,v4] y se evalua donde se encuentra la isoterma buscada. Para el experimento 3, en las instancias construidas se deje estatico a la cantidad de angulos que tendra el horno mientras se varia la cantidad de radios que puede tener el horno. Finalmente en el experimento 4 intercambiamos la variable estatica del experimento 3 para que evaluar el impacto del cambio de radios en las soluciones.  %TODO: Epsilon en función del número de condición %TODO: Una explicación de cómo armamos y variamos las entradas por cada experimento
 
-\subsection{Experimento 1: Estudio de resultados.}
-Para estudiar los resultados se compara la ejecución de la implementación propia contra los resultados obtenidos en los test provistos por la cátedra. Se espera que los resultados se encuentren en un margen igual o mas chico que $10^{-4}$, este es un epsilon suficientemente chico para poder describir que los resultados obtenidos son cercanos a los resultados provistos por la catedra. Se busca tambien comprobar la confianza de los resultados que se exponen, para ello se algunos números de condicion de varios sistemas con el objetivo de que sean suficientemente bajos para decir que los sistemas que se encuentran estan bien condicionados. 
+\subsection{Experimento 1: Estudio de resultados.} %TODO: Rename, test de cáterdra
+Para estudiar los resultados se compara la ejecución de la implementación propia contra los resultados obtenidos en los test provistos por la cátedra. Se espera que los resultados se encuentren en un margen igual o mas chico que $10^{-4}$, este es un epsilon suficientemente chico para poder describir que los resultados obtenidos son cercanos a los resultados provistos por la catedra. Se busca tambien comprobar la confianza de los resultados que se exponen, para ello se algunos números de condicion de varios sistemas con el objetivo de que sean suficientemente bajos para decir que los sistemas que se encuentran estan bien condicionados.  %TODO 10^{-4} => epsilon %TODO: Mencionar en los resultados que apenas cambia la isoterma estimada
 
 ....Resultados comentar .... Sacar la parte de testeo por este experimento ... 
 
-\subsection{Experimento 2: Variación de isoterma en función de la temperatura externa (Sujeto a cambios).}
+\subsection{Experimento 2: Variación de isoterma en función de la temperatura externa (Sujeto a cambios).} %TODO: Rename
 Se quiere estudiar como es que varia la isoterma en relacion a la variación de la temperatura externa del horno. Para ello, se construyen instancias donde las temperatura externa adopte los siguientes valores [v1,v2,v3] con el objetivo de querer corroborar que si la temperatura externa es menor la isoterma se encuentra mas cerca del centro del horno. 
 
+%TODO: Subexperimento, posición de la isoterma para diferentes metalues
 
 \subsection{Experimento 3: Variación de isoterma en función de la cantidad de angulos/radios. (Sujeto a cambios).}
+%TODO: Mostrar la posición para un ángulo en base a la cantidad de radios
 Por como se planteó la estimación de la isoterma, entonces la distancia entre 2  puntos del horno toma mucha importancia por lo que parece importante estudiar como son los resultados cuando se empieza a cambiar la cantidad de angulos o radios del horno ya que de esta forma se esta agregando mas puntos entre aquellos que se toman para estimar la isoterma. Se busca comprobar si a mayor cantidad de radios la isoterma tiende a estar mas alejada del centro del horno.
 
-\appendix %TODO: Roman numbering
+\pagebreak
+
+\appendix 
 \renewcommand{\thesection}{\Roman{section}}
 
-%TODO: Esto mandar al apendice del informe.
 \section{Justificación Gauss sin pivoteo} 
 \label{appendix:justificacion}
 
@@ -336,12 +340,9 @@ Entonces cuando se quiere aplicar un paso de Eliminación Gaussiana sobre \(\sub
 
 %En caso de que la fila corresponda a un punto en la pared interna del horno, entonces esa ecuacion esta igualada a 0, para ciertos $j = 1, \dots, m - 1$ y $k = 0, \dots, n - 1$. Puntualmente, por la forma en la que se construye la matriz del sistema, el elemento $a_{u+1,u+1+n}$ es el coeficiente de la variable $t_{j,k+1}$ en dicha ecuación, que es necesariamente no nulo. Por otra parte, como la matriz $\mat{A}$ es \emph{banda} $n, n$, todos los elementos de la columna $u+1$ que se encuentran por encima de $a_{u+1,u+1+n}$ deben ser nulos. Esto quiere decir que ninguna de las iteraciones ya ejecutadas de Eliminación Gaussiana modificaron este coeficiente, y por lo tanto, sigue siendo no nulo.
 
-\paragraph{} Solo resta probar que la fila \(k+1\) de la matriz \(A^{(k)}\) es no nula. % ya que si es nula entonces no se puede expresar el siguiente paso de la Eliminación Gausseana.
-
-Si la fila $k$ corresponde a uno de los puntos externos de la pared del horno, es decir, si $1 \leq k \leq n$ , entonces tendrá un $1$ en la diagonal y $0$ en las demás posiciones, entonces no es afectado por la eliminación. Esto ocurre en las primeras n filas de la matriz como en las ultimas n?o n.m? filas la matriz original. 
-
+\paragraph{} Solo resta probar que la fila \(k+1\) de la matriz \(A^{(k)}\) es no nula. \\
+Si la fila $k$ corresponde a uno de los puntos extremos de la pared del horno, es decir, si \(1 \leq k \leq n \text{ ó } mn \leq k \leq (m+1)n\), tendrá un $1$ en la diagonal y $0$ en las demás posiciones, entonces no cambia en ningún paso de la Eliminación Gausseana. \\
 Pero si la fila corresponde a una de los puntos internos de la pared, entonces ya que cada fila representa a una instancia de la ecuación de Laplace, se tiene que el elemento \(\sub{a}{k+1}{k+1+n-1}\) es el coeficiente de la temperatura \(\sub{t}{j}{k+1}\) que es no nulo. %TODO: Lo de las columnas no es cierto
-
 
 %Si la fila representa a un coeficiente de la ecuación de calor, para ciertos $j = 1, ..., m - 1$ y $k = 0, ..., n - 1$. Puntualmente, por la forma en la que se construye la matriz del sistema, el elemento $a_{k+1,k+1+n-1}$ es el coeficiente de la temperatura $t_{j,k+1}$ en dicha ecuación, debe ser no nulo. Dado como esta armado el sistema todos los elementos de la columna $k+1$ que se encuentran por arriba de $a_{k+1,k+1+n-1}$, deben ser nulos, es decir, en una iteracion de gauss no deberían haberse modificado el coeficiente $a_{k+1,k+1+n-1}$ entonces sigue siendo no nulo.
 \end{itemize}
