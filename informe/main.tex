@@ -2,8 +2,8 @@
 \documentclass[12pt]{article}
 \usepackage[margin=1.0in]{geometry}
 
-%\usepackage{g-util}
-\usepackage{caratula1}
+\usepackage{g-util}
+\usepackage{caratula}
 \usepackage{amsfonts, amsmath, amssymb, amsthm}
 \usepackage{graphicx, float, hyperref}
 \graphicspath{ {../data/} }
@@ -46,7 +46,6 @@
 \tableofcontents
 
 \pagebreak
-
 \section{Introducción}
 \label{sec:intro}
 
@@ -98,16 +97,18 @@ Aunque para simplificar la notación vamos a nombrar cada coeficiente, por lo qu
 %\tab \chi_r = \frac{1}{(r \Delta \Theta)^{2}}
 %\)
 
-Finalmente, se define la matriz de la siguiente forma: 
-
-$a_{i,j} $ =\left\{ \begin{array}{lcc} %TODO: Descripción de la matriz
-	5 &   si  & x \leq 2 \\
-	\\ x^2-6x+10 &  si & 2 < x < 5 \\
-	\\ 4x-15 &  si  & x \geq 5
-\end{array}
-\right.
-
-\paragraph{} Ahora armamos un sistema de ecuaciones para cada \(\sub{t}{j}{k}\), que podemos representar matricialmente de la forma \(At = b\). Donde \(A \in \mathbb{R}^{(m+1)n \times (m+1)n}\) es una matriz con las primeras y últimas \(n\) filas iguales a la identidad (por las ), y el resto corresponde a una instancia de la ecuación (\ref{eq:laplace.split}); \(t \in \mathbb{R}^{(m+1)n}\) es el vector de incógntias con los radios "estirados" uno arriba del otro; Y  \(b \in \mathbb{R}^{(m+1)n}\) es el vector de resultados que tiene las temperaturas internas en los primeros \(n\) valores, las externas en los últimos \(n\) valores, y el resto todos ceros. \\ %TODO: REwordear
+\paragraph{} Ahora armamos un sistema de ecuaciones para cada \(\sub{t}{j}{k}\), que podemos representar matricialmente de la forma \(At = b\). Donde \(A \in \mathbb{R}^{(m+1)n \times (m+1)n}\) es una matriz con las primeras y últimas \(n\) filas iguales a la identidad (por las ), y el resto corresponde a una instancia de la ecuación (\ref{eq:laplace.split}); \(t \in \mathbb{R}^{(m+1)n}\) es el vector de incógntias con los radios "estirados" uno arriba del otro; Y  \(b \in \mathbb{R}^{(m+1)n}\) es el vector de resultados que tiene las temperaturas internas en los primeros \(n\) valores, las externas en los últimos \(n\) valores, y el resto todos ceros. \\
+%Se ve descripto cómo construir la matriz con la siguiente función:  %TODO: Es horrible
+%\begin{equation}
+%\sub{a}{i}{j} = \begin{cases}
+  %\alpa & \text{if } n < i \leq mn \land  \\
+  %\beta & \text{if } i = j \\
+  %\gamma & \text{if } \\
+  %\chi & \text{if } \\
+  %1 & \text{if } i \leq n \lor mn < i \land j = i\\
+  %0 & \text{otherwise} \\
+%\end{cases} \forall 1 \leq i, j \leq (m+1)n
+%\end{equation}
 En la ecuación (\ref{eq:example}) mostramos un ejemplo de cómo queda el sistema con \(r_i = 1,\ r_e = 3,\ mp1 = 3,\ n = 3,\ \sub{t}{i}{1} = \sub{t}{i}{2} = \sub{t}{i}{3} = 1500,\ \sub{t}{e}{1} = \sub{t}{e}{2} = \sub{t}{e}{3} = 150\).
 
 \begin{equation}
@@ -175,19 +176,6 @@ Y en la figura \ref{fig:times.band.nband} se nota que esta optimización no mejo
 %\label{fig:gauss.banda}
 %\end{figure}
 
-\subsubsection{Float vs Double}
-\label{sec:rounding}
-
-\paragraph{} Un problema común en la computación es que, al trabajar con números representados en una cantidad fija de dígitos binarios (bits), hay errores de redondeo \cite{rounding}.%TODO: Mejor explicación
-%TODO: Experimento
-
-\subsection{Testeando} %TODO: Rename %TODO: Se va a Experimentación
-
-\paragraph{} La cátedra nos proveyó con una serie de tests, con su input y un output esperado. Al correr nuestro programa con este input nos encontramos con que los resultados conseguidos no eran iguales a los esperados (ver figura \ref{fig:diffs}). \\
-Para revisar tenemos el número de condición, que es un número calculado a partir de la matriz que nos permite definir un rango de error al rededor del resultado esperado dentro del cual, si se encuentran nuestros resultados, es aceptable y esperado por los errores de redondeo (ver sección \ref{sec:rounding}). \\
-Corrimos nuestro programa teniendo en cuenta el error y confirmamos que nuestros resultados caen dentro de este rango de error aceptable. Esto se puede repetir usando el script \texttt{analyze\_expected.py}. Y muy importante es que la isoterma estimada entre ambos resultados no es muy diferente, por lo que este error no debería causar problemas. %TODO: Mejor explicación
-%TODO: fig:diffs
-
 \section{Estimando la isoterma}
 \label{sec:peligrosidad}
 
@@ -208,41 +196,77 @@ Corrimos nuestro programa teniendo en cuenta el error y confirmamos que nuestros
 \label{sec:peligrosidad.distance}
 
 \paragraph{} Una vez encontrada la isoterma, es importante decidir si el horno está en un estado peligroso o seguro. \\
-Pero habría que conocer más sobre cómo está armado un alto horno para poder sacar conclusiones sobre qué tan peligrosa es la posición de la isoterma. Aunque preliminarmente se puede ver (Figura \ref{fig:peligrosidad.distance}) que si el "punto de ruptura" se encuentra antes del 75\% de la pared hay poco margen de error, ya que hasta ese punto la isoterma se mueve rápido hacia el exterior.
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.5]{peligrosidad}
-\caption{Distancia de la isoterma al exterior del horno}
-\label{fig:peligrosidad.distance}
-\end{figure}
-
-%\section{Resultados}
-%TODO: ¿Qué?
-
-
+Pero habría que conocer más sobre cómo está armado un alto horno para poder sacar conclusiones sobre qué tan peligrosa es la posición de la isoterma. Aunque preliminarmente se puede ver (Figura \ref{fig:isotherm_by_inner}) que si el "punto de ruptura" se encuentra antes del 75\% de la pared hay poco margen de error, ya que hasta ese punto la isoterma se mueve rápido hacia el exterior.
 
 \section{Experimentación} 
 
-\subsection{Consutrucción de las instancias}
-Para experimentar se construyen instancias para cada experimento. En el experimento 1 se definio un $\epsilon = 10^{-4}}$. Para el experimento 2, se realiza una serie de variaciones a la temperatura externa en los siguientes valores [v1,v2,v3,v4] y se evalua donde se encuentra la isoterma buscada. Para el experimento 3, en las instancias construidas se deje estatico a la cantidad de angulos que tendra el horno mientras se varia la cantidad de radios que puede tener el horno. Finalmente en el experimento 4 intercambiamos la variable estatica del experimento 3 para que evaluar el impacto del cambio de radios en las soluciones.  %TODO: Epsilon en función del número de condición %TODO: Una explicación de cómo armamos y variamos las entradas por cada experimento
+%\subsection{Consutrucción de las instancias}
+%Para experimentar se construyen instancias para cada experimento. En el experimento 1 se definio un $\epsilon = 10^{-4}}$. Para el experimento 2, se realiza una serie de variaciones a la temperatura externa en los siguientes valores [v1,v2,v3,v4] y se evalua donde se encuentra la isoterma buscada. Para el experimento 3, en las instancias construidas se deje estatico a la cantidad de angulos que tendra el horno mientras se varia la cantidad de radios que puede tener el horno. Finalmente en el experimento 4 intercambiamos la variable estatica del experimento 3 para que evaluar el impacto del cambio de radios en las soluciones.  %TODO: Epsilon en función del número de condición %TODO: Una explicación de cómo armamos y variamos las entradas por cada experimento
 
-\subsection{Experimento 1: Estudio de resultados.} %TODO: Rename, test de cáterdra
-Para estudiar los resultados se compara la ejecución de la implementación propia contra los resultados obtenidos en los test provistos por la cátedra. Se espera que los resultados se encuentren en un margen igual o mas chico que $10^{-4}$, este es un epsilon suficientemente chico para poder describir que los resultados obtenidos son cercanos a los resultados provistos por la catedra. Se busca tambien comprobar la confianza de los resultados que se exponen, para ello se algunos números de condicion de varios sistemas con el objetivo de que sean suficientemente bajos para decir que los sistemas que se encuentran estan bien condicionados.  %TODO 10^{-4} => epsilon %TODO: Mencionar en los resultados que apenas cambia la isoterma estimada
+\subsection{Resultados esperados}
+\label{sec:expected}
 
-....Resultados comentar .... Sacar la parte de testeo por este experimento ... 
+\paragraph{} La cátedra nos proveyó con una serie de tests, con su input y un output esperado. Al correr nuestro programa con este input nos encontramos con que los resultados conseguidos no eran iguales a los esperados (ver figura \ref{fig:expected.diffs}). \\
+Para confirmar si este error es aceptable usamos el número de condición, que es un número calculado a partir de la matriz que nos permite definir un rango de error al rededor del resultado esperado dentro del cual, si se encuentran nuestros resultados, es aceptable y esperado por los errores de redondeo (ver sección \ref{sec:rounding}).
 
-\subsection{Experimento 2: Variación de isoterma en función de la temperatura externa (Sujeto a cambios).} %TODO: Rename
-Se quiere estudiar como es que varia la isoterma en relacion a la variación de la temperatura externa del horno. Para ello, se construyen instancias donde las temperatura externa adopte los siguientes valores [v1,v2,v3] con el objetivo de querer corroborar que si la temperatura externa es menor la isoterma se encuentra mas cerca del centro del horno. 
+\paragraph{} Se puede notar que el error crece hacia el centro del horno. Esto se debe a que el algoritmo implementado para resolver el sistema despeja las temperaturas más internas en función de las más externas, por lo que los errores cometidos se van sumando desde afuera hacia adentro.
 
-%TODO: Subexperimento, posición de la isoterma para diferentes metalues
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{expected.1.0.temperature}
+\caption{Diferencia entre las temperaturas esperadas y las calculadas}
+\label{fig:expected.diffs}
+\end{figure}
 
-\subsection{Experimento 3: Variación de isoterma en función de la cantidad de angulos/radios. (Sujeto a cambios).}
-%TODO: Mostrar la posición para un ángulo en base a la cantidad de radios
-Por como se planteó la estimación de la isoterma, entonces la distancia entre 2  puntos del horno toma mucha importancia por lo que parece importante estudiar como son los resultados cuando se empieza a cambiar la cantidad de angulos o radios del horno ya que de esta forma se esta agregando mas puntos entre aquellos que se toman para estimar la isoterma. Se busca comprobar si a mayor cantidad de radios la isoterma tiende a estar mas alejada del centro del horno.
+\paragraph{} Corrimos nuestro programa teniendo en cuenta el error y confirmamos que nuestros resultados caen dentro de este rango de error aceptable. Esto se puede repetir usando el script \texttt{analyze\_expected.py}. Y muy importante es que la isoterma estimada entre ambos resultados no es muy diferente, por lo que este error no debería causar problemas. %TODO: Mejor explicación
+
+\subsection{Revisando errores de redondeo}
+\label{sec:rounding}
+
+\paragraph{} Un problema común en la computación es que, al trabajar con números representados en una cantidad fija de dígitos binarios (bits), hay errores de redondeo \cite{rounding}. \\ %TODO: Mejor explicación
+Para experimentar sobre esto, armamos un sistema que generara coeficientes "muy chiquitos" (\(\alpha, \beta, \gamma, \chi \leq 10^{-6}\)) con temperaturas muy altas (\(T_i, T_e \geq 10^6\)) y comparamos los resultados entre usar \texttt{long double} que usa 128-bits para guardar los números y usar \texttt{float} que usa 32-bits.
+\paragraph{} En la figura \ref{fig:rounding.diffs} se pueden ver las diferencias causadas. Como vimos en la sección \ref{sec:expected}, el algoritmo que usamos para resolver el sistema causa que el error crezca hacia el centro del horno. También por razones similares a lo visto en la sección \ref{sec:expected} estos errores no causan que la isoterma estimada se encuentre en un lugar muy diferente.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{rounding.temperature}
+\caption{Diferencia entre las temperaturas calculadas usando \texttt{long double} y \texttt{float}}
+\label{fig:rounding.diffs}
+\end{figure}
+
+\paragraph{} Este experimento puede ser repetido modificando la entrada en \texttt{data/rounding.in} y corriendo el script \texttt{analyze\_rounding.py}.
+
+\subsection{Movimiento de la isoterma}
+
+\subsubsection{Movimiento de la isoterma en base a la temperatura interna}
+
+\paragraph{} Como diferentes metales necesitan diferentes temperaturas para ser fundidos, nos interesó ver la posición estimada de la isoterma para algunos de los metales más trabajados. \\ %TODO: Cite
+En la figura \ref{fig:isotherm_by_inner} se puede ver la posición de la isoterma en base a la temperatura interna, tiene marcadas en orden las temperaturas del aluminio, el cobre, el hierro, y el tungsteno.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{isotherm_by_inner}
+\caption{Distancia de la isoterma al exterior del horno}
+\label{fig:isotherm_by_inner}
+\end{figure}
+
+\paragraph{} Este experimento puede ser repetido con el script \texttt{analyze\_isotherm.py}.
+
+\subsubsection{Movimiento de isoterma en función de la cantidad de radios}
+
+\paragraph{} Por como se planteó la estimación de la isoterma, nos parece que la cantidad de radios dentro de la pared del horno sobre los que se trabaja afectan a la posición estimada de la isoterma. Para estudiar el efecto que tiene esta variable, analizamos los resultados cuando cambiamos la cantidad radios. Asumimos a las temperaturas internas y externas fijadas en 1500ºC y 150ºC respectivamente. \\
+Como se ve en la figura \ref{fig:isotherm_by_radii}, la posición varía bastante en base a la cantidad de radios.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{isotherm_by_radii}
+\caption{Posición estimada de la isoterma}
+\label{fig:isotherm_by_radii}
+\end{figure}
+
+\paragraph{} Este experimento puede ser repetido con el script \texttt{analyze\_isotherm.py}.
 
 \pagebreak
-
 \appendix 
 \renewcommand{\thesection}{\Roman{section}}
 
@@ -323,7 +347,7 @@ Ahora al sumar los módulos del resto de los coeficientes queda que:
 
 \item[\textbf{Caso base:}] Notemos que \(\sub{a}{1}{1} = 1\) no es nulo, entonces se puede aplicar el primer paso de la Eliminación Gausseana. Dado que \(\sub{a}{1}{2} =0\) entonces si aplicamos un paso de Eliminación Gausseanaen en el lugar $a_{2,2}$ queda un coeficiente no nulo y dado que la matriz luego de haber procesado la primer fila sigue siendo diagonal dominante entonces puedo aplicar el siguiente paso de Eliminación Gausseana. %TODO: Revisar
 
-\item[\textbf{HI:}] Tomamos como Hipótesis Inductiva que la matriz \(A^{(k-1)\), obtenida tras aplicar \(k-1\) pasos de Eliminación Gausseana sobre \(A\), es diagonal dominante y su \(k\)-ésima fila es no nula. Esto implica que \(\sub{a^{(k-1)}}{k}{k} \neq 0\).
+\item[\textbf{HI:}] Tomamos como Hipótesis Inductiva que la matriz \(A^{(k-1)}\), obtenida tras aplicar \(k-1\) pasos de Eliminación Gausseana sobre \(A\), es diagonal dominante y su \(k\)-ésima fila es no nula. Esto implica que \(\sub{a^{(k-1)}}{k}{k} \neq 0\).
 
 \item[\textbf{Paso inductivo:}] Vamos a escribir a \(A^{(k-1)}\) por bloques de la siguiente manera:
 \[

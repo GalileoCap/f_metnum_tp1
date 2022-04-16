@@ -28,9 +28,9 @@ def lu_df(df):
 def split(l, n):
 	return [l[i*n:(i + 1)*n] for i in range(len(l) // n)]
 
-def run(fpath_in, fpath_out, method, debug = False, special = ''):
+def run(fpath_in, fpath_out, method, profiling = False, special = ''):
 	subprocess.run(
-		f'../tp1{".debug" if debug else ""}{special} {fpath_in} {fpath_out} {method}',
+		f'../tp1{".profiling" if profiling else ""}{special} {fpath_in} {fpath_out} {method}',
 		shell = True, capture_output = True
 	)
 

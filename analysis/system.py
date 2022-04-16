@@ -70,4 +70,3 @@ def error_range(M, b, x, x_bar, data):
 	x_bar = x_bar.reshape((1, mp1*n))
 
 	return (np.linalg.norm(x - x_bar) / np.linalg.norm(x)) <= (np.linalg.cond(M) * np.linalg.norm(b - b_bar) / np.linalg.norm(b))
-

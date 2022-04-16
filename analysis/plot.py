@@ -35,7 +35,7 @@ def isotherms(isos, data, fpath):
 	for name, iso in isos.items():
 		# r = [x for x in iso if x >= ri and x <= re]
 		r = iso
-		print(name, iso)
+		# print(name, iso)
 		if len(r) > 0: #A: Para que la isoterma se "pegue" bien al dar la vuelta
 			r.append(r[0])
 		fig.add_trace(go.Scatterpolar(
@@ -88,7 +88,7 @@ def t_pct_lu(df, fpath):
 	)
 	fig.write_image(img_fpath(f'{fpath}.t_pct_lu'))
 
-def peligrosidad(distances, x, fpath):
+def peligrosidad(distances, x, fpath, radii = False):
 	# fig = px.scatter(x = x, y = distances)
 	fig = go.Figure() 
 	fig.add_trace(go.Scatter(
@@ -97,9 +97,20 @@ def peligrosidad(distances, x, fpath):
 	))
 	fig.update_layout(
 		# title = 'Distancia de la isoterma (temperatura externa fija)',
-		xaxis_title = 'Temperatura interna (ºC)',
-		yaxis_title = 'Posición de la isoterma (% de la pared)',
+		xaxis_title = 'Temperatura interna (ºC)' if not radii else 'Cantidad de radios internos',
+		yaxis_title = 'Posición de la isoterma',
 	)
+	if not radii:
+		metals = {
+			'Aluminio': 660,
+			'Hierro': 1538,
+			'Cobre': 1085,
+			# 'Latón': 930,
+			# 'Niquel': 1453,
+			'Tungsteno': 3400
+		}
+		for metal, temp in metals.items():
+			fig.add_vline(x = temp)#, annotation_text = metal)
 	fig.write_image(img_fpath(f'{fpath}'))
 
 def complete(fpath):

@@ -8,7 +8,9 @@
 *.synctex.gz
 *.toc
 
-data/
+data/*.out
+data/*.png
+data/*.csv.gz
 
 analysis/.venv
 analysis/backup
