@@ -28,7 +28,7 @@ void write_output() {
 
   fout.precision(6);
 
-#ifndef _ENTREGA_
+#ifdef _PROFILING_
   for (const long& time : times) fout << time << ' '; fout << '\n';
   for (const std::vector<floating_t>& inst : isotherm) { 
     for (const floating_t& r : inst) fout << r << ' '; fout << '\n';
