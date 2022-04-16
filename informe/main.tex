@@ -5,7 +5,7 @@
 \usepackage{g-util}
 \usepackage{caratula}
 \usepackage{amsfonts, amsmath, amssymb, amsthm}
-\usepackage{graphicx, float, hyperref}
+\usepackage{graphicx, float, hyperref, wrapfig}
 \graphicspath{ {../data/} }
 %\usepackage[xetex]{xcolor}
 
@@ -49,7 +49,12 @@
 \section{Introducción}
 \label{sec:intro}
 
-%TODO: Presentar problema, y las técnicas (Gauss, LU), referenciar lemas, bibliografía y las teóricas
+\begin{wrapfigure}{l}{0.25\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{alto_horno}
+\caption{Diarama de las partes de un alto horno}
+\label{fig:alto_horno}
+\end{wrapfigure}
 
 \paragraph{} Los altos hornos son un tipo de horno metalúrgico, usados para producir metales industriales. Están formado por una pared circular usualmente de acero y ladrillos refractarios \cite{how.it.works} lo que permite fundir distintos metales en el centro. En la Figura \ref{fig:furnace} se puede ver un diagrama de la sección horizontal de un horno. \\
 Estos hornos suelen trabajar con temperaturas internas de 900ºC a 1300ºC \cite{how.it.works}, y en las paredes externas se suelen medir temperaturas de entre 50ºC y 200ºC \cite{consigna}. Dentro de la pared es importante la posición de la isoterma de 500ºC, ya que si esta se encuentra cerca del exterior (ver Sección \ref{sec:peligrosidad}) la integridad del horno podría estar en riesgo.
