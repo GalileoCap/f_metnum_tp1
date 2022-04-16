@@ -136,12 +136,11 @@ void _solve_lu(uint inst) {
 void find_iso(uint inst) { //U: Finds the isotherm by doing a linear interpolation between the two points around where it should be
   const std::vector<floating_t> &t = T[inst]; //A: Rename
   for (uint i = 0; i < n; i++) { //A: For each angle
-    uint j = 0; while(j < (mp1 - 1) && t[j * n + i] > iso) j++; //A: Find the two points around where the isotherm is
-    if (j < (mp1 - 1)) { //A: The isotherm is within the furnace
-      floating_t m = (t[(j + 1) * n + i] - t[j * n + i]) / dr; //U: Slope of the line
-      floating_t r = ri + j * dr;
-      isotherm[inst][i] = r + (iso - t[(j * n + i)]) / m;
-    } else isotherm[inst][i] = re + 1; //A: The isotherm isn't in the furnace NOTE: Values outside of the furnace are invalid and thus should be ignored
+    isotherm[inst][i] = re + 1; //A: Default NOTE: Values outside of the furnace are invalid and thus should be ignored 
+    uint j = 0; while(j < (mp1 - 1) && t[j * n + i] > iso && t[(j+1) * n + i] > iso) j++; //A: Find the two points around where the isotherm is
+    floating_t m = (t[(j + 1) * n + i] - t[j * n + i]) / dr; //U: Slope of the line
+    floating_t r = ri + j * dr;
+    isotherm[inst][i] = r + (iso - t[(j * n + i)]) / m;
   }
   //TODO: The temperature can come back up
 }
