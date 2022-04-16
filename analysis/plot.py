@@ -3,7 +3,6 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy import stats
 
 from utils import *
 
@@ -28,18 +27,29 @@ def temperature(result, data, fpath): #TODO: Plotlyze
 
 	plt.savefig(img_fpath(f'{fpath}.temperature'))
 
-def isotherm(iso, data, fpath):
-	[_, _, mp1, n, _, _], _ = data #TODO: Internal radius
-	iso.append(iso[0]) #A: Para que la isoterma se "pegue" bien al dar la vuelta
+def isotherms(isos, data, fpath):
+	[ri, re, mp1, n, _, _], _ = data #TODO: Internal radius
+	fig = go.Figure()
 	theta = np.linspace(0, 360, n + 1) #NOTE: Plotly expects angles
 
-	fig = px.line_polar(
-		r = iso, range_r = (1, 2),
-		theta = theta, start_angle = 0, direction = 'counterclockwise'
+	for name, iso in isos.items():
+		# r = [x for x in iso if x >= ri and x <= re]
+		r = iso
+		print(name, iso)
+		if len(r) > 0: #A: Para que la isoterma se "pegue" bien al dar la vuelta
+			r.append(r[0])
+		fig.add_trace(go.Scatterpolar(
+			r = r, 
+			theta = theta,
+			mode = 'lines',
+			name = name
+		))
+
+	fig.update_polars(radialaxis = {'range': [ri, re]})
+	fig.update_layout(
+		# title = 'Posición de la isoterma',
+		legend_title = 'Resultado'
 	)
-	# fig.update_layout(
-		# title = 'Posición de la isoterma'
-	# )
 	#TODO: Peligrosidad
 	fig.write_image(img_fpath(f'{fpath}.isotherm'))
 
@@ -100,4 +110,4 @@ def complete(fpath):
 	for inst in range(ninst):
 		_fpath = f'{fpath}.{inst}'
 		temperature(temps[inst], data, _fpath)
-		isotherm(isos[inst], data, _fpath)
+		isotherms({'isotherm': isos[inst]}, data, _fpath)

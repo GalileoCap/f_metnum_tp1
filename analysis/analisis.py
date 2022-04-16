@@ -4,6 +4,7 @@ from scipy import stats
 
 from utils import *
 import plot
+import system
 
 def times(reps, mp1_range, n_range, ninst_range, fpath, replace = False):
 	for ninst in ninst_range:
@@ -73,11 +74,47 @@ def complete(params, fpath):
 	run(in_fpath(fpath), out_fpath(fpath), 0, True)
 	plot.complete(fpath)
 
-if __name__ == '__main__':
-	# complete([1, 2, 15, 15, 500, 1], '../data/complete.simple')
-	# times(100, [2, 3], [4], [1, 2, 9], f'../data/times.simple', replace = False) 
-	# peligrosidad(500, 150, 100, '../data/peligrosidad.simple')
+def compare_expected(replace = False):
+	print('compare_expected', replace)
+	for i in range(1, 4 + 1):
+		print('compare_expected', i)
+		fpath = f'../data/tests_alu/test{i}'
 
-	# complete([1, 2, 50, 50, 500, 1], '../data/complete')
-	# times(1000, range(2, 50), [4], [1, 2, 9], f'../data/times', replace = False)
-	# peligrosidad(500, 150, 1, '../data/peligrosidad')
+		if replace:
+			run(in_fpath(fpath), out_fpath(fpath), 0)
+
+		data = parse_input(in_fpath(fpath))
+		M = system.matrix(data)
+		b = system.result(data)
+
+		_, _, output = parse_output(out_fpath(fpath), data)
+		_, _, expected = parse_output(expected_fpath(fpath), data)
+		python = system.solve(M, b)
+
+		if not system.compare_results(output, python):
+			print('compare_expected ERROR', i)
+
+		[_, _, mp1, n, _, ninst], _ = data
+		diffs = [np.abs(expected[inst] - python[inst]) for inst in range(ninst)]
+		cond_n = np.linalg.cond(M)
+		for inst in range(ninst):
+			print('compare_expected within range?', system.error_range(M, b[inst], python[inst], expected[inst], data))
+
+			a_iso = system.calc_isotherm(python[inst], data)
+			e_iso = system.calc_isotherm(expected[inst], data)
+			plot.isotherms({'Expected': e_iso, 'Approximate': a_iso}, data, f'../data/expected.{i}.{inst}')
+			
+			plot.temperature(diffs[inst], data, f'../data/expected.{i}.{inst}')
+	
+	print('compare_expected DONE')
+	#TODO: Diferencia entre isotermas
+
+if __name__ == '__main__':
+	complete([1, 2, 15, 15, 500, 1], '../data/complete.simple')
+	times(100, [2, 3], [4], [1, 2, 9], f'../data/times.simple', replace = True) 
+	peligrosidad(500, 150, 100, '../data/peligrosidad.simple')
+
+	complete([1, 2, 50, 50, 500, 1], '../data/complete')
+	times(1000, range(2, 50), [4], [1, 2, 9], f'../data/times', replace = True)
+	peligrosidad(500, 150, 1, '../data/peligrosidad')
+	compare_expected()

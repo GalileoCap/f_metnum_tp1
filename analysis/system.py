@@ -48,31 +48,26 @@ def solve(M, b):
 		for _b in b
 	]
 
-def check_tests(replace = True):
-	print('check_tests', replace)
-	for i in range(1, 4 + 1):
-		print('check_tests', i)
-		fpath = f'../data/tests_alu/test{i}'
+def calc_isotherm(T, data):
+	[ri, re, mp1, n, iso, _], _ = data
+	dr = (re - ri) / mp1
 
-		if replace:
-			run(in_fpath(fpath), out_fpath(fpath), 0)
+	res = []
+	for i in range(n): #A: For each angle
+		j = 0
+		while j < (mp1-1) and T[j * n + i] > iso: #A: Until I find it or run out of range 
+			j += 1
+		res.append(ri + j * dr)
 
-		data = parse_input(in_fpath(fpath))
-		M = matrix(data)
-		b = result(data)
+	return res
 
-		_, _, output = parse_output(out_fpath(fpath), data)
-		_, _, expected = parse_output(expected_fpath(fpath), data)
-		python = solve(M, b)
+def error_range(M, b, x, x_bar, data):
+	[_, _, mp1, n, _, _], _ = data
 
-		[_, _, _, _, _, ninst], _ = data
+	b = b.reshape((1, mp1*n))
+	b_bar = M.dot(x_bar) 
+	x = x.reshape((1, mp1*n)) 
+	x_bar = x_bar.reshape((1, mp1*n))
 
-		cvspy = compare_results(output, python) 
-		cvsexpected = compare_results(output, expected)
-		pyvsexpected = compare_results(python, expected)
+	return (np.linalg.norm(x - x_bar) / np.linalg.norm(x)) <= (np.linalg.cond(M) * np.linalg.norm(b - b_bar) / np.linalg.norm(b))
 
-		print('check_tests cvspy cvsexpected pyvsexpected', cvspy, cvsexpected, pyvsexpected)
-		#TODO: Check differences
-
-if __name__ == '__main__':
-	check_tests(False)
