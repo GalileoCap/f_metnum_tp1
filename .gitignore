@@ -1,5 +1,5 @@
-data/a.*
 *.lof
+*.log
 *.aux
 .*.swp
 *.log
@@ -7,4 +7,9 @@ data/a.*
 *.fdb_latexmk
 *.synctex.gz
 *.toc
+
+data/
+
 analysis/.venv
+analysis/backup
+analysis/plots
