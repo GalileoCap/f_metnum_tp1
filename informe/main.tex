@@ -2,8 +2,8 @@
 \documentclass[12pt]{article}
 \usepackage[margin=1.0in]{geometry}
 
-\usepackage{g-util}
-\usepackage{caratula}
+%\usepackage{g-util}
+\usepackage{caratula1}
 \usepackage{amsfonts, amsmath, amssymb, amsthm}
 \usepackage{graphicx, float, hyperref, wrapfig}
 \graphicspath{ {../data/} }
@@ -42,34 +42,46 @@
 \integrante{Anachure, Juan Pablo}{99/16}{janachure@gmail.com}
 
 \maketitle
-
 \tableofcontents
 
 \pagebreak
 \section{Introducción}
 \label{sec:intro}
 
-\begin{wrapfigure}{l}{0.25\textwidth}
-\centering
-\includegraphics[width=0.25\textwidth]{alto_horno}
-\caption{Diarama de las partes de un alto horno}
-\label{fig:alto_horno}
+% Palabras clave:[Eliminación Gausseana. Factorización LU. Alto Horno. Isoterma. Peligrosidad. ]
+
+\begin{wrapfigure}{l}{0.35\textwidth}
+	\centering
+	\includegraphics[width=0.35\textwidth]{alto_horno}
+	\caption{Diarama de las partes de un alto horno}
+	\label{fig:alto_horno}
 \end{wrapfigure}
 
-\paragraph{} Los altos hornos son un tipo de horno metalúrgico, usados para producir metales industriales. Están formado por una pared circular usualmente de acero y ladrillos refractarios \cite{how.it.works} lo que permite fundir distintos metales en el centro. En la Figura \ref{fig:furnace} se puede ver un diagrama de la sección horizontal de un horno. \\
-Estos hornos suelen trabajar con temperaturas internas de 900ºC a 1300ºC \cite{how.it.works}, y en las paredes externas se suelen medir temperaturas de entre 50ºC y 200ºC \cite{consigna}. Dentro de la pared es importante la posición de la isoterma de 500ºC, ya que si esta se encuentra cerca del exterior (ver Sección \ref{sec:peligrosidad}) la integridad del horno podría estar en riesgo.
+\paragraph{} Los altos hornos son un tipo de horno metalúrgico, usados para producir metales industriales. Están formado por una pared circular usualmente de acero y ladrillos refractarios, lo que permite fundir distintos metales en el centro. En la Figura \ref{fig:furnace} se puede ver un diagrama de la sección horizontal de un horno. \\
+\paragraph{} Estos hornos suelen trabajar con temperaturas internas de 900ºC a 1300ºC \cite{how.it.works}, y en las paredes externas se suelen medir temperaturas de entre 50ºC y 200ºC. Dentro de la pared es importante la posición de la isoterma de 500ºC, ya que si esta se encuentra cerca del exterior (ver Sección \ref{sec:peligrosidad}) la integridad del horno podría estar en riesgo.
 
-%TODO: fig:furnace
 
-\paragraph{} En este trabajo estudiamos una manera de calcular las temperaturas dentro de la pared, buscando poder estimar la posición de la isoterma. \\
-Para ello utilizamos una discretización de la ecuación del calor de Laplace (Sección \ref{sec:modelado}). Por lo que necesitamos conocer las dimensiones del horno (el radio interno y el radio externo), y las temperaturas medidas a diferentes ángulos en el interior y exterior del horno. Una vez conseguidos esos datos, armamos una matriz que nos permite estimar la temperatura en diferentes radios dentro de la la pared. %TODO: m en lugar de m+1
+
+\paragraph{} En este trabajo estudiamos una manera de calcular las temperaturas dentro de la pared, buscando poder estimar la posición de la isoterma. Para ello utilizamos una discretización de la ecuación del calor de Laplace (Sección \ref{sec:modelado}). 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.55]{../data/alto_discreto.png}
+	\caption{Sección circular del horno}
+	\label{fig:furnace}
+\end{figure}	\\
+
+El problema de encontrar la isoterma, y medición de peligrosidad se puede resolver utilizando un modelo que requiere de un conjunto de temperaturas medidas en diferentes ángulos. Todo esto es procesado utilizando un sistema de ecuaciones lineales, por lo que sera de interés utilizar métodos que permitan encontrar soluciones a este tipo de sistemas, particularmente este trabajo esta orientado en la utilización de Eliminación Gausseana y factorización LU.
+
+Finalmente, utilizando los resultados de dichos métodos se quiere evaluar la peligrosidad del horno. La cercanía de la isoterma a la pared externa será la que determinará la existencia de una situación de riesgo en la estructura. %TODO: m en lugar de m+1
+
 
 \section{Desarrollo}
 
 \subsection{Modelado}
 \label{sec:modelado}
 
-\paragraph{} La ecuación del calor Laplace afirma que en estado estacionario cualquier temperatura \(T(r, \theta)\), dada por la posición dentro de la pared del horno en coordenadas polares \((r, \theta)\) que representan al radio y el ángulo polar, cumple la siguiente ecuación: \cite{consigna}
+\paragraph{} La ecuación del calor Laplace afirma que en estado estacionario cualquier temperatura \(T(r, \theta)\), dada por la posición dentro de la pared del horno en coordenadas polares \((r, \theta)\) que representan al radio y el ángulo polar, cumple la siguiente ecuación: 
 
 \begin{equation}
 \label{eq:laplace}
@@ -228,7 +240,7 @@ Para confirmar si este error es aceptable usamos el número de condición, que e
 \subsection{Revisando errores de redondeo}
 \label{sec:rounding}
 
-\paragraph{} Un problema común en la computación es que, al trabajar con números representados en una cantidad fija de dígitos binarios (bits), hay errores de redondeo \cite{rounding}. \\ %TODO: Mejor explicación
+\paragraph{} Un problema común en la computación es que, al trabajar con números representados en una cantidad fija de dígitos binarios (bits), hay errores de redondeo. \\ %TODO: Mejor explicación
 Para experimentar sobre esto, armamos un sistema que generara coeficientes "muy chiquitos" (\(\alpha, \beta, \gamma, \chi \leq 10^{-6}\)) con temperaturas muy altas (\(T_i, T_e \geq 10^6\)) y comparamos los resultados entre usar \texttt{long double} que usa 128-bits para guardar los números y usar \texttt{float} que usa 32-bits.
 \paragraph{} En la figura \ref{fig:rounding.diffs} se pueden ver las diferencias causadas. Como vimos en la sección \ref{sec:expected}, el algoritmo que usamos para resolver el sistema causa que el error crezca hacia el centro del horno. También por razones similares a lo visto en la sección \ref{sec:expected} estos errores no causan que la isoterma estimada se encuentre en un lugar muy diferente.
 
@@ -246,7 +258,7 @@ Para experimentar sobre esto, armamos un sistema que generara coeficientes "muy 
 \subsubsection{Movimiento de la isoterma en base a la temperatura interna}
 
 \paragraph{} Como diferentes metales necesitan diferentes temperaturas para ser fundidos, nos interesó ver la posición estimada de la isoterma para algunos de los metales más trabajados. \\ 
-En la figura \ref{fig:isotherm_by_inner} se puede ver la posición de la isoterma en base a la temperatura interna, tiene marcadas en orden las temperaturas del aluminio, el cobre, el hierro, y el tungsteno. \cite{metales}
+En la figura \ref{fig:isotherm_by_inner} se puede ver la posición de la isoterma en base a la temperatura interna, tiene marcadas en orden las temperaturas del aluminio, el cobre, el hierro, y el tungsteno. \cite{big:metales}
 
 \begin{figure}[H]
 \centering
@@ -422,19 +434,17 @@ En la figura \ref{fig:time.9solve} resaltamos que para resolver 9 instancias del
 \end{figure}
 
 \listoffigures
-
+\pagebreak
 \begin{thebibliography}{9}
-\bibitem{how_it_works}
+\bibitem{how.it.works}
 American Iron and Steel Institute (2005), \href{https://web.archive.org/web/20070510164459/http://www.steel.org/AM/Template.cfm?Section=Home&template=%2FCM%2FHTMLDisplay.cfm&ContentID=5433}{How A Blast Furnace Works}. steel.org
 
-\bibitem{consigna}
-Cátedra de Métodos Numéricos (2022), Consigna del TP1
-
-\bibitem{rounding}
-TODO:
-
 \bibitem{clases}
-Cátedra de Métodos Numéricos (2022), Clases Teóricas
+R. Burden y J.D.Faires, Análisis numérico, International Thomson Editors, 2002.
+
+bibitem{big:metales}
+Temperatura de fusión de metales.  \href{https://www.redproteger.com.ar/temp_fusion.htm}
+
 
 \end{thebibliography}
 
