@@ -75,10 +75,10 @@ def complete(params, fpath):
 	plot.complete(fpath)
 
 if __name__ == '__main__':
-	complete([1, 2, 15, 15, 500, 1], '../data/complete.simple')
-	times(100, [2, 3], [4], [1, 2, 9], f'../data/times.simple', replace = True) 
-	peligrosidad(500, 150, 100, '../data/peligrosidad.simple')
+	complete([1, 2, 15, 15, 500, 1], '../data/simple/complete')
+	times(100, [2, 3], [4], [1, 2, 9], f'../data/simple/times', replace = True) 
+	peligrosidad(500, 150, 100, '../data/simple/peligrosidad')
 
-	complete([1, 2, 50, 50, 500, 1], '../data/complete')
-	times(1000, range(2, 50), [4], [1, 2, 9], f'../data/times', replace = True)
-	peligrosidad(500, 150, 1, '../data/peligrosidad')
+	complete([1, 2, 50, 50, 500, 1], '../data/big/complete')
+	times(1000, range(2, 50), [4], [1, 2, 9], f'../data/big/times', replace = True)
+	peligrosidad(500, 150, 1, '../data/big/peligrosidad')

@@ -2,11 +2,11 @@
 \documentclass[12pt]{article}
 \usepackage[margin=1.0in]{geometry}
 
-%\usepackage{g-util}
-%\usepackage{caratula1}
+\usepackage{g-util}
+\usepackage{caratula.met}
 \usepackage{amsfonts, amsmath, amssymb, amsthm}
 \usepackage{graphicx, float, hyperref, wrapfig}
-\graphicspath{ {../data/} }
+\graphicspath{ {./plots/} }
 %\usepackage[xetex]{xcolor}
 
 % \theoremstyle{plain}
@@ -48,8 +48,6 @@
 \section{Introducción}
 \label{sec:intro}
 
-% Palabras clave:[Eliminación Gausseana. Factorización LU. Alto Horno. Isoterma. Peligrosidad. ]
-
 \begin{wrapfigure}{l}{0.35\textwidth}
 	\centering
 	\includegraphics[width=0.35\textwidth]{alto_horno}
@@ -57,24 +55,18 @@
 	\label{fig:alto_horno}
 \end{wrapfigure}
 
-\paragraph{} Los altos hornos son un tipo de horno metalúrgico, usados para producir metales industriales. Están formado por una pared circular usualmente de acero y ladrillos refractarios, lo que permite fundir distintos metales en el centro. En la Figura \ref{fig:furnace} se puede ver un diagrama de la sección horizontal de un horno. \\
+\paragraph{} Los altos hornos son un tipo de horno metalúrgico, usados para producir metales industriales. Están formados por una pared circular usualmente de acero y ladrillos refractarios, lo que permite fundir distintos metales dentro. En la Figura \ref{fig:furnace} se puede ver un diagrama de la sección horizontal de un horno.
 \paragraph{} Estos hornos suelen trabajar con temperaturas internas de 900ºC a 1300ºC \cite{how.it.works}, y en las paredes externas se suelen medir temperaturas de entre 50ºC y 200ºC. Dentro de la pared es importante la posición de la isoterma de 500ºC, ya que si esta se encuentra cerca del exterior (ver Sección \ref{sec:peligrosidad}) la integridad del horno podría estar en riesgo.
-
-
-
-\paragraph{} En este trabajo estudiamos una manera de calcular las temperaturas dentro de la pared, buscando poder estimar la posición de la isoterma. Para ello utilizamos una discretización de la ecuación del calor de Laplace (Sección \ref{sec:modelado}). 
+\paragraph{} En este trabajo se estudia una manera de calcular las temperaturas dentro de la pared, buscando poder estimar la posición de la isoterma. Para ello se utiliza una discretización de la ecuación del calor de Laplace (Sección \ref{sec:modelado}). 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.55]{../data/alto_discreto.png}
-	\caption{Sección circular del horno}
+	\includegraphics[scale=0.55]{alto_discreto}
+	\caption{Sección horizontal de un horno}
 	\label{fig:furnace}
-\end{figure}	\\
+\end{figure}
 
-El problema de encontrar la isoterma, y medición de peligrosidad se puede resolver utilizando un modelo que requiere de un conjunto de temperaturas medidas en diferentes ángulos. Todo esto es procesado utilizando un sistema de ecuaciones lineales, por lo que sera de interés utilizar métodos que permitan encontrar soluciones a este tipo de sistemas, particularmente este trabajo esta orientado en la utilización de Eliminación Gausseana y factorización LU.
-
-Finalmente, utilizando los resultados de dichos métodos se quiere evaluar la peligrosidad del horno. La cercanía de la isoterma a la pared externa será la que determinará la existencia de una situación de riesgo en la estructura. %TODO: m en lugar de m+1
-
+\paragraph{} El problema de encontrar la isoterma, y medición de peligrosidad se puede resolver utilizando un modelo que requiere de un conjunto de temperaturas medidas en diferentes ángulos. Esto es procesado utilizando un sistema de ecuaciones lineales, por lo que será de interés utilizar métodos que permitan encontrar soluciones a este tipo de sistemas, particularmente este trabajo esta orientado en la utilización de Eliminación Gaussiana y factorización LU. Finalmente, utilizando los resultados de dichos métodos se quiere evaluar la peligrosidad del horno.
 
 \section{Desarrollo}
 
@@ -88,7 +80,7 @@ Finalmente, utilizando los resultados de dichos métodos se quiere evaluar la pe
   0 = \frac{\partial^2T(r,\ \theta)}{\partial r^2} + \frac{1}{r} \frac{\partial^2T(r,\ \theta)}{\partial r} + \frac{1}{r^2} \frac{\partial^2T(r,\ \theta)}{\partial\theta^2}
 \end{equation}
 
-Para poder utilizarla para resolver el problema computacionalmente, discretizamos el dominio a coordenadas polares. Tomando una partición \(0 = \theta_0 < \theta_1 < ... < \theta_n = 2\pi\) en \(n\) ángulos discretos con \(\theta_k - \theta_{k-1} = \Delta\theta\) para \(k = 1, ..., n\) y una partición \(r_i = r_0 < r_1 < ... < r_m = r_e\) en \(m+1\) radios discretos con \(r_j - r_{j-1} = \Delta r\) para \(j = 1, ..., m\). Tomamos \(\sub{t}{j}{k} = T(r_j, \theta_k)\) y transformamos a la ecuación (\ref{eq:laplace}) en un conjunto de ecuaciones lineales sobre las incógnitas \(\sub{t}{j}{k}\), aproximando así a \(T\) por la siguiente fórmula de diferencias finitas: %TODO: Too similar to the assignment
+\paragraph{} Para poder utilizarla para resolver el problema computacionalmente, discretizamos el dominio a coordenadas polares. Tomando una partición \(0 = \theta_0 < \theta_1 < ... < \theta_n = 2\pi\) en \(n\) ángulos discretos con \(\theta_k - \theta_{k-1} = \Delta\theta\) para \(k = 1, ..., n\) y una partición \(r_i = r_0 < r_1 < ... < r_m = r_e\) en \(m+1\) radios discretos con \(r_j - r_{j-1} = \Delta r\) para \(j = 1, ..., m\). Tomamos \(\sub{t}{j}{k} = T(r_j, \theta_k)\) y transformamos a la ecuación (\ref{eq:laplace}) en un conjunto de ecuaciones lineales sobre las incógnitas \(\sub{t}{j}{k}\), aproximando así a \(T\) por la siguiente fórmula de diferencias finitas: %TODO: Too similar to the assignment
 
 \begin{equation}
 \label{eq:laplace.finita}
@@ -100,21 +92,18 @@ Que podemos reescribir como una combinación lineal de cinco temperaturas:
 \label{eq:laplace.split}
 0 = \sub{t}{j-1}{k} (\frac{1}{(\Delta r)^{2}} + \frac{-1}{r \Delta r}) + \sub{t}{j}{k} (\frac{-2}{(\Delta r)^2} + \frac{1}{r \Delta r} + \frac{-2}{(r \Delta \Theta)^{2}}) + \sub{t}{j+1}{k} \frac{1}{(\Delta r)^{2}} + \sub{t}{j}{k-1} \frac{1}{(r \Delta \Theta)^{2}} + \sub{t}{j}{k+1} \frac{1}{(r\Delta \Theta)^{2}}
 \end{equation}
-
-Aunque para simplificar la notación vamos a nombrar cada coeficiente, por lo que nos queda: \\ %TODO: Renombrar coeficientes para que tengan más sentido
-\begin{equation}
-\label{eq:laplace.split}
-0 = \alpha_r\sub{t}{j-1}{k} + \beta_r\sub{t}{j}{k} + \gamma_r\sub{t}{j+1}{k} + \chi_r\sub{t}{j}{k-1} + \chi_r\sub{t}{j}{k+1}
-\end{equation}\\
-
+%Aunque para simplificar la notación vamos a nombrar cada coeficiente, por lo que nos queda: \\ %TODO: Renombrar coeficientes para que tengan más sentido
+%\begin{equation}
+%\label{eq:laplace.split}
+%0 = \alpha_r\sub{t}{j-1}{k} + \beta_r\sub{t}{j}{k} + \gamma_r\sub{t}{j+1}{k} + \chi_r\sub{t}{j}{k-1} + \chi_r\sub{t}{j}{k+1}
+%\end{equation}
 %\(
 %\tab \alpha_r = \frac{1}{(\Delta r)^{2}} + \frac{-1}{r \Delta r} \\
 %\tab \beta_r = \frac{-2}{(\Delta r)^2} + \frac{1}{r \Delta r} + \frac{-2}{(r \Delta \Theta)^{2}} \\
 %\tab \gamma_r = \frac{1}{(\Delta r)^{2}} \\ 
 %\tab \chi_r = \frac{1}{(r \Delta \Theta)^{2}}
 %\)
-
-\paragraph{} Ahora armamos un sistema de ecuaciones para cada \(\sub{t}{j}{k}\), que podemos representar matricialmente de la forma \(At = b\). Donde \(A \in \mathbb{R}^{(m+1)n \times (m+1)n}\) es una matriz con las primeras y últimas \(n\) filas iguales a la identidad (por las ), y el resto corresponde a una instancia de la ecuación (\ref{eq:laplace.split}); \(t \in \mathbb{R}^{(m+1)n}\) es el vector de incógntias con los radios "estirados" uno arriba del otro; Y  \(b \in \mathbb{R}^{(m+1)n}\) es el vector de resultados que tiene las temperaturas internas en los primeros \(n\) valores, las externas en los últimos \(n\) valores, y el resto todos ceros. \\
+\paragraph{} Ahora armamos un sistema de ecuaciones para cada \(\sub{t}{j}{k}\), que podemos representar matricialmente de la forma \(At = b\). Donde \(A \in \mathbb{R}^{(m+1)n \times (m+1)n}\) es una matriz con las primeras y últimas \(n\) filas iguales a la identidad (por las temperaturas externas e internas, que son datos), y el resto corresponde a una instancia de la ecuación (\ref{eq:laplace.split}); \(t \in \mathbb{R}^{(m+1)n}\) es el vector de incógntias con los radios "estirados" uno arriba del otro; Y  \(b \in \mathbb{R}^{(m+1)n}\) es el vector de resultados que tiene las temperaturas internas en los primeros \(n\) valores, las externas en los últimos \(n\) valores, y el resto todos ceros. \\
 %Se ve descripto cómo construir la matriz con la siguiente función:  %TODO: Es horrible
 %\begin{equation}
 %\sub{a}{i}{j} = \begin{cases}
@@ -163,11 +152,11 @@ En la ecuación (\ref{eq:example}) mostramos un ejemplo de cómo queda el sistem
 }
 \end{equation}
 
-Demostramos en el apéndice \ref{appendix:justificacion} que se puede aplicar la Eliminación Gausseana sin pivotear filas.
+Demostramos en el apéndice \ref{appendix:justificacion} que se puede aplicar la Eliminación Gaussiana sin pivotear filas.
 
 \subsection{Implementación}
 
-\paragraph{} Implementamos este sistema en \texttt{C++}. Primero programamos matrices usando vectores de la \texttt{STL}. Luego implementamos funciones que resuelvan sistemas de ecuaciones usando Eliminación Gausseana o factorización LU. Y finalmente recibimos los datos y guardamos los resultados en archivos pasados por parámetros. \\
+\paragraph{} Implementamos este sistema en \texttt{C++}. Primero programamos matrices usando vectores de la \texttt{STL}. Luego implementamos funciones que resuelvan sistemas de ecuaciones usando Eliminación Gaussiana o factorización LU. Y finalmente recibimos los datos y guardamos los resultados en archivos pasados por parámetros. \\
 También armamos una herramienta en \texttt{Python} para correr el programa y analizar los resultados, armando los gráficos vistos a través de este informe (como la Figura \ref{fig:temperature}). \\
 Todo el código se puede ver adjuntado al informe, junto con explicaciones de cómo usarlo. \\
 
@@ -178,13 +167,13 @@ Todo el código se puede ver adjuntado al informe, junto con explicaciones de c�
 \label{fig:temperature}
 \end{figure}
 
-\subsubsection{Optimización Matriz "en banda"}
+%\subsubsection{Optimización Matriz "en banda"}
 
-\paragraph{} Por cómo construimos la matriz, luego aplicar la eliminación Gausseana, nos queda una matriz "en banda", lo que en este caso significa que en todas las filas sólo tiene máximo \(n+1\) elementos diferentes a cero. \\
-Por lo que podemos aprovechar y sólo operar sobre esos valores, reduciendo tanto la memoria usada por el programa, como la cantidad de operaciones hechas para resolver el sistema. \\
-En la figura \ref{fig:memory.band.nband} se puede apreciar el espacio ahorrado por esta optimización. \\
-Y en la figura \ref{fig:times.band.nband} se nota que esta optimización no mejoró mucho el tiempo de operación. Esto se debe a que el órden del sistema no dejó de ser \(\bigO{((m+1)n)^3}\). %TODO: Calcular bien el orden
-%TODO: Figuras memory.band.nband y times.band.nband
+%\paragraph{} Por cómo construimos la matriz, luego aplicar la eliminación Gaussiana, nos queda una matriz "en banda", lo que en este caso significa que en todas las filas sólo tiene máximo \(n+1\) elementos diferentes a cero. \\
+%Por lo que podemos aprovechar y sólo operar sobre esos valores, reduciendo tanto la memoria usada por el programa, como la cantidad de operaciones hechas para resolver el sistema. \\
+%En la figura \ref{fig:memory.band.nband} se puede apreciar el espacio ahorrado por esta optimización. \\
+%Y en la figura \ref{fig:times.band.nband} se nota que esta optimización no mejoró mucho el tiempo de operación. Esto se debe a que el órden del sistema no dejó de ser \(\bigO{((m+1)n)^3}\). %TODO: Calcular bien el orden
+%%TODO: Figuras memory.band.nband y times.band.nband
 
 %\begin{figure}[H] %TODO: Fig.banda
 %\centering
@@ -205,9 +194,7 @@ Y en la figura \ref{fig:times.band.nband} se nota que esta optimización no mejo
 \label{fig:isotherm.pos}
 \end{figure}
 
-\paragraph{} Para encontrarla buscamos dos puntos dentro de un mismo ángulo que "rodeen" la temperatura buscada, y luego aproximamos linealmente la posición donde se encuentra entre estos dos puntos. En la figura \ref{fig:estimar.isoterma} representamos cómo hacemos esto.
-
-%TODO: Diagrama mostrando la isoterma estimada entre dos puntos
+\paragraph{} Para encontrarla buscamos dos puntos dentro de un mismo ángulo que "rodeen" la temperatura buscada, y luego aproximamos linealmente la posición donde se encuentra entre estos dos puntos. 
 
 \subsection{Midiendo la Peligrosidad}
 \label{sec:peligrosidad.distance}
@@ -224,14 +211,14 @@ Pero habría que conocer más sobre cómo está armado un alto horno para poder 
 \label{sec:expected}
 
 \paragraph{} La cátedra nos proveyó con una serie de tests, con su input y un output esperado. Al correr nuestro programa con este input nos encontramos con que los resultados conseguidos no eran iguales a los esperados (ver figura \ref{fig:expected.diffs}). \\
-Para confirmar si este error es aceptable usamos el número de condición, que es un número calculado a partir de la matriz que nos permite definir un rango de error al rededor del resultado esperado dentro del cual, si se encuentran nuestros resultados, es aceptable y esperado por los errores de redondeo (ver sección \ref{sec:rounding}).
+Para confirmar si este error es aceptable usamos el número de condición, que es un número calculado a partir de la matriz que nos permite definir un rango de error alrededor del resultado esperado, dentro del cual, si se encuentran nuestros resultados, es aceptable y común por errores de redondeo (ver sección \ref{sec:rounding}).
 
-\paragraph{} Se puede notar que el error crece hacia el centro del horno. Esto se debe a que el algoritmo implementado para resolver el sistema despeja las temperaturas más internas en función de las más externas, por lo que los errores cometidos se van sumando desde afuera hacia adentro.
+\paragraph{} Se puede notar que el error crece hacia el centro del horno. Esto se debe a que el algoritmo implementado para resolver el sistema despeja las temperaturas más internas en función de las más externas, por lo que los errores cometidos se van acumulando desde afuera hacia adentro.
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.5]{expected.1.0.temperature}
-\caption{Diferencia entre las temperaturas esperadas y las calculadas}
+\includegraphics[scale=0.5]{test1.1.0.temperature}
+\caption{Diferencia entre las temperaturas esperadas y las calculadas del test 1}
 \label{fig:expected.diffs}
 \end{figure}
 
@@ -240,9 +227,8 @@ Para confirmar si este error es aceptable usamos el número de condición, que e
 \subsection{Revisando errores de redondeo}
 \label{sec:rounding}
 
-\paragraph{} Un problema común en la computación es que, al trabajar con números representados en una cantidad fija de dígitos binarios (bits) algo que puede ocurrir son errores de redondeo. Se busca verificar que las cuentas no deberian variar cambiando el tipo de representacion con la que se hacen los calculos. Para ello, queremos comparar los resultados entre usar \texttt{long double} es decir, utilizando 128-bits para guardar los números y utilizar \texttt{float} que usa 32-bits. \\ %TODO: Mejor explicación
-\subsubsection{Armado de experimento}
-	Es necesario armar un sistema que genere coeficientes "muy chiquitos" (\(\alpha, \beta, \gamma, \chi \leq 10^{-6}\)) y utilice temperaturas muy altas (\(T_i, T_e \geq 10^6\)). De esta manera, de haber errores de redondeo al hacer restas o divisiones se estara poniendo a prueba los calculos realizados con casos extremos.
+\paragraph{} Un problema común en la computación es que, al trabajar con números representados en una cantidad fija de dígitos binarios (bits), algo que puede ocurrir son errores de redondeo. Se busca cuantificar la diferencia entre dos tipos de representación. Para ello, queremos comparar los resultados entre usar \texttt{long double} es decir, utilizando 128-bits para guardar los números y utilizar \texttt{float} que usa 32-bits. 
+\paragraph{} Armamos un sistema que genere coeficientes "muy chiquitos" (menores que \(10^{-6}\)) y utilice temperaturas muy altas (\(T_i, T_e \geq 10^6\)). De esta manera, deberían de notarse diferencias en los resultados entre las representaciones.
 
 \begin{figure}[H]
 \centering
@@ -251,27 +237,17 @@ Para confirmar si este error es aceptable usamos el número de condición, que e
 \label{fig:rounding.diffs}
 \end{figure}
 
-\paragraph{} En la figura \ref{fig:rounding.diffs} se pueden ver las diferencias causadas,  tomando el eje y como la medida de diferencias. Parte de estos errores se deben a lo mencionado en la seccion \ref{sec:expected} ya que los algoritmos propuestos tienen un leve error de redondeo. Observemos que la mayoria de los errores aparecen en la cercania al centro del horno, esto tiene sentido, ya que la mayor cantidad de calculos se hicieron en la pared interior del horno, esto es asi por como se armo el sistema ya que en las paredes externas e internas el horno vale siempre igual a la temperatura exterior (yyy) y la temperatura interior (0) mientras que en las paredes interiores del horno se debe cumplir la ecuacion de calor de Laplace. También, por razones similares a lo visto en la sección \ref{sec:expected}, estos errores no generan un cambio en la isoterma estimada.
+\paragraph{} En la figura \ref{fig:rounding.diffs} se pueden ver las diferencias causadas. Parte de estos errores se deben a lo mencionado en la sección \ref{sec:expected} ya que los algoritmos propuestos tienen un leve error de redondeo. Observemos que los errores crecen hacia el centro del horno, esto sucede por cómo se resuelve el sistema, ya que los resultados de las temperaturas más externas se usan para calcular las más internas, por lo que el error se acumula hacia el centro. Y no hay error en las temperaturas del radio interno y del radio externo, porque estos son datos de entrada y no calculados.
 
-INCLUIR IMAGEN DE ISOTERMA.
-
-% Como vimos en la sección , el algoritmo que usamos para resolver el sistema causa que el error crezca hacia el centro del horno. 
-\subsubsection{Replicabilidad del experimento}
 \paragraph{} Este experimento puede ser repetido modificando la entrada en \texttt{data/rounding.in} y corriendo el script \texttt{analyze\_rounding.py}.
 
 \subsection{Movimiento de la isoterma}
 
 \subsubsection{Movimiento de la isoterma en base a la temperatura interna}
 
-\paragraph{} Algo interesante a estudiar en el problema del alto horno, es ver como varia la isoterma estimada en funcion a la cantidad de temperatura interna que tengamos, es decir, si la temperatura interna fuese variable esto tendra o no alguna influencia sobre la ubicacion estimada de la isoterma. Se busca comprobar que la ubicacion de la isoterma esta muy relacionada a la variabilidad de la temperatura interna. Motivado por este experimento, tambien evaluamos puntos de fusion de los metales mas trabajados en altos hornos, de esta manera se puede observar cual la isoterma en cada uno de estos, los metales estudiados fueron aluminio, el cobre, el hierro, y el tungsteno \cite{big:metales}. 
-
-\subsubsection{Armado de experimento}\\
-Para armar el experimento es necesario variar las instancias de las temperaturas internas las cuales van del rango entre 500 a 7000 grados. Mientras \textbf{tambien variamos mp1 que nose que es..}
-
-%Como diferentes metales necesitan diferentes temperaturas para ser fundidos, nos interesó ver la posición estimada de la isoterma para algunos de los metales más trabajados. \\ 
-%En la figura \ref{fig:isotherm_by_inner} se puede ver la posición de la isoterma en base a la temperatura interna, tiene marcadas en orden las temperaturas del aluminio, el cobre, el hierro, y el tungsteno. \cite{big:metales}
-
-\paragraph{} Por como se puede ver en la figura, se observa una relacion entre la temperatura interna del horno y la ubicacion de la isoterma pero la misma se da hasta alcanzar los 3000 grados. Aun asi, no es posible concluir que sea una clara relacion positiva, es decir, que cuanto mayor sea una mayor sera la otra, ya que luego de que la temperatura interna supera los 3300 grados la ubicacion de la isoterma termina convergiendo hasta llegar cerca de 3. 
+\paragraph{} Algo interesante a estudiar, es ver cómo varía la isoterma estimada en función a la temperatura interna que medimos. Se busca comprobar que la ubicación de la isoterma esta muy relacionada a la variabilidad de la temperatura interna. Motivado por este experimento, también resaltamos puntos de fusion de los metales más trabajados en altos hornos, de esta manera se puede observar la posición de la isoterma en cada uno, los metales estudiados fueron aluminio, el cobre, el hierro, y el tungsteno \cite{big:metales}. 
+\paragraph{} Para armar el experimento variamos las temperaturas internas desde 500 a 7000 grados centígrados. \\
+Como se puede ver en la figura \ref{fig:isotherm_by_inner}, se observa una clara relación entre la temperatura interna del horno y la ubicación de la isoterma. %TODO: Está llegando hacia la pared %TODO pero la misma se da hasta alcanzar los 3000 grados. Aun asi, no es posible concluir que sea una clara relacion positiva, es decir, que cuanto mayor sea una mayor sera la otra, ya que luego de que la temperatura interna supera los 3300 grados la ubicacion de la isoterma termina convergiendo hasta llegar cerca de 3. 
 
 \begin{figure}[H]
 	\centering
@@ -280,15 +256,14 @@ Para armar el experimento es necesario variar las instancias de las temperaturas
 	\label{fig:isotherm_by_inner}
 \end{figure}
 
-Finalmente, se puede notar la ubicacion de los metales elegidos aquellos que necesitan una temperatura del horno mas baja tienen la posicion de su isoterma mas cercana al centro, mientras que las que requieren mas calor tienen una isoterma mas cercana a la pared exterior. 
+Finalmente, se puede notar la ubicación de los metales elegidos aquellos que necesitan una temperatura del horno mas baja tienen la posición de su isoterma mas cercana al centro, mientras que las que requieren mas calor tienen una isoterma mas cercana a la pared exterior. 
 
-\subsubsection{Replicabilidad del experimento}
+%\subsubsection{Replicabilidad del experimento}
 \paragraph{} Este experimento puede ser repetido con el script \texttt{analyze\_isotherm.py}.
 
 \subsubsection{Movimiento de isoterma en función de la cantidad de radios}
 
 \paragraph{} Por como se planteó la estimación de la isoterma, nos parece que la cantidad de radios dentro de la pared del horno sobre los que se trabaja afectan a la posición estimada de la isoterma. Para estudiar el efecto que tiene esta variable, analizamos los resultados cuando cambiamos la cantidad radios. Asumimos a las temperaturas internas y externas fijadas en 1500ºC y 150ºC respectivamente. \\
-Como se ve en la figura \ref{fig:isotherm_by_radii}, la posición varía bastante en base a la cantidad de radios.
 
 \begin{figure}[H]
 \centering
@@ -297,17 +272,27 @@ Como se ve en la figura \ref{fig:isotherm_by_radii}, la posición varía bastant
 \label{fig:isotherm_by_radii}
 \end{figure}
 
-\subsubsection{Replicabilidad del experimento}
+\paragraph{} Como se ve en la figura \ref{fig:isotherm_by_radii}, la posición varía bastante en base a la cantidad de radios. Preliminarmente parece convincente que si se calculan más radios se debería conseguir la estimación más correcta de la isoterma, pero habría que conseguir datos donde se sabe la posición de la isoterma, para confirmarlo.
+
+%\subsubsection{Replicabilidad del experimento}
 \paragraph{} Este experimento puede ser repetido con el script \texttt{analyze\_isotherm.py}.
+
+\section{Conclusión}
+
+\paragraph{} En nuestra experimentación nos encontramos con errores en los cálculos. No creemos que se deba a un error en la metodología usada, ni en la implementación. Sino a un error esperable al estar discretizando una ecuación continua, y al usar computadoras para hacer cuentas. \\
+A futuro nos gustaría hacer otra implementación que aproveche diferentes técnicas de representación numérica para reducir los errores causados por la tecnología usada.
+\paragraph{} Pudimos corroborar que la posición estimada de la isoterma depende de parámetros elegidos arbitrariamente. Esto resalta que las decisiones tomadas al resolver un problema pueden afectar a los resultados, y tienen que ser consideradas. 
+\paragraph{} También se debería analizar la estructura material de los altos hornos, para poder definir la peligrosidad.
 
 \pagebreak
 \appendix 
+
 \renewcommand{\thesection}{\Roman{section}}
 
 \section{Justificación Gauss sin pivoteo} 
 \label{appendix:justificacion}
 
-\paragraph{} En este anexo demostramos que las matrices armadas (Sección \ref{sec:modelado}) son diagonal dominantes y luego justificamos inductivamente que se puede aplicar el método de Eliminación Gausseana sin reordenar filas.
+\paragraph{} En este anexo demostramos que las matrices armadas (Sección \ref{sec:modelado}) son diagonal dominantes y luego justificamos inductivamente que se puede aplicar el método de Eliminación Gaussiana sin reordenar filas.
 
 \begin{defi}
 Sea \(A \in \mathbb{R}^{n \times n}\). \(A\) se dice \textbf{diagonal dominante} si 
@@ -318,7 +303,7 @@ Sea \(A \in \mathbb{R}^{n \times n}\). \(A\) se dice \textbf{diagonal dominante}
 
 \begin{lema}
 \label{lema:EG conserva diagonal dominante}
-Sea \(A^{(0)} = A \in \mathbb{R}^{n \times n}\) una matriz diagonal dominante, con \(\sub{A}{1}{1} \neq 0\), y \(A^{(1)}\) el resultado de aplicar un paso de Eliminación Gausseana (sin pivoteo) sobre \(A\). Entonces \(A^{(1)}\) es diagonal dominante.
+Sea \(A^{(0)} = A \in \mathbb{R}^{n \times n}\) una matriz diagonal dominante, con \(\sub{A}{1}{1} \neq 0\), y \(A^{(1)}\) el resultado de aplicar un paso de Eliminación Gaussiana (sin pivoteo) sobre \(A\). Entonces \(A^{(1)}\) es diagonal dominante.
 \end{lema}
 \begin{proof}
 Consideremos la \(k\)-ésima fila de \(A^{(1)}\), queremos ver que:
@@ -332,7 +317,7 @@ Se tiene que:
   \sum_{\substack{i = 1 \\ i \neq j}}^n | a^{(1)}_{j,i} |
 = \sum_{\substack{i = 2 \\ i \neq j}}^n | a_{j,i} - \frac{a_{j,1}}{a_{1,1}} a_{1,i} |
 \]
-Ahora veamos como es un paso de Eliminación Gausseana:
+Ahora veamos como es un paso de Eliminación Gaussiana:
 \[\begin{split}
   \sum_{\substack{k = 1 \\ k \neq i}}^n | a^{(1)}_{i,k} | & = \sum_{\substack{k = 2 \\ k \neq i}}^n | a_{i,k} - \frac{a_{i,1}}{a_{1,1}} a_{1,k} | \\
                                                           & \leq \sum_{\substack{k = 2 \\ k \neq i}}^n \vert a_{i,k} \vert + \left \vert \frac{a_{i,1}}{a_{1,1}} \right \vert \sum_{\substack{k = 2 \\ k \neq i}}^n \vert a_{1,i} \vert \\
@@ -342,7 +327,7 @@ Ahora veamos como es un paso de Eliminación Gausseana:
 \end{split}\]
 \end{proof}
 
-\paragraph{} Ahora se tiene que luego de realizar un paso de Eliminación Gausseana la matriz resultante también es diagonal dominante.
+\paragraph{} Ahora se tiene que luego de realizar un paso de Eliminación Gaussiana la matriz resultante también es diagonal dominante.
 \paragraph{} Finalmente queda demostrar que, luego de realizar una iteración del algoritmo de Eliminación Gaussiana sin pivoteo sobre nuestra matriz, la matriz resultante queda bien definida. \\ %TODO: Definir antes que es bien definida
 Entonces:
 \[\begin{split}
@@ -374,14 +359,14 @@ Ahora al sumar los módulos del resto de los coeficientes queda que:
                                                                        & = | \sub{a}{i}{i} |
 \end{split}\] %TODO: Era \proof?
 
-\paragraph{} Así de la demostración anterior se obtuvo que la matriz \(A \in \mathbb{R}^{(m+1)n \times (m+1)n}\) de nuestro sistema es diagonal dominante y aparte no tiene ceros en la diagonal. Ahora resta ver que la Eliminación Gausseana es aplicable y se puede utilizar sin pivoteo. Así solamente hay que ver que para los puntos del medio del horno puede aplicarse Eliminación Gausseana y ademas la matriz resultante es diagonal dominante. 
+\paragraph{} Así de la demostración anterior se obtuvo que la matriz \(A \in \mathbb{R}^{(m+1)n \times (m+1)n}\) de nuestro sistema es diagonal dominante y aparte no tiene ceros en la diagonal. Ahora resta ver que la Eliminación Gaussiana es aplicable y se puede utilizar sin pivoteo. Así solamente hay que ver que para los puntos del medio del horno puede aplicarse Eliminación Gaussiana y ademas la matriz resultante es diagonal dominante. 
 
 \begin{itemize}
 \item En las primeras y últimas \(n\) filas, la matriz ya está triangulada, por lo que no hace falta aplicar Gauss.
 
-\item[\textbf{Caso base:}] Notemos que \(\sub{a}{1}{1} = 1\) no es nulo, entonces se puede aplicar el primer paso de la Eliminación Gausseana. Dado que \(\sub{a}{1}{2} =0\) entonces si aplicamos un paso de Eliminación Gausseanaen en el lugar $a_{2,2}$ queda un coeficiente no nulo y dado que la matriz luego de haber procesado la primer fila sigue siendo diagonal dominante entonces puedo aplicar el siguiente paso de Eliminación Gausseana. %TODO: Revisar
+\item[\textbf{Caso base:}] Notemos que \(\sub{a}{1}{1} = 1\) no es nulo, entonces se puede aplicar el primer paso de la Eliminación Gaussiana. Dado que \(\sub{a}{1}{2} =0\) entonces si aplicamos un paso de Eliminación Gaussianaen en el lugar $a_{2,2}$ queda un coeficiente no nulo y dado que la matriz luego de haber procesado la primer fila sigue siendo diagonal dominante entonces puedo aplicar el siguiente paso de Eliminación Gaussiana. %TODO: Revisar
 
-\item[\textbf{HI:}] Tomamos como Hipótesis Inductiva que la matriz \(A^{(k-1)}\), obtenida tras aplicar \(k-1\) pasos de Eliminación Gausseana sobre \(A\), es diagonal dominante y su \(k\)-ésima fila es no nula. Esto implica que \(\sub{a^{(k-1)}}{k}{k} \neq 0\).
+\item[\textbf{HI:}] Tomamos como Hipótesis Inductiva que la matriz \(A^{(k-1)}\), obtenida tras aplicar \(k-1\) pasos de Eliminación Gaussiana sobre \(A\), es diagonal dominante y su \(k\)-ésima fila es no nula. Esto implica que \(\sub{a^{(k-1)}}{k}{k} \neq 0\).
 
 \item[\textbf{Paso inductivo:}] Vamos a escribir a \(A^{(k-1)}\) por bloques de la siguiente manera:
 \[
@@ -393,13 +378,13 @@ Ahora al sumar los módulos del resto de los coeficientes queda que:
 Con \(\sub{A^{(k-1)}}{1}{1} \in \mathbb{R}^{(k-1) \times (k-1)}\). \\ %TODO: Y el resto?
 %Con \(\sub{A^{(k-1)}}{1}{1} \in \mathbb{R}^{(k-1) \times (k-1)}, B \in \mathbb{R}^{(m+1)n \times (m+1)n - (k-1)}, C \in \mathbb{R}^{(m+1)n - (k-1) \times (k-1)}, \sub{A^{(k-1)}}{2}{2} \in \mathbb{R}^{(m+1)n - (k-1) \times (m+1)n - (k-1)}\). \\ %TODO: Formatting
 Luego de haber probado lo anterior, sabemos que \(\sub{A^{(k-1)}}{1}{1}\) y \(\sub{A^{(k-1)}}{2}{2}\) son matrices diagonal dominantes. \\
-Como para armar \(A^{(k-1)}\) ya aplicamos \((k-1)\) pasos de la Eliminación Gausseana, se tiene que \(C = 0\). \\
+Como para armar \(A^{(k-1)}\) ya aplicamos \((k-1)\) pasos de la Eliminación Gaussiana, se tiene que \(C = 0\). \\
 Entonces cuando se quiere aplicar un paso de Eliminación Gaussiana sobre \(\sub{A^{(k-1)}}{2}{2}\), dado que el elemento de la diagonal es no nulo, este paso se puede hacer sin pivotear la matriz, y utilizando el lema \ref{lema:EG conserva diagonal dominante} se sigue que la matriz luego de este paso sera diagonal dominante.
 
 %En caso de que la fila corresponda a un punto en la pared interna del horno, entonces esa ecuacion esta igualada a 0, para ciertos $j = 1, \dots, m - 1$ y $k = 0, \dots, n - 1$. Puntualmente, por la forma en la que se construye la matriz del sistema, el elemento $a_{u+1,u+1+n}$ es el coeficiente de la variable $t_{j,k+1}$ en dicha ecuación, que es necesariamente no nulo. Por otra parte, como la matriz $\mat{A}$ es \emph{banda} $n, n$, todos los elementos de la columna $u+1$ que se encuentran por encima de $a_{u+1,u+1+n}$ deben ser nulos. Esto quiere decir que ninguna de las iteraciones ya ejecutadas de Eliminación Gaussiana modificaron este coeficiente, y por lo tanto, sigue siendo no nulo.
 
 \paragraph{} Solo resta probar que la fila \(k+1\) de la matriz \(A^{(k)}\) es no nula. \\
-Si la fila $k$ corresponde a uno de los puntos extremos de la pared del horno, es decir, si \(1 \leq k \leq n \text{ ó } mn \leq k \leq (m+1)n\), tendrá un $1$ en la diagonal y $0$ en las demás posiciones, entonces no cambia en ningún paso de la Eliminación Gausseana. \\
+Si la fila $k$ corresponde a uno de los puntos extremos de la pared del horno, es decir, si \(1 \leq k \leq n \text{ ó } mn \leq k \leq (m+1)n\), tendrá un $1$ en la diagonal y $0$ en las demás posiciones, entonces no cambia en ningún paso de la Eliminación Gaussiana. \\
 Pero si la fila corresponde a una de los puntos internos de la pared, entonces ya que cada fila representa a una instancia de la ecuación de Laplace, se tiene que el elemento \(\sub{a}{k+1}{k+1+n-1}\) es el coeficiente de la temperatura \(\sub{t}{j}{k+1}\) que es no nulo. %TODO: Lo de las columnas no es cierto
 
 %Si la fila representa a un coeficiente de la ecuación de calor, para ciertos $j = 1, ..., m - 1$ y $k = 0, ..., n - 1$. Puntualmente, por la forma en la que se construye la matriz del sistema, el elemento $a_{k+1,k+1+n-1}$ es el coeficiente de la temperatura $t_{j,k+1}$ en dicha ecuación, debe ser no nulo. Dado como esta armado el sistema todos los elementos de la columna $k+1$ que se encuentran por arriba de $a_{k+1,k+1+n-1}$, deben ser nulos, es decir, en una iteracion de gauss no deberían haberse modificado el coeficiente $a_{k+1,k+1+n-1}$ entonces sigue siendo no nulo.
@@ -407,8 +392,8 @@ Pero si la fila corresponde a una de los puntos internos de la pared, entonces y
 
 \section{Efectividad de la factorización LU}
 
-\paragraph{} Para resolver un sistema de ecuaciones cualquiera planteado como \(Ax = b\), se puede usar el método de Eliminación Gausseana o "Gauss", que tiene un tiempo de operación en el orden de \(\bigO{n^3}\). Pero también se puede resolver usando la factorización LU, que son dos matrices tales que \(A = LU\), donde \(L\) es triangular inferior y \(U\) es triangular superior. La forma de resolverlo así sería primero calcular un \(y\) tal que \(Ly = b\) y luego resolver \(Ux = y\). Esto toma \(\bigO{n^2}\) operaciones.
-\paragraph{} Como vimos en el apéndice \ref{appendix:justificacion}, se puede aplicar Gauss sobre la matriz de nuestro sistema. Lo cual es condición suficiente para afirmar que tiene factorización \(A = LU\) \cite{clases}. Que nos es muy útil cuando queremos resolver múltiples instancias de \(At_i = b_i\) ya que la factorización LU se puede calcular aplicando la Eliminación Gausseana una sola vez con, y resolver cada instancia \(LUt_i = b_i\) requiere muchas menos operaciones. \\
+\paragraph{} Para resolver un sistema de ecuaciones cualquiera planteado como \(Ax = b\), se puede usar el método de Eliminación Gaussiana o "Gauss", que tiene un tiempo de operación en el orden de \(\bigO{n^3}\). Pero también se puede resolver usando la factorización LU, que son dos matrices tales que \(A = LU\), donde \(L\) es triangular inferior y \(U\) es triangular superior. La forma de resolverlo así sería primero calcular un \(y\) tal que \(Ly = b\) y luego resolver \(Ux = y\). Esto toma \(\bigO{n^2}\) operaciones.
+\paragraph{} Como vimos en el apéndice \ref{appendix:justificacion}, se puede aplicar Gauss sobre la matriz de nuestro sistema. Lo cual es condición suficiente para afirmar que tiene factorización \(A = LU\) \cite{clases}. Que nos es muy útil cuando queremos resolver múltiples instancias de \(At_i = b_i\) ya que la factorización LU se puede calcular aplicando la Eliminación Gaussiana una sola vez con, y resolver cada instancia \(LUt_i = b_i\) requiere muchas menos operaciones. \\
 En la figura \ref{fig:solve.time} se puede confirmar que resolver una instancia del sistema con LU es definitivamente más rápido que resolverla con Gauss. 
 
 \begin{figure}[H]
@@ -450,8 +435,9 @@ En la figura \ref{fig:time.9solve} resaltamos que para resolver 9 instancias del
 \label{fig:time.9solve}
 \end{figure}
 
-%\listoffigures
 \pagebreak
+\listoffigures
+
 \begin{thebibliography}{9}
 \bibitem{how.it.works}
 American Iron and Steel Institute (2005). %\href{https://web.archive.org/web/20070510164459/http://www.steel.org/AM/Template.cfm?Section=Home&template=%2FCM%2FHTMLDisplay.cfm&ContentID=5433}{How A Blast Furnace Works}. steel.org
@@ -460,8 +446,7 @@ American Iron and Steel Institute (2005). %\href{https://web.archive.org/web/200
 R. Burden y J.D.Faires, Análisis numérico, International Thomson Editors, 2002.
 
 \bibitem{big:metales}
-Temperatura de fusión de metales.  \href{https://www.redproteger.com.ar/temp_fusion.htm}
-
+Temperatura de fusión de metales. \url{https://www.redproteger.com.ar/temp_fusion.htm}
 
 \end{thebibliography}
 

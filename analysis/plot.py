@@ -99,7 +99,7 @@ def peligrosidad(distances, x, fpath, radii = False):
 	fig.update_layout(
 		# title = 'Distancia de la isoterma (temperatura externa fija)',
 		xaxis_title = 'Temperatura interna (ºC)' if not radii else 'Cantidad de radios internos',
-		yaxis_title = 'Posición de la isoterma',
+		yaxis_title = 'Porcentaje de la pared recorrida por la isoterma',
 	)
 	if not radii:
 		metals = {
@@ -115,7 +115,7 @@ def peligrosidad(distances, x, fpath, radii = False):
 		for metal, temp in metals.items():
 			fig.add_vline(x = temp,line_color=colors[k],annotation_text=metal, annotation_position="bottom left")#, annotation_text = metal, line_color=colors[k])
 			k+=1
-	fig.update_layout(showlegend=True)
+	# fig.update_layout(showlegend=True)
 	fig.write_image(img_fpath(f'{fpath}'))
 
 def complete(fpath):

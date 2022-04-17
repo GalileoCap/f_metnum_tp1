@@ -40,5 +40,5 @@ def analyze_rounding(fpath, replace = False):
 	#TODO: Better reporting
 
 if __name__ == '__main__':
-	fpath = f'../data/rounding'
+	fpath = f'../data/rounding/test'
 	analyze_rounding(fpath, replace = True) #TODO: True

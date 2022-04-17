@@ -31,15 +31,16 @@ def analyze_expected(fpath, replace = False):
 	for inst in range(ninst):
 		print(f'analyze_expected instance {inst} within range? {system.error_range(M, b[inst], python[inst], expected[inst], data)}')
 
+		_fpath = f'{fpath}.{i}.{inst}'
 		a_iso = system.calc_isotherm(python[inst], data)
 		e_iso = system.calc_isotherm(expected[inst], data)
-		plot.isotherms({'Expected': e_iso, 'Approximate': a_iso}, data, f'../data/expected.{i}.{inst}')
+		plot.isotherms({'Expected': e_iso, 'Approximate': a_iso}, data, _fpath)
 		
-		plot.temperature(diffs[inst], data, f'../data/expected.{i}.{inst}')
+		plot.temperature(diffs[inst], data, _fpath)
 	
 	print(f'analyze_expected fpath {fpath} replace {replace} DONE')
 	#TODO: Reporte cuantificando errores
 
 if __name__ == '__main__':
 	for i in range(1, 4 + 1):
-		analyze_expected(f'../data/test{i}', False)
+		analyze_expected(f'../data/tests_alu/test{i}', True)

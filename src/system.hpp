@@ -89,11 +89,7 @@ void _solve_gauss(uint inst) {
   std::vector<floating_t> &t = T[inst]; //A: Rename
   uint i = (_b.size() - 1);
   while (true) {
-#ifdef _NBANDA_
-    uint l_limit = _b.size();
-#else
     uint l_limit = ((i+n+1) > _b.size()) ? _b.size() : (i+n+1); //A: Min(i+n, _b.size())
-#endif
     floating_t foo = 0; for (uint l = (i+1); l < l_limit; l++) foo += _A(i, l) * t[l]; //A: foo = sum from l = i+1 to n of (a[i][l] * t[l])
     t[i] = (_b[i] - foo) / _A(i, i);
 
@@ -107,12 +103,8 @@ void _solve_lu(uint inst) {
   //S: First solve Ly = b
   std::vector<floating_t> y (_b.size()); 
   for (uint i = 0; i < y.size(); i++) { //A: Solve for each y
-#ifdef _NBANDA_
-    uint l_base = 0;
-#else
-    //uint l_base = (i < n) ? 0 : (i-n); //A: Max(i-n, 0)
-    uint l_base = 0;
-#endif
+    uint l_base = (i < n) ? 0 : (i-n); //A: Max(i-n, 0)
+    //uint l_base = 0;
     floating_t foo = 0; for (uint l = l_base; l < i; l++) foo += L(i, l) * y[l]; //A: foo = sum from l = i+1 to n of (a[i][l] * x[l])
     y[i] = (_b[i] - foo) / L(i, i);
   }
@@ -121,11 +113,7 @@ void _solve_lu(uint inst) {
   std::vector<floating_t> &t = T[inst]; //A: Rename
   uint i = (y.size() - 1);
   while (true) {
-#ifdef _NBANDA_
-    uint l_limit = y.size();
-#else
     uint l_limit = ((i+n+1) > y.size()) ? y.size() : (i+n+1); //A: Min(i+n+1, y.size())
-#endif
     floating_t foo = 0; for (uint l = (i+1); l < l_limit; l++) foo += A(i, l) * t[l]; //A: foo = sum from l = i+1 to n of (u[i][l] * t[l])
     t[i] = (y[i] - foo) / A(i, i);
 

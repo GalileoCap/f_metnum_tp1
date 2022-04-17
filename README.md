@@ -3,7 +3,7 @@
 ## Integrantes
 
 * F. Galileo Cappella Lewi, 653/20, galileocapp@gmail.com
-* Juan Pablo Anachure, 99/16, TODO@dc.uba.ar
+* Juan Pablo Anachure, 99/16, janachure@gmail.com
 
 ## Compilar
 
@@ -11,7 +11,7 @@ Se compila con el script `compilar.sh`.
 
 ## Ejecutables
 
-Hay cuatro ejecutables diferentes, todos reciben los mismos parámetros: Path al archivo de entrada, el path de salida, y el método deseados (0 Gauss, 1 LU). También todos reciben el mismo formato de archivo de input, que es el pedido por la cátedra:
+Hay tres ejecutables diferentes, todos reciben los mismos parámetros: Path al archivo de entrada, el path de salida, y el método deseados (0 Gauss, 1 LU). También todos reciben el mismo formato de archivo de input, que es el pedido por la cátedra:
 ~~~
 ri re m+1 n isoterma ninst
 T(ri, 0) ... T(ri, 2pi) T(re, 0) ... T(re, 2pi)
@@ -35,13 +35,10 @@ Se puede correr un ejemplo:
 ./tp1.profiling ./data/example1.in ./data/example1.profiling.out 1
 ~~~
 
-### Nband
-
-Este ejecutable devuelve dos líneas, una que tiene los tiempos de corrida, y otra con la memoria ocupada por la matriz.  
-
 ### Float
 
 Este ejecutable corre al programa usando `float` en lugar de `long double` como su tipo de punto flotante. Devuelve el mismo archivo de output pedido por la cátedra.
 
-<!--## Análisis TODO-->
+## Análisis
 
+Ver archivo `README.md` dentro del directorio `analysis`
