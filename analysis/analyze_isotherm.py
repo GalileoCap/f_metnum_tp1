@@ -33,7 +33,6 @@ def isotherm_by_radii(mp1_range, fpath):
 		run(in_fpath(fpath), out_fpath(fpath), 0, True)
 		_, [[position, _, _]], _ = parse_output(out_fpath(fpath), [[1, 3, mp1, 3, 500, 1], None], True)
 		distances.append(position)
-
 	plot.peligrosidad(distances, list(mp1_range), fpath, True)
 	print('isotherm_by_radii DONE')
 

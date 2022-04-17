@@ -93,7 +93,8 @@ def peligrosidad(distances, x, fpath, radii = False):
 	fig = go.Figure() 
 	fig.add_trace(go.Scatter(
 		x = x,
-		y = distances
+		y = distances,
+		name="Isoterma"
 	))
 	fig.update_layout(
 		# title = 'Distancia de la isoterma (temperatura externa fija)',
@@ -109,8 +110,12 @@ def peligrosidad(distances, x, fpath, radii = False):
 			# 'Niquel': 1453,
 			'Tungsteno': 3400
 		}
+		colors = ["green","blue","red","black"]
+		k = 0
 		for metal, temp in metals.items():
-			fig.add_vline(x = temp)#, annotation_text = metal)
+			fig.add_vline(x = temp,line_color=colors[k],annotation_text=metal, annotation_position="bottom left")#, annotation_text = metal, line_color=colors[k])
+			k+=1
+	fig.update_layout(showlegend=True)
 	fig.write_image(img_fpath(f'{fpath}'))
 
 def complete(fpath):

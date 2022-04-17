@@ -3,7 +3,7 @@
 \usepackage[margin=1.0in]{geometry}
 
 %\usepackage{g-util}
-\usepackage{caratula}
+%\usepackage{caratula1}
 \usepackage{amsfonts, amsmath, amssymb, amsthm}
 \usepackage{graphicx, float, hyperref, wrapfig}
 \graphicspath{ {../data/} }
@@ -240,9 +240,9 @@ Para confirmar si este error es aceptable usamos el número de condición, que e
 \subsection{Revisando errores de redondeo}
 \label{sec:rounding}
 
-\paragraph{} Un problema común en la computación es que, al trabajar con números representados en una cantidad fija de dígitos binarios (bits), hay errores de redondeo. \\ %TODO: Mejor explicación
-Para experimentar sobre esto, armamos un sistema que generara coeficientes "muy chiquitos" (\(\alpha, \beta, \gamma, \chi \leq 10^{-6}\)) con temperaturas muy altas (\(T_i, T_e \geq 10^6\)) y comparamos los resultados entre usar \texttt{long double} que usa 128-bits para guardar los números y usar \texttt{float} que usa 32-bits.
-\paragraph{} En la figura \ref{fig:rounding.diffs} se pueden ver las diferencias causadas. Como vimos en la sección \ref{sec:expected}, el algoritmo que usamos para resolver el sistema causa que el error crezca hacia el centro del horno. También por razones similares a lo visto en la sección \ref{sec:expected} estos errores no causan que la isoterma estimada se encuentre en un lugar muy diferente.
+\paragraph{} Un problema común en la computación es que, al trabajar con números representados en una cantidad fija de dígitos binarios (bits) algo que puede ocurrir son errores de redondeo. Se busca verificar que las cuentas no deberian variar cambiando el tipo de representacion con la que se hacen los calculos. Para ello, queremos comparar los resultados entre usar \texttt{long double} es decir, utilizando 128-bits para guardar los números y utilizar \texttt{float} que usa 32-bits. \\ %TODO: Mejor explicación
+\subsubsection{Armado de experimento}
+	Es necesario armar un sistema que genere coeficientes "muy chiquitos" (\(\alpha, \beta, \gamma, \chi \leq 10^{-6}\)) y utilice temperaturas muy altas (\(T_i, T_e \geq 10^6\)). De esta manera, de haber errores de redondeo al hacer restas o divisiones se estara poniendo a prueba los calculos realizados con casos extremos.
 
 \begin{figure}[H]
 \centering
@@ -251,22 +251,38 @@ Para experimentar sobre esto, armamos un sistema que generara coeficientes "muy 
 \label{fig:rounding.diffs}
 \end{figure}
 
+\paragraph{} En la figura \ref{fig:rounding.diffs} se pueden ver las diferencias causadas,  tomando el eje y como la medida de diferencias. Parte de estos errores se deben a lo mencionado en la seccion \ref{sec:expected} ya que los algoritmos propuestos tienen un leve error de redondeo. Observemos que la mayoria de los errores aparecen en la cercania al centro del horno, esto tiene sentido, ya que la mayor cantidad de calculos se hicieron en la pared interior del horno, esto es asi por como se armo el sistema ya que en las paredes externas e internas el horno vale siempre igual a la temperatura exterior (yyy) y la temperatura interior (0) mientras que en las paredes interiores del horno se debe cumplir la ecuacion de calor de Laplace. También, por razones similares a lo visto en la sección \ref{sec:expected}, estos errores no generan un cambio en la isoterma estimada.
+
+INCLUIR IMAGEN DE ISOTERMA.
+
+% Como vimos en la sección , el algoritmo que usamos para resolver el sistema causa que el error crezca hacia el centro del horno. 
+\subsubsection{Replicabilidad del experimento}
 \paragraph{} Este experimento puede ser repetido modificando la entrada en \texttt{data/rounding.in} y corriendo el script \texttt{analyze\_rounding.py}.
 
 \subsection{Movimiento de la isoterma}
 
 \subsubsection{Movimiento de la isoterma en base a la temperatura interna}
 
-\paragraph{} Como diferentes metales necesitan diferentes temperaturas para ser fundidos, nos interesó ver la posición estimada de la isoterma para algunos de los metales más trabajados. \\ 
-En la figura \ref{fig:isotherm_by_inner} se puede ver la posición de la isoterma en base a la temperatura interna, tiene marcadas en orden las temperaturas del aluminio, el cobre, el hierro, y el tungsteno. \cite{big:metales}
+\paragraph{} Algo interesante a estudiar en el problema del alto horno, es ver como varia la isoterma estimada en funcion a la cantidad de temperatura interna que tengamos, es decir, si la temperatura interna fuese variable esto tendra o no alguna influencia sobre la ubicacion estimada de la isoterma. Se busca comprobar que la ubicacion de la isoterma esta muy relacionada a la variabilidad de la temperatura interna. Motivado por este experimento, tambien evaluamos puntos de fusion de los metales mas trabajados en altos hornos, de esta manera se puede observar cual la isoterma en cada uno de estos, los metales estudiados fueron aluminio, el cobre, el hierro, y el tungsteno \cite{big:metales}. 
+
+\subsubsection{Armado de experimento}\\
+Para armar el experimento es necesario variar las instancias de las temperaturas internas las cuales van del rango entre 500 a 7000 grados. Mientras \textbf{tambien variamos mp1 que nose que es..}
+
+%Como diferentes metales necesitan diferentes temperaturas para ser fundidos, nos interesó ver la posición estimada de la isoterma para algunos de los metales más trabajados. \\ 
+%En la figura \ref{fig:isotherm_by_inner} se puede ver la posición de la isoterma en base a la temperatura interna, tiene marcadas en orden las temperaturas del aluminio, el cobre, el hierro, y el tungsteno. \cite{big:metales}
+
+\paragraph{} Por como se puede ver en la figura, se observa una relacion entre la temperatura interna del horno y la ubicacion de la isoterma pero la misma se da hasta alcanzar los 3000 grados. Aun asi, no es posible concluir que sea una clara relacion positiva, es decir, que cuanto mayor sea una mayor sera la otra, ya que luego de que la temperatura interna supera los 3300 grados la ubicacion de la isoterma termina convergiendo hasta llegar cerca de 3. 
 
 \begin{figure}[H]
-\centering
-\includegraphics[scale=0.5]{isotherm_by_inner}
-\caption{Distancia de la isoterma al exterior del horno}
-\label{fig:isotherm_by_inner}
+	\centering
+	\includegraphics[scale=0.5]{isotherm_by_inner}
+	\caption{Distancia de la isoterma al exterior del horno}
+	\label{fig:isotherm_by_inner}
 \end{figure}
 
+Finalmente, se puede notar la ubicacion de los metales elegidos aquellos que necesitan una temperatura del horno mas baja tienen la posicion de su isoterma mas cercana al centro, mientras que las que requieren mas calor tienen una isoterma mas cercana a la pared exterior. 
+
+\subsubsection{Replicabilidad del experimento}
 \paragraph{} Este experimento puede ser repetido con el script \texttt{analyze\_isotherm.py}.
 
 \subsubsection{Movimiento de isoterma en función de la cantidad de radios}
@@ -281,6 +297,7 @@ Como se ve en la figura \ref{fig:isotherm_by_radii}, la posición varía bastant
 \label{fig:isotherm_by_radii}
 \end{figure}
 
+\subsubsection{Replicabilidad del experimento}
 \paragraph{} Este experimento puede ser repetido con el script \texttt{analyze\_isotherm.py}.
 
 \pagebreak
@@ -295,7 +312,7 @@ Como se ve en la figura \ref{fig:isotherm_by_radii}, la posición varía bastant
 \begin{defi}
 Sea \(A \in \mathbb{R}^{n \times n}\). \(A\) se dice \textbf{diagonal dominante} si 
 \[
-  \psum{\substack{j = 1 \\ j \neq i}}{n}|A_{ij}| \leq  |A_{ii}| \qquad \forall i = 1, ..., n
+  \sum{\substack{j = 1 \\ j \neq i}}{n}|A_{ij}| \leq  |A_{ii}| \qquad \forall i = 1, ..., n
 \]
 \end{defi}
 
@@ -306,7 +323,7 @@ Sea \(A^{(0)} = A \in \mathbb{R}^{n \times n}\) una matriz diagonal dominante, c
 \begin{proof}
 Consideremos la \(k\)-ésima fila de \(A^{(1)}\), queremos ver que:
 \[
-  \psum{\substack{k = 1 \\ k \neq i}}{n} |a^{(1)}_{i,k}| \leq |a^{(1)}_{i,i} |
+  \sum{\substack{k = 1 \\ k \neq i}}{n} |a^{(1)}_{i,k}| \leq |a^{(1)}_{i,i} |
 \]
 Se tiene que:
 \[
@@ -433,16 +450,16 @@ En la figura \ref{fig:time.9solve} resaltamos que para resolver 9 instancias del
 \label{fig:time.9solve}
 \end{figure}
 
-\listoffigures
+%\listoffigures
 \pagebreak
 \begin{thebibliography}{9}
 \bibitem{how.it.works}
-American Iron and Steel Institute (2005), \href{https://web.archive.org/web/20070510164459/http://www.steel.org/AM/Template.cfm?Section=Home&template=%2FCM%2FHTMLDisplay.cfm&ContentID=5433}{How A Blast Furnace Works}. steel.org
+American Iron and Steel Institute (2005). %\href{https://web.archive.org/web/20070510164459/http://www.steel.org/AM/Template.cfm?Section=Home&template=%2FCM%2FHTMLDisplay.cfm&ContentID=5433}{How A Blast Furnace Works}. steel.org
 
 \bibitem{clases}
 R. Burden y J.D.Faires, Análisis numérico, International Thomson Editors, 2002.
 
-bibitem{big:metales}
+\bibitem{big:metales}
 Temperatura de fusión de metales.  \href{https://www.redproteger.com.ar/temp_fusion.htm}
 
 
