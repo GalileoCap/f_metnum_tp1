@@ -38,6 +38,9 @@ def times(reps, mp1_range, n_range, ninst_range, fpath, replace = False):
 		# df = df[(np.abs(stats.zscore(df['lu']))) < 3]
 		# print(df.describe())
 
+		df['time'] /= 1000 #A: Nanoseconds to microseconds
+		df['lu'] /= 1000
+
 		df['size'] = df['mp1'] * df['n']
 		df['%lu'] = df['time'] / df['lu']
 		df['time+lu'] = df['time'] + df['lu']

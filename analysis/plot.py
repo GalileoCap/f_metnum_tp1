@@ -59,7 +59,7 @@ def t_solve(df, fpath):
 		# title = f'Tiempo para resolver el sistema ({reps} reps)',
 		legend_title = 'Método',
 		xaxis_title = 'Tamaño de la matriz (elementos)',
-		yaxis_title = 'Tiempo (ns, log)',
+		yaxis_title = 'Tiempo (μs, log)',
 	)
 	fig.write_image(img_fpath(f'{fpath}.t_solve'))
 
@@ -73,8 +73,9 @@ def t_solve_lu(df, fpath):
 		# title = f'Tiempo para resolver el sistema teniendo en cuenta LU ({reps} reps)',
 		legend_title = 'Método',
 		xaxis_title = 'Tamaño de la matriz (elementos)',
-		yaxis_title = 'Tiempo (ns, log)',
+		yaxis_title = 'Tiempo (μs, log)',
 	)
+	fig.update_yaxes(type = 'log')
 	fig.write_image(img_fpath(f'{fpath}.t_solve_lu'))
 	
 def t_pct_lu(df, fpath):
@@ -88,7 +89,7 @@ def t_pct_lu(df, fpath):
 	)
 	fig.write_image(img_fpath(f'{fpath}.t_pct_lu'))
 
-def peligrosidad(distances, x, fpath, radii = False):
+def peligrosidad(distances, x, fpath, radii = False, metals = False):
 	# fig = px.scatter(x = x, y = distances)
 	fig = go.Figure() 
 	fig.add_trace(go.Scatter(
@@ -101,7 +102,7 @@ def peligrosidad(distances, x, fpath, radii = False):
 		xaxis_title = 'Temperatura interna (ºC)' if not radii else 'Cantidad de radios internos',
 		yaxis_title = 'Porcentaje de la pared recorrida por la isoterma',
 	)
-	if not radii:
+	if metals:
 		metals = {
 			'Aluminio': 660,
 			'Hierro': 1538,
