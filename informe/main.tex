@@ -18,10 +18,6 @@
 \newtheorem{defi}{Definición}
 
 \setcounter{MaxMatrixCols}{12}
-\newcommand{\Gpmatrix}[1]{\ensuremath{\begin{pmatrix} #1 \end{pmatrix}}}
-\newcommand{\Gbmatrix}[1]{\ensuremath{\begin{bmatrix} #1 \end{bmatrix}}}
-\newcommand{\sub}[3]{\ensuremath{#1_{#2,#3}}}
-\newcommand{\supra}[2]{\ensuremath{#1^#2}}
 
 \renewcommand{\figurename}{Fig.}
 \renewcommand{\listfigurename}{Figuras}
@@ -163,7 +159,7 @@ Todo el código se puede ver adjuntado al informe, junto con explicaciones de c�
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{complete.0.temperature}
-\caption{Temperatura calculada dentro del horno}
+\caption{Temperatura calculada dentro del horno (mp1 = 50, n = 50, Ti \(\approx\) 1500ºC, Te \(\approx\) 500ºC)}
 \label{fig:temperature}
 \end{figure}
 
@@ -190,7 +186,7 @@ Todo el código se puede ver adjuntado al informe, junto con explicaciones de c�
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{complete.0.isotherm}
-\caption{Posición estimada de la isoterma}
+\caption{Posición estimada de la isoterma (mp1 = 50, n = 50, Ti \(\approx\) 1500ºC, Te \(\approx\) 500ºC)}
 \label{fig:isotherm.pos}
 \end{figure}
 
@@ -201,6 +197,13 @@ Todo el código se puede ver adjuntado al informe, junto con explicaciones de c�
 
 \paragraph{} Una vez encontrada la isoterma, es importante decidir si el horno está en un estado peligroso o seguro. \\
 Para esto habría que conocer más sobre cómo está armado un alto horno para poder sacar conclusiones sobre qué tan peligrosa es la posición de la isoterma. Aunque preliminarmente se puede ver (Figura \ref{fig:isotherm_by_inner}) que si el punto de ruptura se encuentra antes de que la isoterma haya recorrido el 75\% de la pared hacia afuera hay poco margen de error, ya que hasta ese punto la isoterma se mueve rápido hacia el exterior.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.5]{isotherm_by_inner}
+  \caption{Distancia de la isoterma al exterior del horno}
+  \label{fig:isotherm_by_inner}
+\end{figure}
 
 \section{Experimentación} 
 
@@ -247,13 +250,13 @@ Para averiguar si este error es aceptable usamos el número de condición. Que e
 
 \paragraph{} Algo interesante a estudiar, es ver cómo varía la isoterma estimada en función a la temperatura interna que medimos. Se busca comprobar que la ubicación de la isoterma esta muy relacionada a la variabilidad de la temperatura interna. Motivado por este experimento, también resaltamos puntos de fusión de los metales más trabajados en altos hornos, de esta manera se puede observar la posición de la isoterma en cada uno. Los metales estudiados fueron aluminio, el cobre, el hierro, y el tungsteno \cite{big:metales}. 
 \paragraph{} Para armar el experimento variamos las temperaturas internas desde 500 hasta 7000 grados centígrados. \\
-Como se puede ver en la Figura \ref{fig:isotherm_by_inner}, se observa una clara relación entre la temperatura interna del horno y la ubicación de la isoterma. 
+Como se puede ver en la Figura \ref{fig:isotherm_by_inner_metals}, se observa una clara relación entre la temperatura interna del horno y la ubicación de la isoterma. 
 
 \begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.5]{isotherm_by_inner}
-	\caption{Distancia de la isoterma al exterior del horno}
-	\label{fig:isotherm_by_inner}
+  \centering
+  \includegraphics[scale=0.5]{isotherm_by_inner_metals}
+  \caption{Distancia de la isoterma al exterior del horno (resaltando temperatura de fusión de ciertos metales)}
+  \label{fig:isotherm_by_inner_metals}
 \end{figure}
 
 Finalmente, se puede notar la ubicación de los metales elegidos que aquellos que necesitan una temperatura del horno más baja, tienen la posición de su isoterma más cercana al centro, Mientras que las que requieren más calor tienen una isoterma más cercana a la pared exterior. 
