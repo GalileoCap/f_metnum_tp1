@@ -1,16 +1,31 @@
 #include "system.h"
 
-void construct_system() { //U: Sets up the system to be solved
+System::System(char *dataIn, char _method) : method(_method) {
+  std::ifstream fin(dataIn);
+
+  fin >> ri >> re >> mp1 >> n >> iso >> ninst; fin.ignore(); //A: Read parameters from file
+  T = std::vector<std::vector<floating_t>> (ninst, std::vector<floating_t> (mp1 * n));
+  for (uint i = 0; i < ninst; i++) {
+    for (uint j = 0; j < n; j++) fin >> T[i][j]; //A: Internal temperatures
+    for (uint j = ((mp1 - 1) * n); j < (mp1 * n); j++) fin >> T[i][j]; //A: External temperatures
+    //TODO: Check if eof and throw error
+  }
+
+  fin.close();
+
+  isotherm = std::vector<std::vector<floating_t>> (ninst, std::vector<floating_t> (n));
+  times = std::vector<long> ((method == '1') + ninst, 0);
+
   A = Matrix(mp1 * n);
 
   dr = (re - ri) / mp1; dt = 2 * M_PI / n;
-  auto calc_coefficient = [](uint c, floating_t i) {
-    floating_t r = (ri + (dr * i)); //A: Radius
+  auto calc_coefficient = [_ri=ri, _dr=dr, _dt=dt](uint c, floating_t i) {
+    floating_t r = (_ri + (_dr * i)); //A: Radius
 
-    if (c == 0) return (1 / pow(dr, 2)) + (-1 / (r * dr)); //A: Alpha
-    else if (c == 1) return (-2 / pow(dr, 2)) + (1 / (r * dr)) + (-2 / pow(r * dt, 2)); //A: Beta
-    else if (c == 2) return 1 / pow(dr, 2); //A: Gamma
-    else if (c == 3) return 1 / pow(r * dt, 2); //A: Chi
+    if (c == 0) return (1 / pow(_dr, 2)) + (-1 / (r * _dr)); //A: Alpha
+    else if (c == 1) return (-2 / pow(_dr, 2)) + (1 / (r * _dr)) + (-2 / pow(r * _dt, 2)); //A: Beta
+    else if (c == 2) return 1 / pow(_dr, 2); //A: Gamma
+    else if (c == 3) return 1 / pow(r * _dt, 2); //A: Chi
     else throw std::invalid_argument("c is out of range");
   };
 
@@ -47,7 +62,7 @@ void construct_system() { //U: Sets up the system to be solved
   }
 }
 
-void calc_lu() { //U: Calculates the LU decomposition
+void System::calc_lu() { //U: Calculates the LU decomposition
   long start = get_time();
 
   L = Matrix(A._m.size());
@@ -64,7 +79,14 @@ void calc_lu() { //U: Calculates the LU decomposition
   times[0] = get_time() - start;
 }
 
-void solve(uint inst) { //U: Solves a specific time instance, may write the output
+void System::solve_all() {
+  for (uint i = 0; i < ninst; i++) {
+    solve(i);
+    find_iso(i);
+  }
+}
+
+void System::solve(uint inst) { //U: Solves a specific time instance, may write the output
   long start = get_time();
 
   if (method == '0') _solve_gauss(inst);
@@ -73,7 +95,7 @@ void solve(uint inst) { //U: Solves a specific time instance, may write the outp
   times[(method == '1') + inst] = get_time() - start;
 }
 
-void _solve_gauss(uint inst) {
+void System::_solve_gauss(uint inst) {
   Matrix _A = A; //A: Copy
   std::vector<floating_t> _b = b[inst];
 
@@ -97,7 +119,7 @@ void _solve_gauss(uint inst) {
   }
 }
 
-void _solve_lu(uint inst) {
+void System::_solve_lu(uint inst) {
   const std::vector<floating_t>& _b = b[inst]; //A: Rename
 
   //S: First solve Ly = b
@@ -121,7 +143,7 @@ void _solve_lu(uint inst) {
   }
 }
 
-void find_iso(uint inst) { //U: Finds the isotherm by doing a linear interpolation between the two points around where it should be
+void System::find_iso(uint inst) { //U: Finds the isotherm by doing a linear interpolation between the two points around where it should be
   const std::vector<floating_t> &t = T[inst]; //A: Rename
   for (uint i = 0; i < n; i++) { //A: For each angle
     isotherm[inst][i] = re + 1; //A: Default NOTE: Values outside of the furnace are invalid and thus should be ignored 
@@ -134,3 +156,20 @@ void find_iso(uint inst) { //U: Finds the isotherm by doing a linear interpolati
 }
 
 //TODO: Optimize by taking advantage of "band" matrix and first and last n rows being 1's
+void System::write_output(char *dataOut) const {
+  std::ofstream fout(dataOut);
+
+  fout.precision(6);
+
+#ifdef _PROFILING_
+  for (const long& time : times) fout << time << ' '; fout << '\n';
+  for (const std::vector<floating_t>& inst : isotherm) { 
+    for (const floating_t& r : inst) fout << r << ' '; fout << '\n';
+  }
+#endif
+  for (const std::vector<floating_t> inst : T) 
+    for (const floating_t& t : inst)
+      fout << std::fixed << t << ' ' << '\n';
+
+  fout.close();
+}

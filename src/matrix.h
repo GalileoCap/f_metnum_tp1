@@ -18,6 +18,6 @@ struct Matrix {
   std::vector<std::vector<floating_t>> _m;
 };
 
-#include "matrix.hpp"
+#include "matrix.cpp"
 
 #endif

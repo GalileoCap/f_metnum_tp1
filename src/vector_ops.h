@@ -18,6 +18,6 @@ std::vector<T> operator+(const std::vector<T>&, const std::vector<T>&);
 template<typename T>
 std::vector<T> operator-(const std::vector<T>&, const std::vector<T>&);
 
-#include "vector_ops.hpp"
+#include "vector_ops.cpp"
 
 #endif
