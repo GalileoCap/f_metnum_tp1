@@ -392,8 +392,7 @@ Pero si la fila corresponde a una de los puntos internos de la pared, entonces c
 
 \section{Efectividad de la factorización LU}
 
-\paragraph{} Para resolver un sistema de ecuaciones cualquiera planteado como \(Ax = b\), se puede usar el método de Eliminación Gaussiana o "Gauss", que tiene un tiempo de operación en el orden de \(\bigO{n^3}\). Pero también se puede resolver usando la factorización LU, que son dos matrices tales que \(A = LU\), donde \(L\) es triangular inferior y \(U\) es triangular superior. La forma de resolverlo así sería primero calcular un \(y\) tal que \(Ly = b\) y luego resolver \(Ux = y\). Esto toma \(\bigO{n^2}\) operaciones.
-\paragraph{} Como vimos en el apéndice \ref{appendix:justificacion}, se puede aplicar Gauss sobre la matriz de nuestro sistema. Lo cual es condición suficiente para afirmar que tiene factorización \(A = LU\) \cite{clases}. Que nos es muy útil cuando queremos resolver múltiples instancias de \(At_i = b_i\) ya que la factorización LU se puede calcular aplicando la Eliminación Gaussiana una sola vez, y resolver cada instancia \(LUt_i = b_i\) requiere muchas menos operaciones. \\
+\paragraph{} Para resolver un sistema de ecuaciones cualquiera planteado como \(Ax = b\), se puede usar el método de Eliminación Gaussiana o "Gauss", que tiene un tiempo de operación en el orden de \(\bigO{n^3}\). Pero también se puede resolver usando la factorización \(A = LU\), que simplifica significativamente las cuentas necesarias para resolver \(Ax = LUx = b\).
 En la Figura \ref{fig:solve.time} se puede confirmar que resolver una instancia del sistema con LU es definitivamente más rápido que resolverla con Gauss. 
 
 \begin{figure}[H]
@@ -403,16 +402,8 @@ En la Figura \ref{fig:solve.time} se puede confirmar que resolver una instancia 
 \label{fig:solve.time}
 \end{figure}
 
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.5]{times.1.t_solve_lu}
-\caption{Tiempo para resolver un sistema contando el tiempo para calcular \(LU\) (1000 reps)}
-\label{fig:solve.lu.time}
-\end{figure}
-
-\paragraph{} Pero como mencionamos, para calcular la factorización hay que aplicar Gauss una vez, por lo que en realidad nos queda el resultado de la Figura \ref{fig:solve.lu.time} para resolver una instancia. \\
+\paragraph{} Pero, para calcular la factorización hay que aplicar Gauss una vez, por lo que en realidad nos quedan tiempos muy similares o mayores para resolver una instancia. \\
 Es por esto que es importante revisar cuándo de verdad nos empieza a convenir usar la factorización \(LU\). En la Figura \ref{fig:pct_lu.time} se ve que independiente del tamaño de la matriz, el tiempo usado para resolver una instancia del sistema es una fracción mínima del tiempo usado para calcular la factorización. Por lo que para dos o más instancias del sistema conviene calcular y usar la factorización \(LU\) (resaltado en la Figura \ref{fig:time.2solve}). \\
-En la Figura \ref{fig:time.9solve} observamos que para resolver 9 instancias del sistema la diferencia de tiempo ya se vuelve muy notoria.
 
 \begin{figure}[H]
 \centering
@@ -423,16 +414,9 @@ En la Figura \ref{fig:time.9solve} observamos que para resolver 9 instancias del
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.5]{times.2.t_solve_lu}
-\caption{Tiempo para resolver dos instancias del sistema teniendo en cuenta el tiempo de \(LU\) (1000 reps)}
+\includegraphics[scale=0.5]{times.2.t_solve}
+\caption{Tiempo para resolver dos instancias del sistema (1000 reps)}
 \label{fig:time.2solve}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.5]{times.9.t_solve_lu}
-\caption{Tiempo para resolver nueve instancias del sistema teniendo en cuenta el tiempo de \(LU\) (1000 reps)}
-\label{fig:time.9solve}
 \end{figure}
 
 \pagebreak
