@@ -6,6 +6,23 @@ from utils import *
 import plot
 import system
 
+def times_run(mp1, n, ninst, reps, fpath):
+	print('times_run mp1 n', mp1, n)
+	df = pd.DataFrame()
+	for _ in range(reps):
+		data = [[1, 2, mp1, n, 500, ninst], None]
+		e_fpath = create_random_example(fpath, data)
+
+		for method in ['Gauss', 'LU']:
+			run(in_fpath(e_fpath), out_fpath(e_fpath), int(method == 'LU'), True)
+			(lu, times), _, _ = parse_output(out_fpath(e_fpath), data, True)
+			df = pd.concat([df, pd.DataFrame([{
+				'mp1': mp1, 'n': n,
+				'method': method,
+				'time': np.sum(times), 'lu': lu
+			}])], ignore_index = True)
+	return df
+
 def times(reps, mp1_range, n_range, ninst_range, fpath, replace = False):
 	for ninst in ninst_range:
 		print('times', reps, mp1_range, n_range, ninst)
@@ -17,20 +34,8 @@ def times(reps, mp1_range, n_range, ninst_range, fpath, replace = False):
 			print('times read')
 		else:
 			for mp1 in mp1_range:
-				print('times mp1', mp1)
 				for n in n_range:
-					for _ in range(reps):
-						data = [[1, 2, mp1, n, 500, ninst], None]
-						e_fpath = create_random_example(fpath, data)
-
-						for method in ['Gauss', 'LU']:
-							run(in_fpath(e_fpath), out_fpath(e_fpath), int(method == 'LU'), True)
-							(lu, times), _, _ = parse_output(out_fpath(e_fpath), data, True)
-							df = pd.concat([df, pd.DataFrame([{
-								'mp1': mp1, 'n': n,
-								'method': method,
-								'time': np.sum(times), 'lu': lu
-							}])], ignore_index = True)
+					df = pd.concat([df, times_run(mp1, n, ninst, reps, fpath)])
 			df.to_csv(df_path(_fpath))
 
 		# print(df.describe())
