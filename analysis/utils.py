@@ -16,6 +16,9 @@ def pyout_fpath(fpath):
 def img_fpath(fpath):
 	return f'{fpath}.png'
 
+def html_fpath(fpath):
+	return f'{fpath}.html'
+
 def df_path(fpath):
 	return f'{fpath}.csv.gz'
 

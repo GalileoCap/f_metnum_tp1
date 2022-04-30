@@ -54,14 +54,43 @@ def isotherms(isos, data, fpath):
 	fig.write_image(img_fpath(f'{fpath}.isotherm'))
 
 def t_solve(df, fpath):
-	fig = px.box(df, x = 'size', y = 'time', color = 'method', log_y = True) #TODO: Remove extreme outliers
+	fig = px.box(df, x = 'size', y = 'time', color = 'method', log_y = True)
 	fig.update_layout(
 		# title = f'Tiempo para resolver el sistema ({reps} reps)',
 		legend_title = 'Método',
 		xaxis_title = 'Tamaño de la matriz (elementos)',
 		yaxis_title = 'Tiempo (μs, log)',
 	)
-	fig.write_image(img_fpath(f'{fpath}.t_solve'))
+	fig.write_image(img_fpath(f'{fpath}.t_solve.size'))
+
+	# fig = px.box(df, x = 'mp1', y = 'time', color = 'n', log_y = True)
+	# fig.update_layout(
+		# # title = f'Tiempo para resolver el sistema ({reps} reps)',
+		# legend_title = 'Método',
+		# xaxis_title = 'Cantidad de radios',
+		# yaxis_title = 'Tiempo (μs, log)',
+	# )
+	# fig.write_image(img_fpath(f'{fpath}.t_solve.mp1'))
+
+	# fig = px.box(df, x = 'n', y = 'time', color = 'mp1', log_y = True)
+	# fig.update_layout(
+		# # title = f'Tiempo para resolver el sistema ({reps} reps)',
+		# legend_title = 'Método',
+		# xaxis_title = 'Cantidad de ángulos',
+		# yaxis_title = 'Tiempo (μs, log)',
+	# )
+	# fig.write_image(img_fpath(f'{fpath}.t_solve.n'))
+
+	fig = px.scatter_3d(df, x = 'mp1', y = 'n', z = 'time', color = 'method', log_z = True)
+	fig.update_layout(
+		legend_title = 'Método',
+		scene = dict(
+			xaxis_title = 'Cantidad de radios',
+			yaxis_title = 'Cantidad de ángulos',
+			zaxis_title = 'Tiempo (μs, log)',
+		),
+	)
+	fig.write_html(html_fpath(f'{fpath}.t_solve.3d'))
 
 def t_solve_lu(df, fpath):
 	gauss, lu = gauss_df(df), lu_df(df)
