@@ -127,7 +127,7 @@ def granularity(df, fpath):
 		x = lu['mp1'],
 		y = lu['n'],
 		z = lu['time'],
-		colorbar = dict(title = 'Tiempo (μs, log)'),
+		colorbar = dict(title = 'Tiempo (μs)'),
 	))
 	fig.update_layout(
 		# title = f'Relación entre el tiempo resolver y el tiempo para calcular LU ({reps} reps)',

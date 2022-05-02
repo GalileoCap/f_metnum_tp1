@@ -234,8 +234,8 @@ Para averiguar si este error es aceptable usamos el número de condición. Que e
 
 \subsection{Granularidad}
 
-%TODO: Introducción y descripción
-\paragraph{} En la figura \ref{fig:granularity.heatmap} se puede ver que no es relevante de qué manera granularizamos el sistema. El tiempo que toma resolver una instancia del sistema de ecuaciones sólo depende del tamaño final de la matriz.
+\paragraph{} Nos interesa revisar el efecto que tiene la cantidad de radios y ángulos en los que granularizamos el sistema.
+\paragraph{} En la figura \ref{fig:granularity.heatmap} se puede ver que, aunque la cantidad de ángulos tiene un peso mayor a la cantidad de radios, lo que más afecta al tiempo que toma resolver una instancia es el tamaño de la matriz. %TODO: A qué se debe?
 
 \begin{figure}[H]
 \centering
@@ -245,6 +245,8 @@ Para averiguar si este error es aceptable usamos el número de condición. Que e
 \end{figure}
 
 %TODO: Hacer mención a Gauss y LU
+
+\paragraph{} Este experimento es parte del script \texttt{analyze\_time.py}.
 
 \subsection{Movimiento de la isoterma}
 
