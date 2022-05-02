@@ -150,18 +150,32 @@ En la ecuación (\ref{eq:example}) mostramos un ejemplo de cómo queda el sistem
 
 Demostramos en el apéndice \ref{appendix:justificacion} que se puede aplicar la Eliminación Gaussiana sin pivotear filas.
 
+\subsection{Estimando la isoterma}
+\label{sec:peligrosidad}
+
+\paragraph{} En la Sección \ref{sec:intro} planteamos que la razón principal para buscar resolver este problema es querer calcular la posición de la isoterma de 500ºC, ya que si está muy cerca del exterior la estructura del horno estaría en riesgo.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{complete.0.isotherm}
+\caption{Posición estimada de la isoterma (mp1 = 50, n = 50, Ti \(\approx\) 1500ºC, Te \(\approx\) 500ºC)}
+\label{fig:isotherm.pos}
+\end{figure}
+
+\paragraph{} Para encontrarla buscamos por ángulo el primer punto donde la temperatura es menor a la buscada, y luego interpolamos linealmente la posición de la isoterma entre ese punto y el anterior.
+
 \subsection{Implementación}
 
 \paragraph{} Implementamos este sistema en \texttt{C++}. Primero programamos matrices usando vectores de la \texttt{STL}. Luego hicimos funciones que resuelvan sistemas de ecuaciones usando Eliminación Gaussiana o factorización LU. Y finalmente recibimos los datos y guardamos los resultados en archivos pasados por parámetros. \\
 También armamos una herramienta en \texttt{Python} para correr el programa y analizar los resultados, armando los gráficos vistos a través de este informe (como la Figura \ref{fig:temperature}). \\
 Todo el código se puede ver adjuntado al informe, junto con explicaciones de cómo usarlo. \\
 
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.5]{complete.0.temperature}
-\caption{Temperatura calculada dentro del horno (mp1 = 50, n = 50, Ti \(\approx\) 1500ºC, Te \(\approx\) 500ºC)}
-\label{fig:temperature}
-\end{figure}
+%\begin{figure}[H]
+%\centering
+%\includegraphics[scale=0.5]{complete.0.temperature}
+%\caption{Temperatura calculada dentro del horno (mp1 = 50, n = 50, Ti \(\approx\) 1500ºC, Te \(\approx\) 500ºC)}
+%\label{fig:temperature}
+%\end{figure}
 
 %\subsubsection{Optimización Matriz "en banda"}
 
@@ -178,32 +192,6 @@ Todo el código se puede ver adjuntado al informe, junto con explicaciones de c�
 %\label{fig:gauss.banda}
 %\end{figure}
 
-\section{Estimando la isoterma}
-\label{sec:peligrosidad}
-
-\paragraph{} En la Sección \ref{sec:intro} planteamos que la razón principal para buscar resolver este problema es querer calcular la posición de la isoterma de 500ºC, ya que si está muy cerca del exterior (ver Sección \ref{sec:peligrosidad.distance}) la estructura del horno estaría en riesgo.
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.5]{complete.0.isotherm}
-\caption{Posición estimada de la isoterma (mp1 = 50, n = 50, Ti \(\approx\) 1500ºC, Te \(\approx\) 500ºC)}
-\label{fig:isotherm.pos}
-\end{figure}
-
-\paragraph{} Para encontrarla buscamos por ángulo el primer punto donde la temperatura es menor a la buscada, y luego interpolamos linealmente la posición de la isoterma entre ese punto y el anterior.
-
-\subsection{Midiendo la peligrosidad}
-\label{sec:peligrosidad.distance}
-
-\paragraph{} Una vez encontrada la isoterma, es importante decidir si el horno está en un estado peligroso o seguro. \\
-Para esto habría que conocer más sobre cómo está armado un alto horno para poder sacar conclusiones sobre qué tan peligrosa es la posición de la isoterma. Aunque preliminarmente se puede ver (Figura \ref{fig:isotherm_by_inner}) que si el punto de ruptura se encuentra antes de que la isoterma haya recorrido el 75\% de la pared hacia afuera hay poco margen de error, ya que hasta ese punto la isoterma se mueve rápido hacia el exterior.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=0.5]{isotherm_by_inner}
-  \caption{Distancia de la isoterma al exterior del horno}
-  \label{fig:isotherm_by_inner}
-\end{figure}
 
 \section{Experimentación} 
 
@@ -244,6 +232,20 @@ Para averiguar si este error es aceptable usamos el número de condición. Que e
 
 \paragraph{} Este experimento puede ser repetido modificando la entrada en \texttt{data/rounding.in} y corriendo el script \texttt{analyze\_rounding.py}.
 
+\subsection{Granularidad}
+
+%TODO: Introducción y descripción
+\paragraph{} En la figura \ref{fig:granularity.heatmap} se puede ver que no es relevante de qué manera granularizamos el sistema. El tiempo que toma resolver una instancia del sistema de ecuaciones sólo depende del tamaño final de la matriz.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{simple.1.granularity.heatmap}
+\caption{Tiempo para resolver una instancia del sistema usando LU en base a la granularidad}
+\label{fig:granularity.heatmap}
+\end{figure}
+
+%TODO: Hacer mención a Gauss y LU
+
 \subsection{Movimiento de la isoterma}
 
 \subsubsection{Movimiento de la isoterma en base a la temperatura interna}
@@ -259,14 +261,15 @@ Como se puede ver en la Figura \ref{fig:isotherm_by_inner_metals}, se observa un
   \label{fig:isotherm_by_inner_metals}
 \end{figure}
 
-Finalmente, se puede notar la ubicación de los metales elegidos que aquellos que necesitan una temperatura del horno más baja, tienen la posición de su isoterma más cercana al centro, Mientras que las que requieren más calor tienen una isoterma más cercana a la pared exterior. 
+\paragraph{} Finalmente, se puede notar la ubicación de los metales elegidos que aquellos que necesitan una temperatura del horno más baja, tienen la posición de su isoterma más cercana al centro, mientras que las que requieren más calor tienen una isoterma más cercana a la pared exterior. Por lo que para trabajar con metales que tienen una temperatura de fusión más alta, es claro que el horno tiene que poder resistir que la isoterma esté más cerca del exterior.
 
 %\subsubsection{Replicabilidad del experimento}
 \paragraph{} Este experimento puede ser repetido con el script \texttt{analyze\_isotherm.py}.
 
 \subsubsection{Movimiento de isoterma en función de la cantidad de radios}
 
-\paragraph{} Por como se planteó la estimación de la isoterma, nos parece que la cantidad de radios dentro de la pared del horno sobre los que se trabaja afectan a la posición estimada de la isoterma. Para estudiar el efecto que tiene esta variable, analizamos los resultados cuando cambiamos la cantidad de radios. Asumimos a las temperaturas internas y externas fijadas en 1500ºC y 150ºC respectivamente. \\
+\paragraph{} Por como se planteó la estimación de la isoterma, nos parece que la cantidad de radios dentro de la pared del horno sobre los que se trabaja afectan a la posición estimada de la isoterma. Esto es relevante, ya que como mencionamos en la sección \ref{sec:peligrosidad} la posición de la isoterma determina si el horno está en un estado seguro o peligroso. \\
+Para estudiar el efecto que tiene esta variable, analizamos los resultados cuando cambiamos la cantidad de radios. Asumimos a las temperaturas internas y externas fijadas en 1500ºC y 150ºC respectivamente. \\
 
 \begin{figure}[H]
 \centering
@@ -279,6 +282,20 @@ Finalmente, se puede notar la ubicación de los metales elegidos que aquellos qu
 
 %\subsubsection{Replicabilidad del experimento}
 \paragraph{} Este experimento puede ser repetido con el script \texttt{analyze\_isotherm.py}.
+
+%\subsubsection{Midiendo la peligrosidad}
+%\label{sec:peligrosidad.distance}
+
+%\paragraph{} Una vez encontrada la isoterma, es importante decidir si el horno está en un estado peligroso o seguro. \\
+%Para esto habría que conocer más sobre cómo está armado un alto horno para poder sacar conclusiones sobre qué tan peligrosa es la posición de la isoterma. Aunque preliminarmente se puede ver (Figura \ref{fig:isotherm_by_inner}) que si el punto de ruptura se encuentra antes de que la isoterma haya recorrido el 75\% de la pared hacia afuera hay poco margen de error, ya que hasta ese punto la isoterma se mueve rápido hacia el exterior.
+
+%\begin{figure}[H]
+  %\centering
+  %\includegraphics[scale=0.5]{isotherm_by_inner}
+  %\caption{Distancia de la isoterma al exterior del horno}
+  %\label{fig:isotherm_by_inner}
+%\end{figure}
+
 
 \section{Conclusión}
 

@@ -1,5 +1,6 @@
 import plotly.graph_objects as go
 import plotly.express as px
+from plotly.subplots import make_subplots
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -117,6 +118,23 @@ def t_pct_lu(df, fpath):
 		yaxis_title = 'Relación',
 	)
 	fig.write_image(img_fpath(f'{fpath}.t_pct_lu'))
+
+def granularity(df, fpath):
+	lu = lu_df(df)
+	fpath = f'{fpath}.granularity'
+
+	fig = go.Figure(data=go.Heatmap(
+		x = lu['mp1'],
+		y = lu['n'],
+		z = lu['time'],
+		colorbar = dict(title = 'Tiempo (μs, log)'),
+	))
+	fig.update_layout(
+		# title = f'Relación entre el tiempo resolver y el tiempo para calcular LU ({reps} reps)',
+		xaxis_title = 'Cantidad de radios',
+		yaxis_title = 'Cantidad de ángulos',
+	)
+	fig.write_image(img_fpath(f'{fpath}.heatmap'))
 
 def peligrosidad(distances, x, fpath, radii = False, metals = False):
 	# fig = px.scatter(x = x, y = distances)

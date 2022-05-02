@@ -61,8 +61,9 @@ def times(reps, mp1_range, n_range, ninst_range, fpath, replace = False):
 		plot.t_solve(df, ninst_fpath(fpath, ninst))
 		plot.t_solve_lu(df, ninst_fpath(fpath, ninst))
 		plot.t_pct_lu(df, ninst_fpath(fpath, ninst))
+		plot.granularity(df, ninst_fpath(fpath, ninst))
 
 	print('times DONE')
 
 if __name__ == '__main__':
-	times(100, range(2, 10), range(3, 10), [1, 2, 9], f'../data/times/simple', replace = False) 
+	times(1000, range(2, 50), range(3, 50), [1, 2, 9], f'../data/times/simple', replace = True) 
