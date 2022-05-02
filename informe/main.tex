@@ -216,12 +216,12 @@ Para esto habría que conocer más sobre cómo está armado un alto horno para p
 \paragraph{} La cátedra nos proveyó con una serie de tests, con su input y output esperados. Al correr nuestro programa con este input nos encontramos con que los resultados conseguidos no eran iguales a los esperados (ver Figura \ref{fig:expected.diffs}). \\
 Para averiguar si este error es aceptable usamos el número de condición. Que es un número calculado a partir de la matriz que nos permite definir un rango de error alrededor del resultado esperado, dentro del cual, si se encuentran nuestros resultados, son aceptables y esperables por errores de redondeo (ver Sección \ref{sec:rounding}).
 
-\paragraph{} Se puede notar que el error crece hacia el centro del horno. Esto se debe a que el algoritmo implementado para resolver el sistema despeja las temperaturas más internas en función de las más externas, por lo que los errores cometidos se van acumulando desde afuera hacia adentro.
+%\paragraph{} Se puede notar que el error crece hacia el exterior del horno. Esto se debe a que el algoritmo implementado para resolver el sistema despeja las temperaturas más internas en función de las más externas, por lo que los errores cometidos se van acumulando desde afuera hacia adentro. TODO: Esto ya no es cierto
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{test1.1.0.temperature}
-\caption{Diferencia entre las temperaturas esperadas y las calculadas del test 1}
+\caption{Porcentaje de diferencia entre las temperaturas esperadas y las calculadas del test 1}
 \label{fig:expected.diffs}
 \end{figure}
 
@@ -236,7 +236,7 @@ Para averiguar si este error es aceptable usamos el número de condición. Que e
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{rounding.temperature}
-\caption{Diferencia entre las temperaturas calculadas usando \texttt{long double} y \texttt{float}}
+\caption{Porcentaje de diferencia entre las temperaturas calculadas usando \texttt{long double} y \texttt{float}}
 \label{fig:rounding.diffs}
 \end{figure}
 

@@ -6,7 +6,7 @@ import pandas as pd
 
 from utils import *
 
-def temperature(result, data, fpath): #TODO: Plotlyze
+def temperature(result, data, fpath, label = 'Temperatura (ºC)'): #TODO: Plotlyze
 	[_, _, mp1, n, _, _], _ = data
 	
 	r = np.tile(np.linspace(0, 1, mp1), (n, 1))
@@ -23,7 +23,7 @@ def temperature(result, data, fpath): #TODO: Plotlyze
 		r, z,
 		cmap='jet'
 	)
-	fig.colorbar(grafico)
+	fig.colorbar(grafico, label = label)
 
 	plt.savefig(img_fpath(f'{fpath}.temperature'))
 

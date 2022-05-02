@@ -26,7 +26,7 @@ def analyze_expected(fpath, replace = False):
 		print('analyze_expected ERROR', i)
 
 	[_, _, mp1, n, _, ninst], _ = data
-	diffs = [np.abs(expected[inst] - python[inst]) for inst in range(ninst)]
+	diffs = [np.abs((expected[inst] - python[inst]) / expected[inst]) for inst in range(ninst)]
 	cond_n = np.linalg.cond(M)
 	for inst in range(ninst):
 		print(f'analyze_expected instance {inst} within range? {system.error_range(M, b[inst], python[inst], expected[inst], data)}')
@@ -36,7 +36,7 @@ def analyze_expected(fpath, replace = False):
 		e_iso = system.calc_isotherm(expected[inst], data)
 		plot.isotherms({'Expected': e_iso, 'Approximate': a_iso}, data, _fpath)
 		
-		plot.temperature(diffs[inst], data, _fpath)
+		plot.temperature(diffs[inst], data, _fpath, 'Diferencia (%)')
 	
 	print(f'analyze_expected fpath {fpath} replace {replace} DONE')
 	#TODO: Reporte cuantificando errores

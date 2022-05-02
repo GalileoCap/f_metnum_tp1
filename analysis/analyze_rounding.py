@@ -25,7 +25,7 @@ def analyze_rounding(fpath, replace = False):
 	_, _, f_output = parse_output(out_fpath(f_fpath), data)
 
 	[_, _, mp1, n, _, ninst], _ = data
-	diffs = [np.abs(d_output[inst] - f_output[inst]) for inst in range(ninst)]
+	diffs = [np.abs((d_output[inst] - f_output[inst]) / d_output[inst]) for inst in range(ninst)]
 	cond_n = np.linalg.cond(M)
 	for inst in range(ninst):
 		print(f'analyze_rounding within range? {system.error_range(M, b[inst], d_output[inst], f_output[inst], data)}')
@@ -34,7 +34,7 @@ def analyze_rounding(fpath, replace = False):
 		f_iso = system.calc_isotherm(f_output[inst], data)
 		plot.isotherms({'Double': d_iso, 'Float': f_iso}, data, fpath)
 		
-		plot.temperature(diffs[inst], data, fpath)
+		plot.temperature(diffs[inst], data, fpath, 'Diferencia (%)')
 	
 	print('analyze_rounding DONE')
 	#TODO: Better reporting
