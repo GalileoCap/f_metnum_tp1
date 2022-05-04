@@ -232,19 +232,38 @@ Para averiguar si este error es aceptable usamos el número de condición. Que e
 
 \paragraph{} Este experimento puede ser repetido modificando la entrada en \texttt{data/rounding.in} y corriendo el script \texttt{analyze\_rounding.py}.
 
-\subsection{Granularidad}
 
-\paragraph{} Nos interesa revisar el efecto que tiene la cantidad de radios y ángulos en los que granularizamos el sistema.
-\paragraph{} En la figura \ref{fig:granularity.heatmap} se puede ver que, aunque la cantidad de ángulos tiene un peso mayor a la cantidad de radios, lo que más afecta al tiempo que toma resolver una instancia es el tamaño de la matriz. %TODO: A qué se debe?
+\subsection{Granularidad de la matriz}
+
+\paragraph{} Para acercarnos al problema continuo del alto horno es necesario estudiar el efecto que tiene cambiar el tipo de granularidad de la matriz. Se quiere analizar si existe alguna relación entre el tamaño de la matriz a resolver y los tiempos de computo, es decir, en el limite al agregar angulos y radios nos estamos acercando al problema continuo y en estas situaciones buscamos ver como resuelve nuestra solución al problema. Para la construcción de este experimento variamos tanto cantidad de ángulos y radios. Estamos buscando comprobar que los tiempos de computo no son ajenos al tamaño de la matriz, mas en especifico a la cantidad de radios, ya que dentro del problema de un alto horno es lo que mas se puede controlar. 
 
 \begin{figure}[H]
-\centering
-\includegraphics[scale=0.5]{simple.1.granularity.heatmap}
-\caption{Tiempo para resolver una instancia del sistema usando LU en base a la granularidad}
-\label{fig:granularity.heatmap}
+	\centering
+	\includegraphics[scale=0.5]{simple.1.granularity.heatmap}
+	\caption{Tiempo para resolver una instancia del sistema usando LU en base a la granularidad}
+	\label{fig:granularity.heatmap}
 \end{figure}
 
-%TODO: Hacer mención a Gauss y LU
+\paragraph{} Como se puede ver en la figura \ref{fig:granularity.heatmap} podemos notar que la hipótesis que manejábamos en parte se termino comprobando. Esto ilustra que la cantidad de ángulos y la cantidad de radios no son ajenos a los tiempos de computo obtenidos, también es posible notar que la cantidad de ángulos tiene un mayor peso a la cantidad de radios, es  decir lo que más afecta a los tiempos de computo son la cantidad de ángulos esto podemos notarlo con los contrastes de colores logrados a medida que crece la granuralidad de los ángulos. Aunque también existe una relación positiva entre la cantidad de radios y ángulos con los tiempos de computo, ya que cuando ambos crecen casi a la par de los tiempos de computo. Una razon a este fenómeno es quizás la forma de construir la matriz, ya que la dimensión de la matriz depende de la cantidad de radios y ángulos.
+
+%TODO: A qué se debe? Respondido arriba ? 
+
+
+%TODO: Hacer mención a Gauss y LU. Respondido abajo ?
+
+\section{Experimentación LU vs Gauss}
+\paragraph{} Inspirados en el experimento anterior, armamos el sistema de ecuaciones planteado por la ecuación de calor como \(Ax = b\), además se utiliza el método de Eliminación Gaussiana, que tiene un tiempo de operación en el orden de $O({n^3})$. Pero también podemos resolver el sistema usando la factorización \(A = LU\), así buscamos comprobar que esta factorización aplicada a nuestro problema es capaz de simplificar las cuentas necesarias al resolver \(Ax = LUx = b\). Se quiere corroborar que al aumentar el tamaño de la matriz es mejor utilizar la factorización LU. Para ello simulamos diferentes instancias del problema todas ellas de escenarios posibles:
+\begin{itemize}
+	\item Aumenta $T_{i}(\theta_{j} ) y T_{e}(\theta_{j})$ para todo j de la discretización.
+	\item Aumenta $T_{i}(\theta_{j} )$ y $T_{e}(\theta_{j})$ se mantiene constante para todo j de la discretización.
+	\item Aumenta $T_{i}(\theta_{j} )$ y $T_{e}(\theta_{j})$ asciende para todo j de la discretización.
+\end{itemize}
+
+En todos estos escenarios, las $r_{i}$ y $r_{e}$ se mantienen constantes durante todo el experimento ya que en la realidad (revisar) las radios de un alto horno no varían en distintos instantes de tiempos. 
+
+De las figuras NRO y NRO podemos notar que en la mayoría de los escenarios se comprueba la hipótesis que venimos trabajando, en cada escenario el tiempo de computo de las simulaciones resultas con LU tomo menos tiempo que las resueltas con Gauss. Algo importante que notamos es el momento que conveniente utilizar un método u otro dependiendo del escenario que estemos y además del tamaño de la matriz, como podemos ver en la figura NRO que a cuando la dimensión de la matriz supera X requiere menos cuentas utilizar la factorización LU.
+
+%TODO: Completar con los graficos.
 
 \paragraph{} Este experimento es parte del script \texttt{analyze\_time.py}.
 
