@@ -235,7 +235,7 @@ Para averiguar si este error es aceptable usamos el número de condición. Que e
 
 \subsection{Granularidad de la matriz}
 
-\paragraph{} Para acercarnos al problema continuo del alto horno es necesario estudiar el efecto que tiene cambiar el tipo de granularidad de la matriz. Se quiere analizar si existe alguna relación entre el tamaño de la matriz a resolver y los tiempos de computo, es decir, en el limite al agregar angulos y radios nos estamos acercando al problema continuo y en estas situaciones buscamos ver como resuelve nuestra solución al problema. Para la construcción de este experimento variamos tanto cantidad de ángulos y radios. Estamos buscando comprobar que los tiempos de computo no son ajenos al tamaño de la matriz, mas en especifico a la cantidad de radios, ya que dentro del problema de un alto horno es lo que mas se puede controlar. 
+\paragraph{} Para acercarnos al problema continuo del alto horno es necesario estudiar el efecto que tiene cambiar el nivel de granularidad de la matriz. Se quiere analizar la relación entre el tamaño de la matriz a resolver y los tiempos de computo, ya que, al granularizar en más ángulos y radios nos estamos acercando al problema continuo y en estas situaciones buscamos ver como resuelve nuestra solución al problema. Para la construcción de este experimento variamos la cantidad de ángulos y radios. Buscando comprobar que los tiempos de computo se ven más afectados por el tamaño de la matriz (\((mp1 \cdot n)^2\) ) que por la cantidad de ángulos o radios individualmente.
 
 \begin{figure}[H]
 	\centering
@@ -244,17 +244,21 @@ Para averiguar si este error es aceptable usamos el número de condición. Que e
 	\label{fig:granularity.heatmap}
 \end{figure}
 
-\paragraph{} Como se puede ver en la figura \ref{fig:granularity.heatmap} podemos notar que la hipótesis que manejábamos en parte se termino comprobando. Esto ilustra que la cantidad de ángulos y la cantidad de radios no son ajenos a los tiempos de computo obtenidos, también es posible notar que la cantidad de ángulos tiene un mayor peso a la cantidad de radios, es  decir lo que más afecta a los tiempos de computo son la cantidad de ángulos esto podemos notarlo con los contrastes de colores logrados a medida que crece la granuralidad de los ángulos. Aunque también existe una relación positiva entre la cantidad de radios y ángulos con los tiempos de computo, ya que cuando ambos crecen casi a la par de los tiempos de computo. Una razon a este fenómeno es quizás la forma de construir la matriz, ya que la dimensión de la matriz depende de la cantidad de radios y ángulos.
+\paragraph{} Como se puede ver en la figura \ref{fig:granularity.heatmap} se puede confirmar la hipótesis que planteamos, aunque se ve que la cantidad de ángulos tiene un peso levemente mayor. Esto se puede deber a que al resolver el sistema aprovechamos que la matriz tiene forma de banda, y para instancia de la ecuación \ref{eq:laplace} hacemos \bigO{n} operaciones.
 
-%TODO: A qué se debe? Respondido arriba ? 
+\paragraph{} Como parte de este experimento, comparamos los tiempos de resolución usando factorización \(LU\) con los tiempos usando Gauss y confirmamos lo visto. Con la figura \ref{fig:solve.time} se puede confirmar que aprovechar la factorización \(LU\) es muy conveniente.
 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{times.1.t_solve}
+\caption{Tiempo para resolver una instancia del sistema (1000 reps)}
+\label{fig:solve.time}
+\end{figure}
 
-%TODO: Hacer mención a Gauss y LU. Respondido abajo ?
-
-\section{Experimentación LU vs Gauss}
+\subsection{Casos no uniformes}
 \paragraph{} Inspirados en el experimento anterior, armamos el sistema de ecuaciones planteado por la ecuación de calor como \(Ax = b\), además se utiliza el método de Eliminación Gaussiana, que tiene un tiempo de operación en el orden de $O({n^3})$. Pero también podemos resolver el sistema usando la factorización \(A = LU\), así buscamos comprobar que esta factorización aplicada a nuestro problema es capaz de simplificar las cuentas necesarias al resolver \(Ax = LUx = b\). Se quiere corroborar que al aumentar el tamaño de la matriz es mejor utilizar la factorización LU. Para ello simulamos diferentes instancias del problema todas ellas de escenarios posibles:
 \begin{itemize}
-	\item Aumenta $T_{i}(\theta_{j} ) y T_{e}(\theta_{j})$ para todo j de la discretización.
+	\item Aumenta $T_{i}(\theta_{j} )$ y $T_{e}(\theta_{j})$ para todo j de la discretización.
 	\item Aumenta $T_{i}(\theta_{j} )$ y $T_{e}(\theta_{j})$ se mantiene constante para todo j de la discretización.
 	\item Aumenta $T_{i}(\theta_{j} )$ y $T_{e}(\theta_{j})$ asciende para todo j de la discretización.
 \end{itemize}
@@ -427,35 +431,6 @@ Si la fila $k$ corresponde a uno de los puntos extremos de la pared del horno, e
 Pero si la fila corresponde a una de los puntos internos de la pared, entonces como cada fila representa a una instancia de la ecuación de Laplace, se tiene que el elemento \(\sub{a}{k+1}{k+1+n-1}\) es el coeficiente de la temperatura \(\sub{t}{j}{k+1}\), que es no nulo. 
 
 \end{itemize}
-
-\section{Efectividad de la factorización LU}
-
-\paragraph{} Para resolver un sistema de ecuaciones cualquiera planteado como \(Ax = b\), se puede usar el método de Eliminación Gaussiana o "Gauss", que tiene un tiempo de operación en el orden de \(\bigO{n^3}\). Pero también se puede resolver usando la factorización \(A = LU\), que simplifica significativamente las cuentas necesarias para resolver \(Ax = LUx = b\).
-En la Figura \ref{fig:solve.time} se puede confirmar que resolver una instancia del sistema con LU es definitivamente más rápido que resolverla con Gauss. 
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.5]{times.1.t_solve}
-\caption{Tiempo para resolver una instancia del sistema (1000 reps)}
-\label{fig:solve.time}
-\end{figure}
-
-\paragraph{} Pero, para calcular la factorización hay que aplicar Gauss una vez, por lo que en realidad nos quedan tiempos muy similares o mayores para resolver una instancia. \\
-Es por esto que es importante revisar cuándo de verdad nos empieza a convenir usar la factorización \(LU\). En la Figura \ref{fig:pct_lu.time} se ve que independiente del tamaño de la matriz, el tiempo usado para resolver una instancia del sistema es una fracción mínima del tiempo usado para calcular la factorización. Por lo que para dos o más instancias del sistema conviene calcular y usar la factorización \(LU\) (resaltado en la Figura \ref{fig:time.2solve}). \\
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.5]{times.1.t_pct_lu}
-\caption{Relación entre el tiempo para resolver el sistema y el tiempo para calcular la factorización LU (1000 reps)}
-\label{fig:pct_lu.time}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.5]{times.2.t_solve}
-\caption{Tiempo para resolver dos instancias del sistema (1000 reps)}
-\label{fig:time.2solve}
-\end{figure}
 
 \pagebreak
 \listoffigures
