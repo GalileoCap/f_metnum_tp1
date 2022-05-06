@@ -5,7 +5,7 @@
 \usepackage{g-util}
 \usepackage{caratula.met}
 \usepackage{amsfonts, amsmath, amssymb, amsthm}
-\usepackage{graphicx, float, hyperref, wrapfig}
+\usepackage{graphicx, float, hyperref, wrapfig, subcaption}
 \graphicspath{ {./plots/} }
 %\usepackage[xetex]{xcolor}
 
@@ -255,22 +255,6 @@ Para averiguar si este error es aceptable usamos el número de condición. Que e
 \label{fig:solve.time}
 \end{figure}
 
-\subsection{Casos no uniformes}
-\paragraph{} Inspirados en el experimento anterior, armamos el sistema de ecuaciones planteado por la ecuación de calor como \(Ax = b\), además se utiliza el método de Eliminación Gaussiana, que tiene un tiempo de operación en el orden de $O({n^3})$. Pero también podemos resolver el sistema usando la factorización \(A = LU\), así buscamos comprobar que esta factorización aplicada a nuestro problema es capaz de simplificar las cuentas necesarias al resolver \(Ax = LUx = b\). Se quiere corroborar que al aumentar el tamaño de la matriz es mejor utilizar la factorización LU. Para ello simulamos diferentes instancias del problema todas ellas de escenarios posibles:
-\begin{itemize}
-	\item Aumenta $T_{i}(\theta_{j} )$ y $T_{e}(\theta_{j})$ para todo j de la discretización.
-	\item Aumenta $T_{i}(\theta_{j} )$ y $T_{e}(\theta_{j})$ se mantiene constante para todo j de la discretización.
-	\item Aumenta $T_{i}(\theta_{j} )$ y $T_{e}(\theta_{j})$ asciende para todo j de la discretización.
-\end{itemize}
-
-En todos estos escenarios, las $r_{i}$ y $r_{e}$ se mantienen constantes durante todo el experimento ya que en la realidad (revisar) las radios de un alto horno no varían en distintos instantes de tiempos. 
-
-De las figuras NRO y NRO podemos notar que en la mayoría de los escenarios se comprueba la hipótesis que venimos trabajando, en cada escenario el tiempo de computo de las simulaciones resultas con LU tomo menos tiempo que las resueltas con Gauss. Algo importante que notamos es el momento que conveniente utilizar un método u otro dependiendo del escenario que estemos y además del tamaño de la matriz, como podemos ver en la figura NRO que a cuando la dimensión de la matriz supera X requiere menos cuentas utilizar la factorización LU.
-
-%TODO: Completar con los graficos.
-
-\paragraph{} Este experimento es parte del script \texttt{analyze\_time.py}.
-
 \subsection{Movimiento de la isoterma}
 
 \subsubsection{Movimiento de la isoterma en base a la temperatura interna}
@@ -321,6 +305,67 @@ Para estudiar el efecto que tiene esta variable, analizamos los resultados cuand
   %\label{fig:isotherm_by_inner}
 %\end{figure}
 
+\subsection{Casos no uniformes}
+
+\paragraph{} En los otros experimentos siempre trabajamos sobre temperaturas internas y externas uniformes, por lo que nos interesa revisar cómo se comporta el sistema cuando no son uniformes. Para ello, planteamos los siguientes tres escenarios:
+
+\paragraph{Caso 1:} En el que aumentan \(T_i(\theta_j)\) y \(T_e(\theta_j)\).
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.5\textwidth}
+  \includegraphics[scale=0.4]{uniform.0.isotherm}
+  \caption{Posición de la isoterma para el caso 1}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+  \includegraphics[scale=0.5]{uniform.0.temperature}
+  \caption{Temperatura dentro del horno para el caso 1}
+\end{subfigure}
+\label{fig:uniform.0}
+\end{figure}
+
+\paragraph{Caso 2:} En el que aumenta \(T_i(\theta_j)\), pero \(T_e(\theta_{j})\) es uniforme.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.5\textwidth}
+  \includegraphics[scale=0.4]{uniform.1.isotherm}
+  \caption{Posición de la isoterma para el caso 2}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+  \includegraphics[scale=0.5]{uniform.1.temperature}
+  \caption{Temperatura dentro del horno para el caso 2}
+\end{subfigure}
+\label{fig:uniform.1}
+\end{figure}
+
+\paragraph{Caso 3:} En el que aumenta \(T_i(\theta_j)\), pero \(T_e(\theta_j)\) desciende.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.5\textwidth}
+  \includegraphics[scale=0.4]{uniform.2.isotherm}
+  \caption{Posición de la isoterma para el caso 3}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+  \includegraphics[scale=0.5]{uniform.2.temperature}
+  \caption{Temperatura dentro del horno para el caso 3}
+\end{subfigure}
+\label{fig:uniform.2}
+\end{figure}
+
+\paragraph{} Como se puede ver en los gráficos, que las temperaturas no sean uniformes causa que la isoterma se deforme y en algunos lugares esté mucho más cerca del exterior que en otros.
+
+\paragraph{} Este experimento puede ser repetido con el script \texttt{analyze\_uniform.py}.
+
+%\subsection{Simulación}
+
+%\paragraph{} Como parte final de nuestra experimentación queremos resaltar que el modelo sirve para simular ciertos aspectos de un alto horno. Para hacerlo planteamos el seguimiento de eventos que sucedería luego de prender el horno: Todas las temperaturas empezarían uniformes alrededor de la temperatura ambiente (20ºC) y al ir pasando el tiempo la temperatura en el interior crecería y se esparciría hacia el exterior. \\
+%En las figuras \ref{fig:sim.isotherms} y \ref{fig:sim.temps} se pueden ver los aspectos analizados.
+
+%TODO: Figs
+
+%\paragraph{} Este experimento puede ser repetido con el script \texttt{analyze\_sim.py}.
 
 \section{Conclusión}
 
