@@ -167,7 +167,7 @@ Demostramos en el apéndice \ref{appendix:justificacion} que se puede aplicar la
 \subsection{Implementación}
 
 \paragraph{} Implementamos este sistema en \texttt{C++}. Primero programamos matrices usando vectores de la \texttt{STL}. Luego hicimos funciones que resuelvan sistemas de ecuaciones usando Eliminación Gaussiana o factorización LU. Y finalmente recibimos los datos y guardamos los resultados en archivos pasados por parámetros. \\
-También armamos una herramienta en \texttt{Python} para correr el programa y analizar los resultados, armando los gráficos vistos a través de este informe (como la Figura \ref{fig:temperature}). \\
+También armamos una herramienta en \texttt{Python} para correr el programa y analizar los resultados, armando los gráficos vistos a través de este informe. \\
 Todo el código se puede ver adjuntado al informe, junto con explicaciones de cómo usarlo. \\
 
 %\begin{figure}[H]
@@ -202,7 +202,7 @@ Todo el código se puede ver adjuntado al informe, junto con explicaciones de c�
 \label{sec:expected}
 
 \paragraph{} La cátedra nos proveyó con una serie de tests, con su input y output esperados. Al correr nuestro programa con este input nos encontramos con que los resultados conseguidos no eran iguales a los esperados (ver Figura \ref{fig:expected.diffs}). \\
-Para averiguar si este error es aceptable usamos el número de condición. Que es un número calculado a partir de la matriz que nos permite definir un rango de error alrededor del resultado esperado, dentro del cual, si se encuentran nuestros resultados, son aceptables y esperables por errores de redondeo (ver Sección \ref{sec:rounding}).
+Para averiguar si este error es aceptable usamos el número de condición. Este es un número calculado a partir de la matriz que nos permite definir un rango de error alrededor del resultado esperado. Si nuestros resultados se encuentran dentro de este, son aceptables y esperables por errores de redondeo (ver Sección \ref{sec:rounding}).
 
 %\paragraph{} Se puede notar que el error crece hacia el exterior del horno. Esto se debe a que el algoritmo implementado para resolver el sistema despeja las temperaturas más internas en función de las más externas, por lo que los errores cometidos se van acumulando desde afuera hacia adentro. TODO: Esto ya no es cierto
 
@@ -213,7 +213,7 @@ Para averiguar si este error es aceptable usamos el número de condición. Que e
 \label{fig:expected.diffs}
 \end{figure}
 
-\paragraph{} Corrimos nuestro programa teniendo en cuenta el error y confirmamos que nuestros resultados caen dentro de este rango de error aceptable. Esto se puede repetir usando el script \texttt{analyze\_expected.py}. Es muy relevante que la isoterma estimada entre ambos resultados no es muy diferente, por lo que este error no debería causar problemas. %TODO: Mejor explicación
+\paragraph{} Corrimos nuestro programa teniendo en cuenta el error y confirmamos que nuestros resultados caen dentro de este rango de error aceptable. Esto se puede repetir usando el script \texttt{analyze\_expected.py}. Es relevante que la isoterma estimada entre ambos resultados no es muy diferente, por lo que este error no debería causar problemas. %TODO: Mejor explicación
 
 \subsection{Revisando errores de redondeo}
 \label{sec:rounding}
@@ -228,14 +228,14 @@ Para averiguar si este error es aceptable usamos el número de condición. Que e
 \label{fig:rounding.diffs}
 \end{figure}
 
-\paragraph{} En la Figura \ref{fig:rounding.diffs} se pueden ver las diferencias causadas. Parte de estos errores se deben a lo mencionado en la Sección \ref{sec:expected} ya que los algoritmos propuestos tienen un leve error de redondeo. Observemos que los errores crecen hacia el centro del horno, esto sucede por cómo se resuelve el sistema, ya que al usar los resultados de las temperaturas más externas para calcular las más internas el error se acumula hacia el centro. Y no hay error en las temperaturas del radio interno y del radio externo, porque estos son datos de entrada y no calculados.
+\paragraph{} En la Figura \ref{fig:rounding.diffs} se pueden ver las diferencias causadas. Parte de estos errores se deben a lo mencionado en la Sección \ref{sec:expected}, ya que los algoritmos propuestos tienen un leve error de redondeo. Observemos que los errores crecen hacia el centro del horno, esto sucede por cómo se resuelve el sistema, ya que al usar los resultados de las temperaturas más externas para calcular las más internas el error se acumula hacia el centro. Y no hay error en las temperaturas del radio interno y del radio externo, porque estos son datos de entrada y no calculados.
 
 \paragraph{} Este experimento puede ser repetido modificando la entrada en \texttt{data/rounding.in} y corriendo el script \texttt{analyze\_rounding.py}.
 
 
 \subsection{Granularidad de la matriz}
 
-\paragraph{} Para acercarnos al problema continuo del alto horno es necesario estudiar el efecto que tiene cambiar el nivel de granularidad de la matriz. Se quiere analizar la relación entre el tamaño de la matriz a resolver y los tiempos de computo, ya que, al granularizar en más ángulos y radios nos estamos acercando al problema continuo y en estas situaciones buscamos ver como resuelve nuestra solución al problema. Para la construcción de este experimento variamos la cantidad de ángulos y radios. Buscando comprobar que los tiempos de computo se ven más afectados por el tamaño de la matriz (\((mp1 \cdot n)^2\) ) que por la cantidad de ángulos o radios individualmente.
+\paragraph{} Para acercarnos al problema continuo del alto horno es necesario estudiar el efecto que tiene cambiar el nivel de granularidad de la matriz. Se quiere analizar la relación entre el tamaño de la matriz a resolver y los tiempos de computo, ya que al granularizar en más ángulos y radios nos estamos acercando al problema continuo y en estas situaciones buscamos ver cómo resuelve nuestra solución al problema. Para la construcción de este experimento variamos la cantidad de ángulos y radios. Buscamos comprobar que los tiempos de cómputo se ven más afectados por el tamaño de la matriz (\((mp1 \cdot n)^2\) ) que por la cantidad de ángulos o radios individualmente.
 
 \begin{figure}[H]
 	\centering
@@ -244,7 +244,7 @@ Para averiguar si este error es aceptable usamos el número de condición. Que e
 	\label{fig:granularity.heatmap}
 \end{figure}
 
-\paragraph{} Como se puede ver en la figura \ref{fig:granularity.heatmap} se puede confirmar la hipótesis que planteamos, aunque se ve que la cantidad de ángulos tiene un peso levemente mayor. Esto se puede deber a que al resolver el sistema aprovechamos que la matriz tiene forma de banda, y para instancia de la ecuación \ref{eq:laplace} hacemos \bigO{n} operaciones.
+\paragraph{} Como está ilustrado en la figura \ref{fig:granularity.heatmap} se puede confirmar la hipótesis que planteamos, aunque se ve que la cantidad de ángulos tiene un peso levemente mayor. Esto puede deberse a que al resolver el sistema aprovechamos que la matriz tiene forma de banda, y para instancia de la ecuación \ref{eq:laplace} hacemos \bigO{n} operaciones.
 
 \paragraph{} Como parte de este experimento, comparamos los tiempos de resolución usando factorización \(LU\) con los tiempos usando Gauss y confirmamos lo visto. Con la figura \ref{fig:solve.time} se puede confirmar que aprovechar la factorización \(LU\) es muy conveniente.
 
@@ -287,7 +287,7 @@ Para estudiar el efecto que tiene esta variable, analizamos los resultados cuand
 \label{fig:isotherm_by_radii}
 \end{figure}
 
-\paragraph{} Como se ve en la Figura \ref{fig:isotherm_by_radii}, la posición varía bastante en base a la cantidad de radios. Preliminarmente parece convincente que si se calculan más radios se debería conseguir la estimación más correcta de la isoterma, pero habría que conseguir datos donde se sabe la posición de la isoterma para confirmarlo.
+\paragraph{} Como se ve en la Figura \ref{fig:isotherm_by_radii}, la posición varía bastante en base a la cantidad de radios. Preliminarmente parece convincente que si se calculan más radios se debería conseguir la estimación más correcta de la isoterma. Pero habría que conseguir datos donde se sabe la posición de la isoterma para confirmarlo.
 
 %\subsubsection{Replicabilidad del experimento}
 \paragraph{} Este experimento puede ser repetido con el script \texttt{analyze\_isotherm.py}.
@@ -307,7 +307,7 @@ Para estudiar el efecto que tiene esta variable, analizamos los resultados cuand
 
 \subsection{Casos no uniformes}
 
-\paragraph{} En los otros experimentos siempre trabajamos sobre temperaturas internas y externas uniformes, por lo que nos interesa revisar cómo se comporta el sistema cuando no son uniformes. Para ello, planteamos los siguientes tres escenarios:
+\paragraph{} En los experimentos anteriores siempre trabajamos sobre temperaturas internas y externas uniformes, por lo que nos interesa revisar cómo se comporta el sistema cuando no son uniformes. Para ello, planteamos los siguientes tres escenarios:
 
 \paragraph{Caso 1:} En el que aumentan \(T_i(\theta_j)\) y \(T_e(\theta_j)\).
 
