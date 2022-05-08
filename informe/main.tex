@@ -241,7 +241,7 @@ Para averiguar si este error es aceptable usamos el número de condición. Este 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.5]{simple.1.granularity.scatter}
-	\caption{Tiempo para resolver una instancia del sistema usando LU en base a la granularidad}
+  \caption{Tiempo para resolver una instancia del sistema usando LU en base a la granularidad (1000 reps)}
 	\label{fig:granularity.scatter}
 \end{figure}
 
@@ -261,21 +261,21 @@ Para averiguar si este error es aceptable usamos el número de condición. Este 
     Cant. Ángulos & 0.292982 \\
     Tamaño de la matriz & 0.482435 \\
   \end{tabular}
-  \caption{Tabla de correlación entre granuralidad del sistema, tamaño, y tiempos de resolución}
+  \caption{Tabla de correlación entre granuralidad del sistema, tamaño, y tiempos de resolución (1000 reps)}
   \label{table:granularity}
 \end{center}
 \end{table}
 
 \paragraph{} Como está ilustrado en la figura \ref{fig:granularity.scatter} y en la tabla \ref{table:granularity} se puede confirmar la hipótesis que planteamos: No hay gran diferencia entre la correlación entre la cantidad de radios y el tiempo, y la cantidad de ángulos y el tiempo, y es mucho mayor la correlación entre el tamaño de la matriz y el tiempo de resolución.
 
-\paragraph{} Como parte de este experimento, comparamos los tiempos de resolución usando factorización \(LU\) con los tiempos usando Gauss y confirmamos lo visto. Con la figura \ref{fig:solve.time} se puede confirmar que aprovechar la factorización \(LU\) es muy conveniente.
+\paragraph{} Como parte de este experimento, comparamos los tiempos de resolución usando factorización \(LU\) con los tiempos usando Gauss y confirmamos que aprovechar la factorización \(LU\) es crucial para reducir los tiempos de operación.
 
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.5]{times.1.t_solve}
-\caption{Tiempo para resolver una instancia del sistema (1000 reps)}
-\label{fig:solve.time}
-\end{figure}
+%\begin{figure}[H]
+%\centering
+%\includegraphics[scale=0.5]{times.1.t_solve}
+%\caption{Tiempo para resolver una instancia del sistema (1000 reps)}
+%\label{fig:solve.time}
+%\end{figure}
 
 \subsection{Movimiento de la isoterma}
 
