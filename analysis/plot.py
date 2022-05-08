@@ -34,9 +34,7 @@ def isotherms(isos, data, fpath):
 	theta = np.linspace(0, 360, n + 1) #NOTE: Plotly expects angles
 
 	for name, iso in isos.items():
-		# r = [x for x in iso if x >= ri and x <= re]
-		r = iso
-		# print(name, iso)
+		r = [x for x in iso if x >= ri and x <= re]
 		if len(r) > 0: #A: Para que la isoterma se "pegue" bien al dar la vuelta
 			r.append(r[0])
 		fig.add_trace(go.Scatterpolar(
@@ -136,6 +134,22 @@ def granularity(df, fpath):
 	)
 	fig.write_image(img_fpath(f'{fpath}.heatmap'))
 
+	fig = go.Figure()
+	for i in [3, 8, 10, 20, 25, 30]:
+		tmp_df = lu[lu['n'] == i]
+		fig.add_trace(go.Scatter(
+			x = tmp_df['mp1'].unique(),
+			y = tmp_df.groupby('mp1')['time'].mean(),
+			name =f'{i} ángulos'
+		))
+	fig.update_layout(
+		legend_title = 'Cantidad de ángulos',
+		xaxis_title = 'Cantidad de radios',
+		yaxis_title = 'Tiempo promedio (μs)',
+	)
+
+	fig.write_image(img_fpath(f'{fpath}.scatter'))
+
 def peligrosidad(distances, x, fpath, radii = False, metals = False):
 	# fig = px.scatter(x = x, y = distances)
 	fig = go.Figure() 
@@ -166,12 +180,14 @@ def peligrosidad(distances, x, fpath, radii = False, metals = False):
 	# fig.update_layout(showlegend=True)
 	fig.write_image(img_fpath(f'{fpath}'))
 
+def complete_inst(temp, iso, data, fpath):
+	temperature(temp, data, fpath)
+	isotherms({'isotherm': iso}, data, fpath)
+
 def complete(fpath):
 	data = parse_input(in_fpath(fpath))
 	_, isos, temps = parse_output(out_fpath(fpath), data, True)
 
 	[_, _, _, _, _, ninst], _ = data
 	for inst in range(ninst):
-		_fpath = f'{fpath}.{inst}'
-		temperature(temps[inst], data, _fpath)
-		isotherms({'isotherm': isos[inst]}, data, _fpath)
+		complete_inst(temps[inst], isos[inst], data, f'{fpath}.{inst}')

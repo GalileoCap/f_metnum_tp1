@@ -30,13 +30,15 @@ def times_run_ninst(reps, mp1_range, n_range, ninst, fpath, replace = False):
 	print('times_run', reps, mp1_range, n_range, ninst)
 
 	df = pd.DataFrame()
+	df_avg = pd.DataFrame()
 	if not replace:
 		df = pd.read_csv(df_path(ninst_fpath(fpath, ninst)), index_col = 0)
 		print('times read')
 	else:
 		for mp1 in mp1_range:
 			for n in n_range:
-				df = pd.concat([df, times_run_one(mp1, n, ninst, reps, fpath)])
+				this_run = times_run_one(mp1, n, ninst, reps, fpath)
+				df = pd.concat([df, this_run])
 	df.to_csv(df_path(ninst_fpath(fpath, ninst)))
 	return df
 
@@ -58,6 +60,9 @@ def times(reps, mp1_range, n_range, ninst_range, fpath, replace = False):
 		df['%lu'] = df['time'] / df['lu']
 		df['time+lu'] = df['time'] + df['lu']
 
+		with pd.option_context('display.max_rows', None, 'display.max_columns', None): 
+			print(df[['mp1', 'n', 'size', 'time']].corr())	
+
 		plot.t_solve(df, ninst_fpath(fpath, ninst))
 		plot.t_solve_lu(df, ninst_fpath(fpath, ninst))
 		plot.t_pct_lu(df, ninst_fpath(fpath, ninst))
@@ -66,4 +71,4 @@ def times(reps, mp1_range, n_range, ninst_range, fpath, replace = False):
 	print('times DONE')
 
 if __name__ == '__main__':
-	times(1000, range(2, 50), range(3, 50), [1, 2, 9], f'../data/times/simple', replace = True) 
+	times(1000, range(2, 30), range(3, 30), [1, 2, 9], f'../data/times/simple', replace = True) 

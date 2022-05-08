@@ -21,6 +21,7 @@
 
 \renewcommand{\figurename}{Fig.}
 \renewcommand{\listfigurename}{Figuras}
+\renewcommand{\tablename}{Tabla}
 \renewcommand{\contentsname}{Secciones}
 \renewcommand{\refname}{Bibliografía}
 
@@ -239,12 +240,33 @@ Para averiguar si este error es aceptable usamos el número de condición. Este 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.5]{simple.1.granularity.heatmap}
+	\includegraphics[scale=0.5]{simple.1.granularity.scatter}
 	\caption{Tiempo para resolver una instancia del sistema usando LU en base a la granularidad}
-	\label{fig:granularity.heatmap}
+	\label{fig:granularity.scatter}
 \end{figure}
 
-\paragraph{} Como está ilustrado en la figura \ref{fig:granularity.heatmap} se puede confirmar la hipótesis que planteamos, aunque se ve que la cantidad de ángulos tiene un peso levemente mayor. Esto puede deberse a que al resolver el sistema aprovechamos que la matriz tiene forma de banda, y para instancia de la ecuación \ref{eq:laplace} hacemos \bigO{n} operaciones.
+%\begin{figure}[H]
+	%\centering
+	%\includegraphics[scale=0.5]{simple.1.granularity.heatmap}
+	%\caption{Tiempo para resolver una instancia del sistema usando LU en base a la granularidad}
+	%\label{fig:granularity.heatmap}
+%\end{figure}
+
+\begin{table}[H]
+\begin{center}
+  \begin{tabular}{|c || c ||} 
+    & Tiempo \\
+    \hline\hline
+    Cant. Radios & 0.306062 \\
+    Cant. Ángulos & 0.292982 \\
+    Tamaño de la matriz & 0.482435 \\
+  \end{tabular}
+  \caption{Tabla de correlación entre granuralidad del sistema, tamaño, y tiempos de resolución}
+  \label{table:granularity}
+\end{center}
+\end{table}
+
+\paragraph{} Como está ilustrado en la figura \ref{fig:granularity.scatter} y en la tabla \ref{table:granularity} se puede confirmar la hipótesis que planteamos: No hay gran diferencia entre la correlación entre la cantidad de radios y el tiempo, y la cantidad de ángulos y el tiempo, y es mucho mayor la correlación entre el tamaño de la matriz y el tiempo de resolución.
 
 \paragraph{} Como parte de este experimento, comparamos los tiempos de resolución usando factorización \(LU\) con los tiempos usando Gauss y confirmamos lo visto. Con la figura \ref{fig:solve.time} se puede confirmar que aprovechar la factorización \(LU\) es muy conveniente.
 
